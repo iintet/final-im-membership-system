@@ -53,8 +53,8 @@ body {
   color: white;
   text-decoration: none;
   font-weight: 400;
-  text-align: left;       /* Aligns text to the left */
-  width: 100%;            /* Makes sure it takes up full width */
+  text-align: left;
+  width: 100%;
   padding: 12px 0;
 }
 
@@ -68,16 +68,8 @@ body {
   margin-bottom: 10px;
 }
 
-hr {
-  margin: 20px 0;
-  border: none;
-  height: 1px;
-  background-color: #ccc;
-}
-
-.dashboard-grid {
-  display: flex;
-  gap: 20px;
+.subtitle {
+  font-size: 1.1rem;
   margin-bottom: 30px;
 }
 
@@ -86,60 +78,47 @@ hr {
   border: 1px solid #ddd;
   border-radius: 10px;
   padding: 20px;
-  flex: 1;
+  margin-bottom: 20px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
+.card.full-width {
+  width: 100%;
+}
+
 .card h2 {
-  font-size: 1.2rem;
   margin-bottom: 10px;
 }
 
 .card p {
-  font-size: 2rem;
-  font-weight: bold;
+  margin-bottom: 15px;
 }
 
-.row {
-  display: flex;
-  gap: 20px;
-}
-
-.card.activity ul {
-  list-style: none;
-}
-
-.card.activity li {
-  padding: 6px 0;
-  border-bottom: 1px solid #eee;
-}
-
-.card.actions button {
-  display: block;
-  width: 100%;
-  padding: 12px;
-  margin: 10px 0;
-  font-size: 1rem;
+.blue-btn {
+  background-color: #007BFF;
+  color: white;
   border: none;
+  padding: 10px 16px;
   border-radius: 5px;
   cursor: pointer;
-  color: white;
-  transition: 0.3s;
+  font-size: 1rem;
 }
 
-/* Button Colors */
-button.light-blue {
-  background-color: #4da6ff; /* Light Blue */
-}
-
-button.medium-blue {
-  background-color: #007BFF; /* Medium Blue */
-}
-
-button.dark-blue {
-  background-color: #0056b3; /* Dark Blue */
-}
-
-.card.actions button:hover {
+.blue-btn:hover {
   opacity: 0.9;
+}
+
+.filter-row {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.filter-row input,
+.filter-row select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }

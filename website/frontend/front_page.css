@@ -1,94 +1,102 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Oswald', sans-serif;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
+  background-color: white;
+  color: #111;
+  line-height: 1.6;
 }
 
 header {
-    background-color: #fff;
-    padding: 20px;
-    border-bottom: 1px solid #ddd;
+  padding: 1.5rem 2rem;
 }
 
-header h1 {
-    margin: 0;
-    font-size: 24px;
+.logo {
+  font-size: 1.8rem;
+  color: #0f1f5c;
+  font-weight: bold;
 }
 
-nav ul {
-    list-style: none;
-    padding: 0;
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  text-align: center;
 }
 
-nav ul li {
-    display: inline;
-    margin-right: 20px;
+.hero h1 {
+  font-size: 3.5rem; /* was 2.8rem */
+  color: #0f1f5c;
+  margin-bottom: 0.5rem;
 }
 
-nav ul li a {
-    text-decoration: none;
-    color: #333;
+
+.hero p {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
 }
 
-main {
-    padding: 20px;
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
 
-.welcome {
-    text-align: center;
-    margin-bottom: 40px;
+.btn {
+  background-color: #0f1f5c;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  font-size: 1.2rem;
+  text-decoration: none;
+  border-radius: 5px;
 }
 
-.welcome h2 {
-    font-size: 32px;
-    margin-bottom: 10px;
+hr {
+  margin: 2rem 0;
+  border: none;
+  border-top: 1px solid #ccc;
 }
 
-.welcome p {
-    font-size: 18px;
-    margin-bottom: 20px;
-}
-
-.welcome button {
-    background-color: #003366;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    margin: 10px;
-    cursor: pointer;
-    border-radius: 5px;
-}
-
-.about, .benefits {
-    margin-bottom: 40px;
-}
-
-.about h3, .benefits h3 {
-    font-size: 24px;
-    margin-bottom: 10px;
+.about h2,
+.benefits h2 {
+  color: #0f1f5c;
+  font-size: 1.6rem;
+  margin-bottom: 0.5rem;
+  text-align: left;
 }
 
 .about p {
-    font-size: 16px;
+  font-size: 1.1rem;
+  text-align: left;
 }
 
-.benefits .benefit {
-    background-color: #fff;
-    padding: 20px;
-    border: 1px solid #ddd;
-    margin-bottom: 20px;
+.benefits .cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-top: 1rem;
+  justify-content: space-between;
 }
 
-.benefits .benefit h4 {
-    font-size: 20px;
-    margin-bottom: 10px;
+.card {
+  flex: 1 1 30%;
+  background-color: #0f1f5c;
+  color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  text-align: center;
 }
 
-.benefits .benefit p {
-    font-size: 16px;
+.card h3 {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
 }
 
-a:hover {
-    text-decoration: underline;
+.card p {
+  font-size: 1.05rem;
 }

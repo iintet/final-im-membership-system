@@ -1,82 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MRSYS Dashboard</title>
-    <link rel="stylesheet" href="staff_dashboard.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Staff Dashboard</title>
+  <link rel="stylesheet" href="staff_dashboard.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <aside class="sidebar">
-        <div class="sidebar-logo">MRSYS</div>
-        <nav class="sidebar-nav">
-            <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Member Management</a></li>
-                <li><a href="#">Membership Management</a></li>
-                <li><a href="#">Billing & Payment</a></li>
-                <li><a href="#">Event Management</a></li>
-                <li><a href="#">Committee Dashboard</a></li>
-                <li><a href="#">Staff Management</a></li>
-            </ul>
-        </nav>
-        <div class="sidebar-logout">
-            <a href="front_page.html">Log Out</a>
-        </div>
-    </aside>
+  <div class="sidebar">
+    <div class="logo">MRSYS</div>
+    <nav>
+      <a href="#" class="active">Home</a>
+      <a href="#">Member Management</a>
+      <a href="#">Membership Management</a>
+      <a href="#">Billing & Payment</a>
+      <a href="#">Event Management</a>
+      <a href="#">Committee Dashboard</a>
+      <a href="#">Staff Management</a>
+    </nav>
+    <div class="logout">
+      <a href="login.html">Log Out</a>
+    </div>
+  </div>
 
-    <main class="main-content">
-        <h1 class="welcome-header">Welcome back, StaffName!</h1>
+  <div class="main-content">
+    <h1 id="welcome-message">Welcome back!</h1>
+    <hr />
 
-        <div class="info-cards-grid">
-            <div class="info-card">
-                <h2 class="card-title">Total Members</h2>
-                <p class="card-value">1,250</p>
-            </div>
+    <div class="dashboard-grid">
+      <div class="card">
+        <h2>Total Members</h2>
+        <p>1,250</p>
+      </div>
+      <div class="card">
+        <h2>Active Memberships</h2>
+        <p>980</p>
+      </div>
+      <div class="card">
+        <h2>Upcoming Events</h2>
+        <p>3</p>
+      </div>
+    </div>
 
-            <div class="info-card">
-                <h2 class="card-title">Active Memberships</h2>
-                <p class="card-value">980</p>
-            </div>
+    <div class="row">
+      <div class="card activity">
+        <h2>Recent Activity</h2>
+        <ul>
+          <li>John Doe registered</li>
+          <li>Membership payment received</li>
+          <li>Abra Cadabra registered</li>
+          <li>Invoice #1234 created</li>
+        </ul>
+      </div>
+      <div class="card actions">
+        <h2>Quick Actions</h2>
+        <button class="light-blue">Register New Member</button>
+        <button class="medium-blue">Create New Event</button>
+        <button class="dark-blue">View Billing Summary</button>
+      </div>
+    </div>
+  </div>
 
-            <div class="info-card">
-                <h2 class="card-title">Upcoming Events</h2>
-                <p class="card-value">3</p>
-            </div>
-        </div>
-
-        <div class="bottom-sections-grid">
-            <div class="recent-activity">
-                <h2 class="section-title">Recent Activity</h2>
-                <ul>
-                    <li>
-                        <span>John Doe registered</span>
-                        <span class="arrow">&gt;</span>
-                    </li>
-                    <li>
-                        <span>Membership payment received</span>
-                        <span class="arrow">&gt;</span>
-                    </li>
-                    <li>
-                        <span>Abra Cadabra registered</span>
-                        <span class="arrow">&gt;</span>
-                    </li>
-                    <li>
-                        <span>Invoice #1234 created</span>
-                        <span class="arrow">&gt;</span>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="quick-actions">
-                <h2 class="section-title">Quick Actions</h2>
-                <div class="button-group">
-                    <button class="btn btn-primary">Register New Member</button>
-                    <button class="btn btn-secondary">Create New Event</button>
-                    <button class="btn btn-outlined">Viewing Billing Summary</button>
-                </div>
-            </div>
-        </div>
-    </main>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const username = params.get("username");
+    if (username) {
+      document.getElementById("welcome-message").textContent = `Welcome back, ${username}!`;
+    }
+  </script>
 </body>
 </html>
