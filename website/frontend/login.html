@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - MRSYS</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <header>
+        <h1>MRSYS</h1>
+        <nav>
+            <ul>
+                <li><a href="front_page.html">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Benefits</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main class="login-container">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+
+            <!-- Forgot Password Link -->
+            <a href="forgot_password.html" class="forgot-password">Forgot Password?</a>
+
+            <button type="submit">Log In</button>
+        </form>
+        <p>Don't have an account? <a href="register.html">Register here</a></p>
+    </main>
+
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            window.location.href = "staff_dashboard.html"; // Redirect users to member dashboard
+        });
+    </script>
+</body>
+</html>

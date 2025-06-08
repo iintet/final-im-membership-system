@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MRSYS Dashboard</title>
+    <link rel="stylesheet" href="staff_dashboard.css">
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-logo">MRSYS</div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Member Management</a></li>
+                <li><a href="#">Membership Management</a></li>
+                <li><a href="#">Billing & Payment</a></li>
+                <li><a href="#">Event Management</a></li>
+                <li><a href="#">Committee Dashboard</a></li>
+                <li><a href="#">Staff Management</a></li>
+            </ul>
+        </nav>
+        <div class="sidebar-logout">
+            <a href="front_page.html">Log Out</a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <h1 class="welcome-header">Welcome back, StaffName!</h1>
+
+        <div class="info-cards-grid">
+            <div class="info-card">
+                <h2 class="card-title">Total Members</h2>
+                <p class="card-value">1,250</p>
+            </div>
+
+            <div class="info-card">
+                <h2 class="card-title">Active Memberships</h2>
+                <p class="card-value">980</p>
+            </div>
+
+            <div class="info-card">
+                <h2 class="card-title">Upcoming Events</h2>
+                <p class="card-value">3</p>
+            </div>
+        </div>
+
+        <div class="bottom-sections-grid">
+            <div class="recent-activity">
+                <h2 class="section-title">Recent Activity</h2>
+                <ul>
+                    <li>
+                        <span>John Doe registered</span>
+                        <span class="arrow">&gt;</span>
+                    </li>
+                    <li>
+                        <span>Membership payment received</span>
+                        <span class="arrow">&gt;</span>
+                    </li>
+                    <li>
+                        <span>Abra Cadabra registered</span>
+                        <span class="arrow">&gt;</span>
+                    </li>
+                    <li>
+                        <span>Invoice #1234 created</span>
+                        <span class="arrow">&gt;</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="quick-actions">
+                <h2 class="section-title">Quick Actions</h2>
+                <div class="button-group">
+                    <button class="btn btn-primary">Register New Member</button>
+                    <button class="btn btn-secondary">Create New Event</button>
+                    <button class="btn btn-outlined">Viewing Billing Summary</button>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

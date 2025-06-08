@@ -1,0 +1,250 @@
+/* Custom CSS Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Custom font for a cleaner look */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* CSS Custom Properties (Variables) */
+:root {
+    --primary-blue: #007bff; /* Used for card values, some links, outlined button border */
+    --dark-blue: #003366; /* Used for sidebar background, secondary button */
+    --text-dark: #333;
+    --text-light: #fff;
+    --border-gray: #ddd;
+    --bg-light: #fff;
+    --bg-body: #f0f2f5; /* Light gray background for the page */
+
+    --spacing-sm: 10px;
+    --spacing-md: 20px;
+    --spacing-lg: 30px;
+
+    --border-radius-sm: 5px;
+    --border-radius-md: 8px;
+    --border-default: 1px solid var(--border-gray);
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-body);
+    color: var(--text-dark);
+    display: flex; /* Use flexbox for main layout (sidebar + content) */
+    min-height: 100vh;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    position: fixed; /* Fixed position */
+    top: 0;
+    left: 0;
+    width: 250px; /* Fixed width */
+    height: 100%;
+    background-color: var(--dark-blue);
+    color: var(--text-light);
+    padding: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    border-top-right-radius: var(--border-radius-md); /* Rounded right corners */
+    border-bottom-right-radius: var(--border-radius-md);
+}
+
+.sidebar-logo {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: var(--spacing-lg);
+    color: var(--text-light);
+}
+
+.sidebar-nav {
+    flex-grow: 1; /* Allows nav to take up available space */
+}
+
+.sidebar-nav ul {
+    list-style: none;
+}
+
+.sidebar-nav li {
+    margin-bottom: var(--spacing-sm);
+}
+
+.sidebar-nav a,
+.sidebar-logout a {
+    display: block;
+    padding: var(--spacing-sm) var(--spacing-md);
+    color: var(--text-light);
+    text-decoration: none;
+    border-radius: var(--border-radius-sm);
+    transition: background-color 0.3s ease;
+}
+
+.sidebar-nav a:hover,
+.sidebar-logout a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-logout {
+    margin-top: auto; /* Pushes logout to the bottom */
+}
+
+/* Main Content Area Styling */
+.main-content {
+    margin-left: 250px; /* Offset by sidebar width */
+    flex-grow: 1; /* Takes remaining space */
+    padding: var(--spacing-lg);
+}
+
+.welcome-header {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: var(--spacing-lg);
+    color: var(--text-dark);
+}
+
+/* Information Cards Grid */
+.info-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Three equal columns */
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.info-card {
+    background-color: var(--bg-light);
+    border: var(--border-default);
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-md);
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: 500;
+    color: #777;
+    margin-bottom: var(--spacing-sm);
+}
+
+.card-value {
+    font-size: 48px;
+    font-weight: bold;
+    color: var(--text-dark); /* Changed to dark text as per image */
+}
+
+/* Bottom Sections Grid (Recent Activity & Quick Actions) */
+.bottom-sections-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Two equal columns */
+    gap: var(--spacing-md);
+}
+
+/* Section Common Styling */
+.recent-activity,
+.quick-actions {
+    background-color: var(--bg-light);
+    border: var(--border-default);
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-md);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.section-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: var(--spacing-md);
+}
+
+/* Recent Activity List Styling */
+.recent-activity ul {
+    list-style: none;
+}
+
+.recent-activity li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-sm) 0;
+    border-bottom: 1px solid var(--border-gray);
+    color: #555;
+}
+
+.recent-activity li:last-child {
+    border-bottom: none; /* Remove border from last item */
+}
+
+.recent-activity.arrow {
+    font-weight: bold;
+    color: #999; /* Lighter arrow color as per image */
+}
+
+/* Quick Actions Button Styling */
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm); /* Spacing between buttons */
+}
+
+.btn {
+    display: block; /* Make buttons take full width */
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: none;
+    border-radius: var(--border-radius-md);
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease, opacity 0.3s ease;
+    box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+}
+
+.btn-primary {
+    background-color: var(--primary-blue);
+    color: var(--text-light);
+}
+
+.btn-secondary {
+    background-color: var(--dark-blue);
+    color: var(--text-light);
+}
+
+.btn-outlined {
+    background-color: transparent;
+    border: 1px solid var(--border-gray); /* Use border-gray for outline as per image */
+    color: var(--text-dark); /* Dark text for outlined button */
+    box-shadow: none; /* No shadow for outlined button */
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+
+/* Basic Responsiveness (Optional, but good practice) */
+@media (max-width: 768px) {
+  .sidebar {
+        position: relative; /* Sidebar becomes part of normal flow */
+        width: 100%;
+        height: auto;
+        border-radius: 0;
+        padding-bottom: var(--spacing-sm); /* Adjust padding */
+    }
+
+  .main-content {
+        margin-left: 0; /* Remove offset */
+        padding-top: var(--spacing-md); /* Add some top padding */
+    }
+
+  .info-cards-grid,
+  .bottom-sections-grid {
+        grid-template-columns: 1fr; /* Stack columns on small screens */
+    }
+
+  .info-card,
+  .recent-activity,
+  .quick-actions {
+        margin-bottom: var(--spacing-md); /* Add spacing between stacked sections */
+    }
+}

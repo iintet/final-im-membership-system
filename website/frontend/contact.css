@@ -1,0 +1,293 @@
+/* Custom CSS Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Custom font for a cleaner look */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* CSS Custom Properties (Variables) */
+:root {
+    --primary-blue: #007bff; /* Used for some buttons, links */
+    --dark-blue: #003366; /* Used for MRSYS logo, section titles */
+    --text-dark: #333;
+    --text-light: #fff;
+    --border-gray: #ddd;
+    --bg-light: #fff;
+    --bg-body: #f0f2f5; /* Light gray background for the page */
+
+    --spacing-sm: 10px;
+    --spacing-md: 20px;
+    --spacing-lg: 30px;
+
+    --border-radius-sm: 5px;
+    --border-radius-md: 8px;
+    --border-default: 1px solid var(--border-gray);
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-body);
+    color: var(--text-dark);
+    min-height: 100vh;
+}
+
+/* Main Header Styling */
+.main-header {
+    background-color: var(--bg-light);
+    border-bottom: var(--border-default);
+    padding: var(--spacing-md) var(--spacing-lg);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.header-content {
+    max-width: 1200px; /* Max width for header content */
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--dark-blue);
+}
+
+.header-nav ul {
+    list-style: none;
+    display: flex;
+    gap: var(--spacing-md);
+}
+
+.header-nav a {
+    text-decoration: none;
+    color: var(--text-dark);
+    font-weight: 500;
+    padding: var(--spacing-sm) 0; /* Add padding for click area */
+    transition: color 0.3s ease;
+}
+
+.header-nav a:hover {
+    color: var(--primary-blue);
+}
+
+.header-nav li.active a {
+    color: var(--primary-blue);
+    font-weight: 600;
+    border-bottom: 2px solid var(--primary-blue); /* Underline active link */
+}
+
+/* Main Content Area Styling (No Sidebar) */
+.main-content-no-sidebar {
+    max-width: 960px; /* Content width similar to image */
+    margin: var(--spacing-lg) auto; /* Center content horizontally */
+    padding: 0 var(--spacing-md); /* Add some side padding */
+}
+
+/* Common Card Styling for Sections */
+.content-card {
+    background-color: var(--bg-light);
+    border: var(--border-default);
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-lg);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    margin-bottom: var(--spacing-lg); /* Space between sections */
+}
+
+/* Hero Section Styling */
+.hero-section {
+    text-align: center;
+    padding: var(--spacing-lg) var(--spacing-md); /* Adjust padding for hero */
+}
+
+.hero-title {
+    font-size: 36px;
+    font-weight: bold;
+    color: var(--dark-blue);
+    margin-bottom: var(--spacing-sm);
+    line-height: 1.2;
+}
+
+.hero-subtitle {
+    font-size: 18px;
+    color: #555;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* Section Heading Common Styling */
+.section-heading {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--text-dark);
+    margin-bottom: var(--spacing-md);
+}
+
+/* Contact Form Styling */
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: #555;
+    margin-bottom: var(--spacing-sm);
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group textarea {
+    width: 100%;
+    padding: var(--spacing-sm);
+    border: 1px solid var(--border-gray);
+    border-radius: var(--border-radius-sm);
+    font-size: 16px;
+    color: var(--text-dark);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+/* Button Styling - Reused from Dashboard */
+.btn {
+    display: block;
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: none;
+    border-radius: var(--border-radius-md);
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease, opacity 0.3s ease;
+    box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.btn-primary {
+    background-color: var(--primary-blue);
+    color: var(--text-light);
+}
+
+.btn-primary:hover {
+    opacity: 0.9;
+}
+
+/* Alternative Contact Details Grid */
+.contact-details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Flexible columns */
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.contact-item h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--dark-blue);
+    margin-bottom: var(--spacing-sm);
+}
+
+.contact-item p {
+    font-size: 16px;
+    color: #555;
+    line-height: 1.4;
+}
+
+.contact-item a {
+    color: var(--primary-blue);
+    text-decoration: none;
+    transition: text-decoration 0.3s ease;
+}
+
+.contact-item a:hover {
+    text-decoration: underline;
+}
+
+.contact-item.full-width {
+    grid-column: 1 / -1; /* Make this item span all columns */
+}
+
+.social-media-heading {
+    margin-top: var(--spacing-md);
+}
+
+.social-links {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.social-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background-color: var(--dark-blue);
+    color: var(--text-light);
+    border-radius: 50%; /* Circular icons */
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.social-icon:hover {
+    background-color: var(--primary-blue);
+    transform: translateY(-2px);
+}
+
+.map-container {
+    margin-top: var(--spacing-md);
+    border: var(--border-default);
+    border-radius: var(--border-radius-md);
+    overflow: hidden; /* Ensures iframe respects border-radius */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.map-container iframe {
+    display: block; /* Remove extra space below iframe */
+}
+
+/* Basic Responsiveness */
+@media (max-width: 768px) {
+   .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+    }
+
+   .header-nav ul {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+    }
+
+   .main-content-no-sidebar {
+        padding: 0 var(--spacing-sm); /* Adjust padding for smaller screens */
+    }
+
+   .hero-title {
+        font-size: 28px;
+    }
+
+   .section-heading {
+        font-size: 20px;
+    }
+
+   .contact-details-grid {
+        grid-template-columns: 1fr; /* Stack columns on small screens */
+    }
+}
