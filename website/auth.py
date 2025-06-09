@@ -1,8 +1,10 @@
-from flask import Blueprint
+from flask import Blueprint, request, jsonify
+from flask_supabase import Supabase
+from flask import current_app
 
 auth = Blueprint('auth', __name__)
 
-@auth.route('/login')
+@auth.route('/login', methods=['POST'])
 def login():
     return "Login"
 
