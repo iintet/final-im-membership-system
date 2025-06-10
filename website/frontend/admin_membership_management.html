@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Membership Management</title>
+  <link rel="stylesheet" href="admin_membership_management.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="sidebar">
+    <div class="logo">MRSYS</div>
+    <nav>
+      <a href="admin_dashboard.html">Home</a>
+      <a href="admin_member_management.html">Member Management</a>
+      <a href="#" class="active">Membership Management</a>
+      <a href="admin_billing_payment.html">Billing & Payment</a>
+      <a href="admin_event_management.html">Event Management</a>
+      <a href="admin_committee_dashboard.html">Committee Dashboard</a>
+      <a href="admin_staff_management.html">Staff Management</a>
+    </nav>
+    <div class="logout">
+      <a href="login.html">Log Out</a>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <h1>Membership Management</h1>
+    <p class="subtitle">Manage member types and registrations</p>
+
+    <div class="card">
+      <h2>Membership Types</h2>
+      <div class="actions">
+        <a href="admin_edit_membership_types.html" class="blue-btn">Edit</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Pending Membership Registrations</h2>
+      <ul class="pending-list">
+        <li>
+          <span>Michael Johnson</span>
+          <div class="actions">
+            <button class="blue-btn">Approve</button>
+            <button class="red-btn">Reject</button>
+          </div>
+        </li>
+        <li>
+          <span>Samantha Lee</span>
+          <div class="actions">
+            <button class="blue-btn">Approve</button>
+            <button class="red-btn">Reject</button>
+          </div>
+        </li>
+        <li>
+          <span>Chris Martin</span>
+          <div class="actions">
+            <button class="blue-btn">Approve</button>
+            <button class="red-btn">Reject</button>
+          </div>
+        </li>
+
+        <!-- Hidden Extra Entries -->
+        <div class="extra-pending" style="display: none;">
+          <li>
+            <span>Angela Brooks</span>
+            <div class="actions">
+              <button class="blue-btn">Approve</button>
+              <button class="red-btn">Reject</button>
+            </div>
+          </li>
+          <li>
+            <span>Victor Cheng</span>
+            <div class="actions">
+              <button class="blue-btn">Approve</button>
+              <button class="red-btn">Reject</button>
+            </div>
+          </li>
+        </div>
+      </ul>
+      <button id="toggle-more" class="blue-btn show-more-btn">Show More</button>
+    </div>
+
+    <div class="card full-width">
+      <h2>Member Registration History</h2>
+      <a href="admin_membership_registration_history.html" class="blue-btn">View History</a>
+    </div>
+  </div>
+
+  <script>
+    const toggleBtn = document.getElementById('toggle-more');
+    const extra = document.querySelector('.extra-pending');
+
+    toggleBtn.addEventListener('click', () => {
+      if (extra.style.display === 'none') {
+        extra.style.display = 'block';
+        toggleBtn.textContent = 'Show Less';
+      } else {
+        extra.style.display = 'none';
+        toggleBtn.textContent = 'Show More';
+      }
+    });
+  </script>
+</body>
+</html>

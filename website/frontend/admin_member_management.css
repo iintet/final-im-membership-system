@@ -1,18 +1,32 @@
+/* Reset & Base */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 body {
   font-family: 'Oswald', sans-serif;
   display: flex;
-  height: 100vh;
+  flex-direction: row;
   background-color: #f4f4f4;
   color: #001F54;
+  overflow-x: hidden;
 }
 
+/* Sidebar */
 .sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  overflow-y: auto;
   width: 250px;
   background-color: #001F54;
   color: white;
@@ -58,15 +72,19 @@ body {
   padding: 12px 0;
 }
 
+/* Main Content */
 .main-content {
-  flex-grow: 1;
+  margin-left: 250px;
   padding: 40px;
+  flex-grow: 1;
+  min-height: 100vh;
+  background-color: #f4f4f4;
   overflow-y: auto;
 }
 
 .main-content h1 {
   font-size: 2.5rem;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 hr {
@@ -76,13 +94,32 @@ hr {
   background-color: #ccc;
 }
 
+/* Back Button */
+.back-btn {
+  display: inline-block;
+  margin-bottom: 20px;
+  font-size: 1rem;
+  color: #007BFF;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.back-btn:hover {
+  color: #0056b3;
+}
+
+/* Form and Profile Sections */
 .form-section,
 .profile-section {
   background-color: white;
-  padding: 20px;
+  padding: 30px;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   margin-bottom: 30px;
+  max-width: 1000px;
+  width: 100%;
+  line-height: 1.8;
 }
 
 .form-section h2,
@@ -91,6 +128,7 @@ hr {
   font-size: 1.5rem;
 }
 
+/* Registration Form Layout */
 .form-row {
   display: flex;
   gap: 20px;
@@ -120,6 +158,7 @@ form button:hover {
   background-color: #0056b3;
 }
 
+/* Table Styling */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -136,13 +175,14 @@ table th {
   color: white;
 }
 
-table td button {
+table td button,
+table td a.view-btn {
   margin-right: 8px;
 }
 
-/* Blue Blur Buttons */
-button.view-btn,
-button.edit-btn {
+/* View and Edit Buttons */
+.view-btn,
+.edit-btn {
   backdrop-filter: blur(6px);
   background-color: rgba(0, 123, 255, 0.3);
   border: 1px solid rgba(0, 123, 255, 0.5);
@@ -152,10 +192,12 @@ button.edit-btn {
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s, transform 0.2s;
+  text-decoration: none;
+  display: inline-block;
 }
 
-button.view-btn:hover,
-button.edit-btn:hover {
+.view-btn:hover,
+.edit-btn:hover {
   background-color: rgba(0, 123, 255, 0.5);
   transform: scale(1.03);
 }

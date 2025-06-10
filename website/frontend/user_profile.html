@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Profile - MRSYS</title>
+  <link rel="stylesheet" href="user_profile.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet"/>
+</head>
+<body>
+  <div class="dashboard-container">
+    <aside class="sidebar">
+      <div>
+        <h2 class="logo">MRSYS</h2>
+        <nav class="nav-menu">
+          <a href="user_dashboard.html">Home</a>
+          <a href="#" class="active">My Profile</a>
+          <a href="user_membership_details.html">Membership Details</a>
+          <a href="user_billing_payment.html">Billing & Payment</a>
+          <a href="user_events_participation.html">My Events Participation</a>
+          <a href="user_committee_participation.html">Committee Participation</a>
+        </nav>
+      </div>
+      <div class="logout-section">
+        <hr class="logout-divider" />
+        <a href="login.html" class="logout-link" onclick="return confirm('Are you sure you want to log out?')">Log Out</a>
+      </div>
+    </aside>
+
+    <main class="profile-content">
+      <section class="profile-header">
+        <h1>My Profile</h1>
+        <p class="subtitle">View and update your information below:</p>
+        <hr class="skyline-divider" />
+      </section>
+
+      <form class="profile-form" id="profileForm">
+        <!-- Personal Information -->
+        <fieldset>
+          <legend>Personal Information</legend>
+
+          <div class="form-group">
+            <label for="full-name">Full Name</label>
+            <input type="text" id="full-name" value="John A. Doe" disabled />
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" value="john@example.com" disabled />
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Contact Number</label>
+            <input type="tel" id="phone" value="0912 345 6789" disabled />
+          </div>
+
+          <div class="form-group">
+            <label for="address">Address</label>
+            <textarea id="address" rows="3" disabled>Street, City, Province, Zip Code</textarea>
+          </div>
+        </fieldset>
+
+        <!-- Emergency Contact -->
+        <fieldset>
+          <legend>Emergency Contact</legend>
+          <div class="form-group">
+            <label for="emergency-contact">Contact Number</label>
+            <input type="tel" id="emergency-contact" value="0917 765 4321" disabled />
+          </div>
+        </fieldset>
+
+        <!-- Change Password -->
+        <fieldset>
+          <legend>Change Password</legend>
+          <div class="form-group">
+            <label for="current-password">Current Password</label>
+            <input type="password" id="current-password" value="12345678" disabled />
+          </div>
+          <div class="form-group">
+            <label for="new-password">New Password</label>
+            <input type="password" id="new-password" value="" disabled />
+          </div>
+          <div class="form-group">
+            <label for="confirm-password">Confirm New Password</label>
+            <input type="password" id="confirm-password" value="" disabled />
+          </div>
+        </fieldset>
+
+        <div class="form-actions">
+          <button type="button" id="editBtn">Edit</button>
+          <button type="submit" id="saveBtn" style="display: none;">Save</button>
+          <button type="button" id="cancelBtn" style="display: none;">Cancel</button>
+        </div>
+      </form>
+    </main>
+  </div>
+
+  <script>
+    const editBtn = document.getElementById('editBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const form = document.getElementById('profileForm');
+    const inputs = form.querySelectorAll('input, textarea');
+
+    editBtn.addEventListener('click', () => {
+      inputs.forEach(input => input.disabled = false);
+      editBtn.style.display = 'none';
+      saveBtn.style.display = 'inline-block';
+      cancelBtn.style.display = 'inline-block';
+    });
+
+    cancelBtn.addEventListener('click', () => {
+      inputs.forEach(input => input.disabled = true);
+      editBtn.style.display = 'inline-block';
+      saveBtn.style.display = 'none';
+      cancelBtn.style.display = 'none';
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      inputs.forEach(input => input.disabled = true);
+      editBtn.style.display = 'inline-block';
+      saveBtn.style.display = 'none';
+      cancelBtn.style.display = 'none';
+      alert('Changes saved successfully!');
+    });
+  </script>
+</body>
+</html>

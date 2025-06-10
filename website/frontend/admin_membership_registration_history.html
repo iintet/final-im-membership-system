@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Membership History</title>
+  <link rel="stylesheet" href="admin_membership_management.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="sidebar">
+    <div class="logo">MRSYS</div>
+    <nav>
+      <a href="admin_dashboard.html">Home</a>
+      <a href="admin_member_management.html">Member Management</a>
+      <a href="admin_membership_management.html" class="active">Membership Management</a>
+      <a href="admin_billing_payment.html">Billing & Payment</a>
+      <a href="admin_event_management.html">Event Management</a>
+      <a href="admin_committee_dashboard.html">Committee Dashboard</a>
+      <a href="admin_staff_management.html">Staff Management</a>
+    </nav>
+    <div class="logout">
+      <a href="login.html">Log Out</a>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <a href="admin_membership_management.html" class= "back-btn emphasized"> ←
+      <i class="fas fa-arrow-left"></i> Back to Membership Management</a>
+    <h1>Membership Registration History</h1>
+    <p class="subtitle">Review the outcome of all registration requests</p>
+
+    <div class="card full-width">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Registration Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>John Doe</td>
+            <td>June 1, 2025</td>
+            <td><span class="badge approved">Approved</span></td>
+          </tr>
+          <tr>
+            <td>Jane Smith</td>
+            <td>June 3, 2025</td>
+            <td><span class="badge rejected">Rejected</span></td>
+          </tr>
+          <tr>
+            <td>Victor Cheng</td>
+            <td>June 5, 2025</td>
+            <td><span class="badge approved">Approved</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

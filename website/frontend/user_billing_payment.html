@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Billing & Payments - MRSYS</title>
+  <link rel="stylesheet" href="user_billing_payment.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet"/>
+</head>
+<body>
+  <div class="dashboard-container">
+    <aside class="sidebar">
+      <div>
+        <h2 class="logo">MRSYS</h2>
+        <nav class="nav-menu">
+          <a href="user_dashboard.html">Home</a>
+          <a href="user_profile.html">My Profile</a>
+          <a href="user_membership_details.html">Membership Details</a>
+          <a href="#" class="active">Billing & Payment</a>
+          <a href="user_events_participation.html">My Events Participation</a>
+          <a href="user_committee_participation.html">Committee Participation</a>
+        </nav>
+      </div>
+      <div class="logout-section">
+        <hr class="logout-divider" />
+        <a href="login.html" class="logout-link" onclick="return confirm('Are you sure you want to log out?')">Log Out</a>
+      </div>
+    </aside>
+
+    <main class="billing-content">
+      <section class="billing-header">
+        <h1>Billing & Payments</h1>
+        <p class="subtitle">View your billing details, payment history, and manage your dues.</p>
+        <hr class="divider" />
+      </section>
+
+      <!-- Bills Table -->
+      <section class="bill-section">
+        <h2>Current Bills</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th>Due Date</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Membership Renewal</td>
+              <td>July 6, 2025</td>
+              <td>₱1,500</td>
+              <td><span class="badge unpaid">Unpaid</span></td>
+              <td>
+                <button class="upload-btn">Upload Proof</button>
+                <button class="pay-btn">Pay Online</button>
+              </td>
+            </tr>
+            <tr>
+              <td>Event Registration: AGM 2024</td>
+              <td>June 1, 2024</td>
+              <td>₱500</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><span class="disabled">N/A</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Payment History -->
+      <section class="payment-history">
+        <h2>Payment History</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Reference</th>
+              <th>Amount</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>June 1, 2024</td>
+              <td>TXN-AGM2024-00321</td>
+              <td>₱500</td>
+              <td><span class="badge paid">Paid</span></td>
+            </tr>
+            <tr>
+              <td>July 1, 2023</td>
+              <td>TXN-MEM2023-00111</td>
+              <td>₱1,500</td>
+              <td><span class="badge paid">Paid</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

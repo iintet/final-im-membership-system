@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Committee - MRSYS</title>
+  <link rel="stylesheet" href="user_committee_participation.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet"/>
+</head>
+<body>
+  <div class="dashboard-container">
+    <aside class="sidebar">
+      <div>
+        <h2 class="logo">MRSYS</h2>
+        <nav class="nav-menu">
+          <a href="user_dashboard.html">Home</a>
+          <a href="user_profile.html">My Profile</a>
+          <a href="user_membership_details.html">Membership Details</a>
+          <a href="user_billing_payment.html">Billing & Payment</a>
+          <a href="user_event_participation.html">My Events Participation</a>
+          <a href="#" class="active">Committee Participation</a>
+        </nav>
+      </div>
+      <div class="logout-section">
+        <hr class="logout-divider" />
+        <a href="login.html" class="logout-link" onclick="return confirm('Are you sure you want to log out?')">Log Out</a>
+      </div>
+    </aside>
+
+    <main class="committee-content">
+      <section class="committee-header">
+        <h1>Committee Participation</h1>
+        <p class="subtitle">Apply to join, track status, and view your designations.</p>
+        <hr class="divider" />
+      </section>
+
+      <!-- Apply Section -->
+      <section class="apply-section">
+        <h2>Apply to Join a Committee</h2>
+        <form class="apply-form">
+          <label for="role">Select Role:</label>
+          <select id="role" required>
+            <option value="">-- Select role --</option>
+            <option value="head">Head</option>
+            <option value="member">Member</option>
+          </select>
+
+          <button type="submit">Submit Application</button>
+        </form>
+      </section>
+
+      <!-- Status & Role -->
+      <section class="application-status">
+        <h2>My Application Status</h2>
+        <div class="status-box">
+          <p><strong>Status:</strong> <span class="badge pending">Pending Review</span></p>
+          <p class="status-spacing"><strong>Assigned Role:</strong> <span class="dim">Not Assigned</span></p>
+        </div>
+      </section>
+
+      <!-- Designation History -->
+      <section class="designation-history">
+        <h2>Designation History</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Committee</th>
+              <th>Role</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Ethics Committee</td>
+              <td>Secretary</td>
+              <td>Jan 2022</td>
+              <td>Dec 2022</td>
+            </tr>
+            <tr>
+              <td>Education Committee</td>
+              <td>Member</td>
+              <td>Aug 2021</td>
+              <td>Aug 2022</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

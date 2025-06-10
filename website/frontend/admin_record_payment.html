@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Record Payment - MRSYS</title>
+  <link rel="stylesheet" href="admin_billing_payment.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-pRf5F1gk+T3OMIu6V+tRpEvZzK3eqp7I4hzRWhW/4rWkUazspB6PhN4szZGBDbZYAYhYz8bMjDdJbwGp+KZgWg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+  <div class="sidebar">
+    <div class="logo">MRSYS</div>
+    <nav>
+      <a href="admin_dashboard.html">Home</a>
+      <a href="admin_member_management.html">Member Management</a>
+      <a href="admin_membership_management.html">Membership Management</a>
+      <a href="admin_billing_payment.html" class="active">Billing & Payment</a>
+      <a href="admin_event_management.html">Event Management</a>
+      <a href="admin_committee_dashboard.html">Committee Dashboard</a>
+      <a href="admin_staff_management.html">Staff Management</a>
+    </nav>
+    <div class="logout">
+      <a href="login.html">Log Out</a>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <a href="admin_billing_payment.html" class= "back-btn emphasized"> ←
+      <i class="fas fa-arrow-left"></i> Back to Billing & Payment</a>
+    
+
+    <div class="page-heading">
+      <h1>Record Payment</h1>
+    </div>
+    <p class="subtitle">Enter payment details for a member's outstanding bill.</p>
+
+    <div class="card full-width">
+      <form>
+        <div class="form-group">
+          <label for="member-name">Member Name</label>
+          <input type="text" id="member-name" name="member-name" placeholder="e.g., Maria Santos" required />
+        </div>
+
+        <div class="form-group">
+          <label for="reference-id">Bill Reference ID</label>
+          <input type="text" id="reference-id" name="reference-id" placeholder="e.g., TXN-MEM2025-00012" required />
+        </div>
+
+        <div class="form-group">
+          <label for="payment-date">Payment Date</label>
+          <input type="date" id="payment-date" name="payment-date" required />
+        </div>
+
+        <div class="form-group">
+          <label for="amount">Amount Paid (₱)</label>
+          <input type="number" id="amount" name="amount" placeholder="e.g., 1500" required />
+        </div>
+
+        <div class="form-group">
+          <label for="status">Payment Status</label>
+          <select id="status" name="status" required>
+            <option value="">Select status</option>
+            <option value="Paid">Paid</option>
+            <option value="Pending">Pending</option>
+          </select>
+        </div>
+
+        <button type="submit" class="blue-btn">Submit Payment</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

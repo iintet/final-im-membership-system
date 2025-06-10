@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>User Dashboard</title>
+  <link rel="stylesheet" href="user_dashboard.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&display=swap" rel="stylesheet"/>
+</head>
+<body>
+  <div class="dashboard-container">
+    <aside class="sidebar">
+      <div>
+        <h2 class="logo">MRSYS</h2>
+        <nav class="nav-menu">
+          <a href="#" class="active">Home</a>
+          <a href="user_profile.html">My Profile</a>
+          <a href="user_membership_details.html">Membership Details</a>
+          <a href="user_billing_payment.html">Billing & Payment</a>
+          <a href="user_events_participation.html">My Events Participation</a>
+          <a href="user_committee_participation.html">Committee Participation</a>
+        </nav>
+      </div>
+      <div class="logout-section">
+        <hr class="logout-divider" />
+        <a href="login.html" class="logout-link" onclick="return confirm('Are you sure you want to log out?')">Log Out</a>
+      </div>
+    </aside>
+
+    <main class="dashboard-content">
+      <section class="welcome-header">
+        <h1>Welcome back,<br>Member Name!</h1>
+        <hr class="skyline-divider" />
+      </section>
+
+      <section class="info-cards">
+        <div class="info-card">
+          <h3>Membership Status</h3>
+          <p class="info-main">Active</p>
+          <p class="info-sub">Validity<br>June 6, 2025 - July 6, 2025</p>
+        </div>
+        <div class="info-card">
+          <h3>Outstanding Balance</h3>
+          <p class="info-main">₱150,000</p>
+        </div>
+        <div class="info-card">
+          <h3>Next Upcoming Event</h3>
+          <p class="info-main">August 01, 2025</p>
+          <button class="join-btn">Join</button>
+        </div>
+      </section>
+
+      <section class="quick-actions">
+        <h3>Quick Actions</h3>
+        <div class="action-buttons">
+          <button>Renew Membership</button>
+          <button class="primary">Register for Event</button>
+          <button>Update Profile</button>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

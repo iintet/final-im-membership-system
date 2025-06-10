@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Edit Membership Types</title>
+  <link rel="stylesheet" href="admin_membership_management.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="sidebar">
+    <div class="logo">MRSYS</div>
+    <nav>
+      <a href="admin_dashboard.html">Home</a>
+      <a href="admin_member_management.html">Member Management</a>
+      <a href="admin_membership_management.html" class="active">Membership Management</a>
+      <a href="admin_billing_payment.html">Billing & Payment</a>
+      <a href="admin_event_management.html">Event Management</a>
+      <a href="admin_committee_dashboard.html">Committee Dashboard</a>
+      <a href="admin_staff_management.html">Staff Management</a>
+    </nav>
+    <div class="logout">
+      <a href="login.html">Log Out</a>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <a href="admin_membership_management.html" class= "back-btn emphasized"> ←
+      <i class="fas fa-arrow-left"></i> Back to Membership Management</a>
+    <h1>Edit Membership Types</h1>
+    <p class="subtitle">Manage your available membership types</p>
+
+    <div class="card">
+      <h2>Current Types</h2>
+      <ul class="membership-list">
+        <li>Basic <button class="red-btn">Delete</button></li>
+        <li>Platinum <button class="red-btn">Delete</button></li>
+        <li>Student <button class="red-btn">Delete</button></li>
+      </ul>
+      <a href="admin_add_membership_type.html" class="blue-btn">Add New Membership Type</a>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,196 @@
+/* Reset & Base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Oswald', sans-serif;
+  background-color: #f8f8f8;
+}
+
+/* Layout */
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background-color: #0f1f59;
+  color: white;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.logo {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+.nav-menu {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-menu a {
+  color: white;
+  text-decoration: none;
+  margin: 1rem 0;
+  font-size: 1.1rem;
+}
+
+.nav-menu a.active {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.logout-section {
+  margin-top: 2rem;
+}
+
+.logout-divider {
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  margin-bottom: 1rem;
+}
+
+.logout-link {
+  color: white;
+  text-decoration: none;
+  font-size: 1.1rem;
+}
+
+.logout-link:hover {
+  text-decoration: underline;
+}
+
+/* Main Content */
+.committee-content {
+  flex: 1;
+  padding: 2rem 3rem;
+  background-color: #f4f6fa;
+  overflow-y: auto;
+}
+
+.committee-header h1 {
+  font-size: 2.2rem;
+  color: #0f1f59;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: #555;
+  margin: 0.3rem 0 1.5rem;
+}
+
+.divider {
+  border: 0;
+  border-top: 1px solid #ccc;
+  margin-bottom: 2rem;
+}
+
+/* Apply Form */
+.apply-section {
+  margin-bottom: 2rem;
+}
+
+.apply-form {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.apply-form select {
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  min-width: 250px;
+}
+
+.apply-form button {
+  background-color: #0f1f59;
+  color: white;
+  padding: 0.5rem 1.2rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.apply-form button:hover {
+  background-color: #1d3d88;
+}
+
+/* Status Box */
+.application-status {
+  margin-bottom: 2rem;
+}
+
+.status-box {
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+}
+
+.status-box p + p,
+.status-spacing {
+  margin-top: 1rem;
+}
+
+.badge {
+  padding: 0.4rem 0.7rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  color: white;
+}
+
+.badge.pending {
+  background-color: #f39c12;
+}
+
+.badge.approved {
+  background-color: #27ae60;
+}
+
+.badge.rejected {
+  background-color: #e74c3c;
+}
+
+.dim {
+  color: #777;
+}
+
+/* Designation History Table */
+.designation-history h2 {
+  margin-bottom: 1rem;
+  color: #0f1f59;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.05);
+}
+
+thead {
+  background-color: #0f1f59;
+  color: white;
+}
+
+th, td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
