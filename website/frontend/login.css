@@ -1,0 +1,107 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Oswald', sans-serif;
+}
+
+body, html {
+  height: 100%;
+  background-color: #fff;
+}
+
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  background-color: #0f1f5c;
+  width: 30%;
+  clip-path: polygon(0 0, 100% 0, 70% 100%, 0% 100%);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.logo {
+  color: white;
+  font-size: 2rem;
+  letter-spacing: 2px;
+}
+
+.main-content {
+  flex: 1;
+  padding: 2rem 4rem;
+  position: relative;
+}
+
+.nav-links {
+  position: absolute;
+  top: 2rem;
+  right: 4rem;
+}
+
+.nav-links a {
+  margin-left: 2rem;
+  text-decoration: none;
+  color: #444;
+  font-size: 1rem;
+}
+
+.login-form {
+  max-width: 400px;
+  margin: 8rem auto 0 auto;
+  text-align: center;
+}
+
+.login-form h2 {
+  font-size: 3rem;
+  color: #0f1f5c;
+  margin-bottom: 2rem;
+}
+
+.login-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.login-form input {
+  padding: 0.75rem 1rem;
+  font-size: 1.2rem;
+  border: 2px solid #444;
+  border-radius: 4px;
+}
+
+.forgot-link {
+  text-align: right;
+}
+
+.forgot-link a {
+  text-decoration: none;
+  color: #0056cc;
+  font-size: 1rem;
+}
+
+.login-form button {
+  background-color: #0f1f5c;
+  color: white;
+  font-size: 1.5rem;
+  border: none;
+  padding: 0.8rem;
+  margin-top: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.signup {
+  margin-top: 1rem;
+  font-size: 1.1rem;
+}
+
+.signup a {
+  color: #0056cc;
+  text-decoration: none;
+}

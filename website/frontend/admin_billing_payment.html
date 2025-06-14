@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Billing & Payment</title>
+  <link rel="stylesheet" href="admin_billing_payment.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="sidebar">
+    <div class="logo">MRSYS</div>
+    <nav>
+      <a href="admin_dashboard.html">Home</a>
+      <a href="admin_member_management.html">Member Management</a>
+      <a href="admin_membership_management.html">Membership Management</a>
+      <a href="#" class="active">Billing & Payment</a>
+      <a href="admin_event_management.html">Event Management</a>
+      <a href="admin_committee_dashboard.html">Committee Dashboard</a>
+      <a href="admin_staff_management.html">Staff Management</a>
+    </nav>
+    <div class="logout">
+      <a href="login.html">Log Out</a>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <h1>Billing & Payment Dashboard</h1>
+    <p class="subtitle">List of all bills and dues</p>
+
+    <div class="card">
+      <h2>Create New Bill</h2>
+      <p>Link a member and a payer to create a bill.</p>
+      <a href="admin_create_bill.html"><button class="blue-btn">Create Bill</button></a>
+    </div>
+
+    <div class="card">
+      <h2>Record Payment</h2>
+      <p>Enter payment details for a member's bill.</p>
+      <a href="admin_record_payment.html"><button class="blue-btn">Record Payment</button></a>
+    </div>
+
+    <div class="card full-width">
+      <h2>Filter Bills</h2>
+      <div class="filter-row">
+        <label for="due-date">Due Date:</label>
+        <input type="date" id="due-date" />
+
+        <label for="status">Status:</label>
+        <select id="status">
+          <option value="all">All</option>
+          <option value="paid">Paid</option>
+          <option value="unpaid">Unpaid</option>
+        </select>
+
+        <button class="blue-btn">Apply Filter</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
