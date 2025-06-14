@@ -1,5 +1,13 @@
 from datetime import datetime
 from .supabase_client import supabase
+from dataclasses import dataclass
+from typing import Optional
+
+@dataclass
+class User:
+    id: Optional[str]
+    email: str
+    password: str
 
 def iso_date(value):
      try:

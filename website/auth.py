@@ -3,6 +3,30 @@ from .supabase_client import supabase
 
 auth = Blueprint('auth', __name__)
 
+@auth.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+    if not email or not password:
+        return jsonify({"error": "Email and password are required"}), 400
+    try:
+        response = supabase.auth.sign_in({
+            'email': email,
+            'password': password
+        })
+        if response.get('error'):
+            return jsonify({"error": response['error']['message']}), 401
+        
+        return jsonify({
+            "message": "Login successful",
+            "access_token": response['data']['access_token'],
+            "user": response['data']['user']
+        }), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+''' 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -21,14 +45,15 @@ def login():
             return jsonify({"error": str(e)}), 400  
     else:
         return render_template('login.html')
+'''
 
 @auth.route('/logout', methods=['POST'])
 def logout():
     try:
         supabase.auth.sign_out()
-        return jsonify({"message": "Logout successful"}), 200
+        return jsonify({"message": "Logged out successfully"}), 200
     except Exception as e:
-        return jsonify({"error": str(e)}), 400
+        return jsonify({"error": str(e)}), 500
 
 @auth.route('/sign-up', methods=['GET', 'POST'])
 def signup():

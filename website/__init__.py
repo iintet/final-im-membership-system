@@ -8,6 +8,9 @@ def create_app():
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
 
+    app.template_folder = 'frontend'
+    app.static_folder = 'frontend'
+
     @app.route('/test')
     def test_connection():
         from .supabase_client import supabase

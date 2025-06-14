@@ -20,6 +20,10 @@ def validate_required_fields(data, fields):
 def home():
     return render_template("front_page.html")
 
+@views.route('/login', methods=['GET'])
+def login():
+    return render_template('login.html')
+
 # --- MEMBER ROUTES ---
 @views.route('/members', methods=['GET'])
 def list_members():
