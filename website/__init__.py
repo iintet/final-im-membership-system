@@ -8,8 +8,8 @@ def create_app():
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
 
-    app.template_folder = 'frontend'
-    app.static_folder = 'frontend'
+    app.template_folder = 'templates'
+    app.static_folder = 'static'
 
     @app.route('/test')
     def test_connection():

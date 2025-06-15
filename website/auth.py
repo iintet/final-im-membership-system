@@ -3,51 +3,65 @@ from .supabase_client import supabase
 
 auth = Blueprint('auth', __name__)
 
-@auth.route('/login', methods=['POST'])
+# -- AUTH LOGIN --
+@auth.route('/auth/login', methods=['GET', 'POST'])
 def login():
+    if request.method == 'GET':
+        return render_template('login.html')
     data = request.get_json()
     email = data.get('email')
     password = data.get('password')
     if not email or not password:
-        return jsonify({"error": "Email and password are required"}), 400
+        return jsonify({"error": "email and password are required"}), 400
     try:
-        response = supabase.auth.sign_in({
+        login_response = supabase.auth.sign_in({
             'email': email,
             'password': password
         })
-        if response.get('error'):
-            return jsonify({"error": response['error']['message']}), 401
-        
+
+        if login_response.get('error'):
+            return jsonify({"error": login_response['error']['message']}), 401
         return jsonify({
-            "message": "Login successful",
-            "access_token": response['data']['access_token'],
-            "user": response['data']['user']
+            "message": "login successful",
+            "access_token": login_response['data']['access_token'],
+            "user": login_response['data']['user']
         }), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+# -- AUTH REGISTER --
+@auth.route('/auth/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'GET':
+        return render_template('register.html')
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+    role = data.get('role')  # 'individual' or 'institution'
+    if not email or not password or not role:
+        return jsonify({"error": "email, password, and role are required"}), 400
+    try:
+        sign_up_response = supabase.auth.sign_up({
+            'email': email,
+            'password': password
+        })
+        if sign_up_response.get('error'):
+            return jsonify({"error": sign_up_response['error']['message']}), 400
+        member_data = {
+            "emailaddress": email,    # match your DB column names
+            "role": role,
+            # include other fields from data as needed, e.g., firstname, institutionname...
+        }
 
-''' 
-@auth.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        data = request.form
-        email = data.get('emailaddress')
-        password = data.get('password') #notsure
-        if not email or not password:
-            return jsonify({"error": "Email address and password are required"}), 400
-        try:
-            response = supabase.auth.sign_in_with_password({"emailaddress": email, "password": password})
-            if response.user:
-                return redirect(url_for('views.home'))
-            else:
-                 return jsonify({"error": "Invalid credentials"}), 401
-        except Exception as e:
-            return jsonify({"error": str(e)}), 400  
-    else:
-        return render_template('login.html')
-'''
+        insert_response = supabase.table('member').insert(member_data).execute()
+        if insert_response.error:
+            return jsonify({"error": insert_response.error.message}), 500
+        return jsonify({"message": "registration successful"}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
-@auth.route('/logout', methods=['POST'])
+# -- AUTH LOGOUT --
+@auth.route('auth/logout', methods=['POST'])
 def logout():
     try:
         supabase.auth.sign_out()
@@ -55,21 +69,4 @@ def logout():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@auth.route('/sign-up', methods=['GET', 'POST'])
-def signup():
-    if request.method == 'POST':
-        data = request.form
-        email = data.get('emailaddress')
-        password = data.get('password')
-        if not email or not password:
-            return jsonify({"error": "Email and password are required"}), 400
-        try:
-            response = supabase.auth.sign_up({"emailaddress": email, "password": password})
-            if response.user:
-                return redirect(url_for('auth.login'))
-            else:
-                return jsonify({"error": "Signup failed"}), 400
-        except Exception as e:
-            return jsonify({"error": str(e)}), 400
-    else:
-        return render_template('register.html')
+
