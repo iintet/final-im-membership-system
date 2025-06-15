@@ -10,13 +10,18 @@ def login():
     data = request.json or {}
     email = data.get('email')
     password = data.get('password')
-    # Fetch user from the database using email
+
+    if not email or not password:
+        return jsonify({'error': 'Email and password are required'}), 400
+
+    # Fetch user by email
     user_response = supabase.table('member').select('*').eq('email', email).execute()
+
     if user_response.data:
         user = user_response.data[0]
-        # Check if the provided password matches the stored hashed password
+
+        # Compare provided password with hashed password
         if check_password_hash(user['password'], password):
-            # Successful login
             return jsonify({
                 'message': 'Login successful',
                 'user': {
@@ -27,12 +32,10 @@ def login():
                 }
             }), 200
         else:
-            # Invalid credentials
             return jsonify({'error': 'Invalid credentials'}), 401
     else:
-        # User not found
-        return jsonify({'error': 'User  not found'}), 404
-
+        return jsonify({'error': 'User not found'}), 404
+    
 # -- AUTH REGISTER --
 @auth.route('/auth/register', methods=['GET', 'POST'])
 def register():
