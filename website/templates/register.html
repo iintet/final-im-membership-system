@@ -13,10 +13,10 @@
       <h1 class="logo">MRSYS</h1>
       <nav>
         <ul>
-          <li><a href="front_page.html">Home</a></li>
-          <li><a href="#">About</a></li>
-          <li><a href="#">Benefits</a></li>
-          <li><a href="#">Contact</a></li>
+          <li><a href="{{ url_for('views.home') }}">Home</a></li>
+          <li><a href="{{ url_for('views.about') }}">About</a></li>
+          <li><a href="{{ url_for('views.benefits') }}">Benefits</a></li>
+          <li><a href="{{ url_for('views.contact') }}">Contact</a></li>
         </ul>
       </nav>
     </div>
@@ -51,13 +51,10 @@
         </select>
       </div>
       <div class="form-group"><label for="dob">Date of Birth</label><input type="date" id="dob" name="dob" required></div>
-      <div class="form-group"><label for="region">Region</label>
+      <div class="form-group">
+        <label for="region">Region</label>
         <select id="region" name="region" required>
           <option value="">Select region</option>
-          <option value="NCR">NCR</option>
-          <option value="Region I">Region I - Ilocos</option>
-          <option value="Region II">Region II - Cagayan Valley</option>
-          <option value="Region III">Region III - Central Luzon</option>
         </select>
       </div>
       <div class="form-group"><label for="province">Province</label><select id="province" name="province" required><option value="">Select a province</option></select></div>
@@ -72,6 +69,68 @@
   </main>
 
   <script>
+    // Dynamic dropdowns script
+    document.addEventListener('DOMContentLoaded', () => {
+      const regionSelect = document.getElementById('region');
+      const provinceSelect = document.getElementById('province');
+      const citySelect = document.getElementById('city');
+      const barangaySelect = document.getElementById('barangay');
+      // Fetch Regions on load
+      fetch('/api/regions')
+        .then(res => res.json())
+        .then(data => {
+          regionSelect.innerHTML = '<option value="">Select region</option>' +
+            data.map(r => `<option value="${r.regionid}">${r.regionname}</option>`).join('');
+        });
+      regionSelect.addEventListener('change', () => {
+        const regionId = regionSelect.value;
+        provinceSelect.innerHTML = '<option value="">Loading...</option>';
+        citySelect.innerHTML = '<option value="">Select a city</option>';
+        barangaySelect.innerHTML = '<option value="">Select a barangay</option>';
+        if (!regionId) {
+          provinceSelect.innerHTML = '<option value="">Select a province</option>';
+          return;
+        }
+        fetch(`/api/provinces?region_id=${regionId}`)
+          .then(res => res.json())
+          .then(data => {
+            provinceSelect.innerHTML = '<option value="">Select a province</option>' +
+              data.map(p => `<option value="${p.provinceid}">${p.provincename}</option>`).join('');
+          });
+      });
+
+      provinceSelect.addEventListener('change', () => {
+        const provinceId = provinceSelect.value;
+        citySelect.innerHTML = '<option value="">Loading...</option>';
+        barangaySelect.innerHTML = '<option value="">Select a barangay</option>';
+        if (!provinceId) {
+          citySelect.innerHTML = '<option value="">Select a city</option>';
+          return;
+        }
+        fetch(`/api/cities?province_id=${provinceId}`)
+          .then(res => res.json())
+          .then(data => {
+            citySelect.innerHTML = '<option value="">Select a city</option>' +
+              data.map(c => `<option value="${c.cityid}">${c.cityname}</option>`).join('');
+          });
+      });
+
+      citySelect.addEventListener('change', () => {
+        const cityId = citySelect.value;
+        barangaySelect.innerHTML = '<option value="">Loading...</option>';
+        if (!cityId) {
+          barangaySelect.innerHTML = '<option value="">Select a barangay</option>';
+          return;
+        }
+        fetch(`/api/barangays?city_id=${cityId}`)
+          .then(res => res.json())
+          .then(data => {
+            barangaySelect.innerHTML = '<option value="">Select a barangay</option>' +
+              data.map(b => `<option value="${b.barangayid}">${b.barangayname}</option>`).join('');
+          });
+      });
+    });
+
     document.getElementById("registrationForm").addEventListener("submit", function(event) {
       event.preventDefault();
       window.location.href = "member_dashboard.html";
