@@ -40,6 +40,57 @@ def benefits():
 def contact():
     return render_template('front_page_contact.html')
 
+# API endpoints to fetch locations data from Supabase
+@views.route('/api/regions', methods=['GET'])
+def get_regions():
+    try:
+        response = supabase.table('region').select('*').execute()
+        if response.error:
+            return jsonify({'error': str(response.error)}), 500
+        return jsonify(response.data), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+@views.route('/api/provinces', methods=['GET'])
+def get_provinces():
+    regionid = request.args.get('regionid')
+    if not regionid:
+        return jsonify({'error': 'regionid parameter is required'}), 400
+    try:
+        response = supabase.table('province').select('*').eq('regionid', regionid).execute()
+        if response.error:
+            return jsonify({'error': str(response.error)}), 500
+        return jsonify(response.data), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+@views.route('/api/cities', methods=['GET'])
+def get_cities():
+    provinceid = request.args.get('provinceid')
+    if not provinceid:
+        return jsonify({'error': 'provinceid parameter is required'}), 400
+    try:
+        response = supabase.table('city').select('*').eq('provinceid', provinceid).execute()
+        if response.error:
+            return jsonify({'error': str(response.error)}), 500
+        return jsonify(response.data), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+@views.route('/api/barangays', methods=['GET'])
+def get_barangays():
+    cityid = request.args.get('cityid')
+    if not cityid:
+        return jsonify({'error': 'cityid parameter is required'}), 400
+    try:
+        response = supabase.table('barangay').select('*').eq('cityid', cityid).execute()
+        if response.error:
+            return jsonify({'error': str(response.error)}), 500
+        return jsonify(response.data), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+
 # --- MEMBER ROUTES ---
 @views.route('/members', methods=['GET'])
 def list_members():
