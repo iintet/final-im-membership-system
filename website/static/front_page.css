@@ -11,8 +11,13 @@ body {
   line-height: 1.6;
 }
 
-header {
+/* Header */
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 1.5rem 2rem;
+  background-color: white;
 }
 
 .logo {
@@ -21,30 +26,49 @@ header {
   font-weight: bold;
 }
 
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.nav-links a {
+  color: #333;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: color 0.2s ease;
+}
+
+.nav-links a:hover {
+  color: #0f1f5c;
+  text-decoration: underline;
+}
+
 .container {
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 1rem 2rem;
+  padding: 2rem;
+}
+
+.hero {
   text-align: center;
+  margin-top: 3rem;
 }
 
 .hero h1 {
-  font-size: 3.5rem; 
+  font-size: 3.5rem;
   color: #0f1f5c;
-  margin-bottom: 0.5rem;
 }
-
 
 .hero p {
   font-size: 1.2rem;
-  margin-bottom: 1.5rem;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
 }
 
 .buttons {
   display: flex;
   justify-content: center;
   gap: 1rem;
-  margin-bottom: 2rem;
 }
 
 .btn {
@@ -57,46 +81,301 @@ header {
 }
 
 hr {
-  margin: 2rem 0;
+  margin: 3rem 0;
   border: none;
   border-top: 1px solid #ccc;
 }
 
-.about h2,
-.benefits h2 {
-  color: #0f1f5c;
-  font-size: 1.6rem;
+/* Success Stories Section */
+.success-stories {
+  background: linear-gradient(to bottom, #0f1f5c 0%, #1e2c6b 100%);
+  padding: 3rem 2rem;
+  color: white;
+  text-align: center;
+  border-radius: 12px;
+}
+
+.success-stories h2 {
+  font-size: 2.5rem;
   margin-bottom: 0.5rem;
-  text-align: left;
 }
 
-.about p {
+.section-subtitle {
   font-size: 1.1rem;
+  color: #dcdcdc;
+  margin-bottom: 2rem;
+}
+
+.swiper-container {
+  width: 100%;
+  padding: 2rem 0;
+}
+
+.swiper-slide {
+  display: flex;
+  justify-content: center;
+}
+
+.story-card {
+  background-color: white;
+  color: #111;
+  border-radius: 8px;
+  overflow: hidden;
+  max-width: 300px;
+  text-align: center;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.story-card:hover {
+  transform: translateY(-5px);
+}
+
+.story-card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+
+.story-content {
+  padding: 1.5rem;
+}
+
+.story-content h3 {
+  font-size: 1.3rem;
+  color: #0f1f5c;
+  margin-bottom: 0.5rem;
+}
+
+.story-content p {
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+.more-btn {
+  text-decoration: none;
+  color: #0f1f5c;
+  font-weight: bold;
+  border: 1px solid #0f1f5c;
+  padding: 0.4rem 1rem;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.more-btn:hover {
+  background-color: #0f1f5c;
+  color: white;
+}
+
+.credit-note {
+  font-size: 0.75rem;
+  color: #bbb;
+  margin-top: 2rem;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.7);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-box {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  position: relative;
   text-align: left;
 }
 
-.benefits .cards {
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 1.5rem;
+  color: #0f1f5c;
+  cursor: pointer;
+}
+
+.modal-box h3 {
+  color: #0f1f5c;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+  .nav-links {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+  }
+
+  .main-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .swiper-slide {
+    flex-direction: column;
+  }
+}
+
+/* About Page Full Layout */
+.about-page {
+  padding: 3rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Text Section */
+.about-section {
   display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.about-text h2 {
+  font-size: 2.5rem;
+  color: #0f1f5c;
+  margin-bottom: 1rem;
+  text-align: center; 
+}
+
+
+.about-text p {
+  font-size: 1.15rem;
+  line-height: 1.8;
+  color: #333;
+  margin-bottom: 1.2rem;
+  text-align: justify;
+}
+
+/* Mission and Vision Cards */
+.about-cards {
+  display: flex;
+  gap: 2rem;
   flex-wrap: wrap;
-  gap: 1.5rem;
-  margin-top: 1rem;
   justify-content: space-between;
 }
 
 .card {
-  flex: 1 1 30%;
+  flex: 1 1 48%;
+  padding: 2rem;
+  border-radius: 12px;
   background-color: #0f1f5c;
   color: white;
-  padding: 1.5rem;
-  border-radius: 8px;
-  text-align: center;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
 }
 
 .card h3 {
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   margin-bottom: 1rem;
 }
 
 .card p {
-  font-size: 1.05rem;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #e7ecf6;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .about-cards {
+    flex-direction: column;
+  }
+
+  .card {
+    flex: 1 1 100%;
+  }
+
+  .about-text h2 {
+    font-size: 2rem;
+    text-align: center;
+  }
+}
+
+/* Membership Benefits Page */
+.benefits-page {
+  margin-top: 3rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.benefits-heading {
+  font-size: 2.5rem;
+  color: #0f1f5c;
+  margin-bottom: 1rem;
+}
+
+.intro-text {
+  font-size: 1.15rem;
+  color: #333;
+  max-width: 800px;
+  margin: 0 auto 2.5rem;
+  line-height: 1.8;
+}
+
+/* Benefit Cards */
+.benefit-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+}
+
+.benefit-card {
+  background-color: #0f1f5c;
+  color: white;
+  flex: 1 1 280px;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+  max-width: 320px;
+}
+
+.benefit-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+}
+
+.benefit-card .card-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.benefit-card h3 {
+  font-size: 1.4rem;
+  margin-bottom: 0.75rem;
+}
+
+.benefit-card p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #e5eaf7;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .benefit-cards {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .benefits-heading {
+    font-size: 2rem;
+  }
 }

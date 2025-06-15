@@ -8,46 +8,147 @@
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <header>
+
+  <!-- Header -->
+  <header class="main-header">
     <div class="logo">MRSYS</div>
+    <nav class="nav-links">
+      <a href="{{ url_for('views.home') }}">Home</a>
+      <a href="{{ url_for('views.about') }}">About</a>
+      <a href="front_page_benefits.html">Benefits</a>
+      <a href="front_page_contact.html">Contact</a>
+    </nav>
   </header>
 
+  <!-- Main -->
   <main class="container">
+    <!-- Hero -->
     <section class="hero">
       <h1>Welcome to Our Membership System</h1>
       <p>Register, join events, track payments, and enjoy membership benefits</p>
       <div class="buttons">
-        <a href="#" class="btn">Register Now</a>
-        <a href="#" class="btn">Log In</a>
+        <a href="{{ url_for('auth.register') }}" class="btn">Register Now</a>
+        <a href="{{ url_for('auth.login') }}" class="btn">Log In</a>
       </div>
     </section>
 
     <hr />
 
-    <section class="about">
-      <h2>About Us</h2>
-      <p>This system allows users to register as members, manage their profiles, join events, and keep track of billing and payments.</p>
-    </section>
+    <!-- Success Stories -->
+    <section class="success-stories" id="testimonials">
+      <h2>Inspirational Success Stories</h2>
+      <p class="section-subtitle">Real experiences from our passionate members who’ve grown with MRSYS.</p>
 
-    <hr />
+      <div class="swiper-container">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide">
+            <div class="story-card">
+              <img src="images/member1.jpg" alt="Alex Ramos">
+              <div class="story-content">
+                <h3>Alex Ramos</h3>
+                <p>“MRSYS helped me connect with professionals and sharpen my event skills.”</p>
+                <a href="#" class="more-btn" data-story="alex">MORE</a>
+              </div>
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div class="story-card">
+              <img src="images/member2.jpg" alt="Bianca Cruz">
+              <div class="story-content">
+                <h3>Bianca Cruz</h3>
+                <p>“I found a passion for leadership through MRSYS committee involvement.”</p>
+                <a href="#" class="more-btn" data-story="bianca">MORE</a>
+              </div>
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div class="story-card">
+              <img src="images/member3.jpg" alt="John Dela Rosa">
+              <div class="story-content">
+                <h3>John Dela Rosa</h3>
+                <p>“Tracking events and payments has never been easier, thanks to MRSYS.”</p>
+                <a href="#" class="more-btn" data-story="john">MORE</a>
+              </div>
+            </div>
+          </div>
+        </div>
 
-    <section class="benefits">
-      <h2>Membership Benefits</h2>
-      <div class="cards">
-        <div class="card">
-          <h3>Event Access</h3>
-          <p>Get access to exclusive member-only events.</p>
-        </div>
-        <div class="card">
-          <h3>Easy Payments</h3>
-          <p>Track and pay membership dues with ease.</p>
-        </div>
-        <div class="card">
-          <h3>Join Committees</h3>
-          <p>Apply to committees and take part in organizational planning.</p>
-        </div>
+        <!-- Swiper Navigation -->
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
       </div>
+
+      <p class="credit-note">Photos are representative. Images © respective owners.</p>
     </section>
   </main>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+      <span class="close-btn" id="closeModal">&times;</span>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+  <script>
+    // Swiper init
+    const swiper = new Swiper('.swiper-container', {
+      slidesPerView: 1,
+      spaceBetween: 20,
+      loop: true,
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      breakpoints: {
+        768: {
+          slidesPerView: 3
+        }
+      }
+    });
+
+    // Modal
+    const modal = document.getElementById('modalOverlay');
+    const modalContent = document.getElementById('modalContent');
+    const closeModal = document.getElementById('closeModal');
+
+    const stories = {
+      alex: {
+        name: "Alex Ramos",
+        detail: "Alex joined MRSYS in 2023 and found immense networking opportunities through our events. His organizational skills improved as he took on volunteer roles."
+      },
+      bianca: {
+        name: "Bianca Cruz",
+        detail: "Bianca started as a regular member but quickly joined committees and developed her leadership style through consistent involvement and mentorship."
+      },
+      john: {
+        name: "John Dela Rosa",
+        detail: "John used MRSYS to keep track of his participation and dues. He’s now actively volunteering and mentoring new members."
+      }
+    };
+
+    document.querySelectorAll('.more-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const key = this.getAttribute('data-story');
+        modalContent.innerHTML = `
+          <h3>${stories[key].name}</h3>
+          <p>${stories[key].detail}</p>
+        `;
+        modal.style.display = 'flex';
+      });
+    });
+
+    closeModal.addEventListener('click', () => {
+      modal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (e) => {
+      if (e.target === modal) modal.style.display = 'none';
+    });
+  </script>
+
 </body>
 </html>

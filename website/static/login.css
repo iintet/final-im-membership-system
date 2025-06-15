@@ -75,7 +75,7 @@ body, html {
   border-radius: 4px;
 }
 
-.forgot-link {
+/* .forgot-link {
   text-align: right;
 }
 
@@ -83,7 +83,7 @@ body, html {
   text-decoration: none;
   color: #0056cc;
   font-size: 1rem;
-}
+} */
 
 .login-form button {
   background-color: #0f1f5c;

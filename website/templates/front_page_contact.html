@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MRSYS - Contact Us</title>
-    <link rel="stylesheet" href="contact.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='front_page_contact.css') }}" />
 </head>
 <body>
     <header class="main-header">
@@ -12,10 +12,10 @@
             <div class="header-logo">MRSYS</div>
             <nav class="header-nav">
                 <ul>
-                    <li><a href="front_page.html">Home</a></li>
-                    <li><a href="#">About</a></li>
-                    <li><a href="#">Benefits</a></li>
-                    <li class="active"><a href="contact.html">Contact</a></li>
+                    <li><a href="{{ url_for('views.home') }}">Home</a></li>
+                    <li><a href="{{ url_for('views.about') }}">About</a></li>
+                    <li><a href="{{ url_for('views.benefits') }}">Benefits</a></li>
+                    <li class="active"><a href="{{ url_for('views.contact') }}">Contact</a></li>
                 </ul>
             </nav>
         </div>
