@@ -39,36 +39,244 @@
         </select>
       </div>
 
-      <div class="form-group"><label for="first-name">First Name</label><input type="text" id="first-name" name="first-name" required></div>
-      <div class="form-group"><label for="middle-name">Middle Name</label><input type="text" id="middle-name" name="middle-name"></div>
-      <div class="form-group"><label for="last-name">Last Name</label><input type="text" id="last-name" name="last-name" required></div>
-      <div class="form-group"><label for="gender">Gender</label>
-        <select id="gender" name="gender" required>
-          <option value="">Select gender</option>
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-          <option value="other">Other</option>
-        </select>
+ <div id="individual-fields" style="display: none;">
+        <div class="field-container"> <!-- Container for individual fields -->
+          <div class="form-group">
+            <label for="first-name">First Name</label>
+            <input type="text" id="first-name" name="first-name" required>
+          </div>
+          <div class="form-group">
+            <label for="middle-name">Middle Name</label>
+            <input type="text" id="middle-name" name="middle-name">
+          </div>
+          <div class="form-group">
+            <label for="last-name">Last Name</label>
+            <input type="text" id="last-name" name="last-name" required>
+          </div>
+          <div class="form-group">
+            <label for="gender">Gender</label>
+            <select id="gender" name="gender" required>
+              <option value="">Select gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="dob">Date of Birth</label>
+            <input type="date" id="dob" name="dob" required>
+          </div>
+          <div class="form-group">
+            <label for="region">Region</label>
+            <select id="region" name="region" required>
+              <option value="">Select region</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="province">Province</label>
+            <select id="province" name="province" required>
+              <option value="">Select province</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="city">City/Municipality</label>
+            <select id="city" name="city" required>
+              <option value="">Select city</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="barangay">Barangay</label>
+            <select id="barangay" name="barangay" required>
+              <option value="">Select a barangay</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="street">Street Address</label>
+            <input type="text" id="street" name="street" required>
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" required>
+          </div>
+          <div class="form-group">
+            <label for="emergency-contact-name">Emergency Contact Name</label>
+            <input type="text" id="emergency-contact-name" name="emergency-contact-name" required>
+          </div>
+          <div class="form-group">
+            <label for="emergency-contact-number">Emergency Contact Number</label>
+            <input type="tel" id="emergency-contact-number" name="emergency-contact-number" required>
+          </div>
+          <div class="form-group">
+            <label for="affiliation-type">Affiliation Type</label>
+            <select id="affiliation-type" name="affiliation-type" required>
+              <option value="">Select type</option>
+              <option value="organization">Organization</option>
+              <option value="school">School</option>
+            </select>
+          </div>
+          <div id="organization-fields" style="display: none;">
+            <div class="form-group">
+              <label for="organization-name">Organization Name</label>
+              <input type="text" id="organization-name" name="organization-name">
+            </div>
+            <div class="form-group">
+              <label for="organization-address">Organization Address</label>
+              <input type="text" id="organization-address" name="organization-address">
+            </div>
+          </div>
+          <div id="school-fields" style="display: none;">
+            <div class="form-group">
+              <label for="school-name">School Name</label>
+              <input type="text" id="school-name" name="school-name">
+            </div>
+            <div class="form-group">
+              <label for="school-type">Type</label>
+              <select id="school-type" name="school-type">
+                <option value="">Select type</option>
+                <option value="public">Public</option>
+                <option value="private">Private</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="school-region">Region</label>
+              <select id="school-region" name="school-region" required>
+                <option value="">Select region</option>
+                <option value="NCR">NCR</option>
+                <option value="Region I">Region I - Ilocos</option>
+                <option value="Region II">Region II - Cagayan Valley</option>
+                <option value="Region III">Region III - Central Luzon</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="school-province">Province</label>
+              <select id="school-province" name="school-province" required>
+                <option value="">Select province</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="school-city">City/Municipality</label>
+              <select id="school-city" name="school-city" required>
+                <option value="">Select city</option>
+              </select>
+            </div>
+          </div>
+        </div> <!-- End of field-container -->
       </div>
-      <div class="form-group"><label for="dob">Date of Birth</label><input type="date" id="dob" name="dob" required></div>
-      <div class="form-group">
-        <label for="region">Region</label>
-        <select id="region" name="region" required>
-          <option value="">Select region</option>
-        </select>
+
+       <div id="institution-fields" style="display: none;">
+        <div class="form-group">
+          <label for="institution-name">Institution Name</label>
+          <input type="text" id="institution-name" name="institution-name" required>
+        </div>
+        <div class="form-group">
+          <label>Type</label>
+          <div class="radio-group">
+            <label><input type="radio" name="institution-type" value="school" required> School</label>
+            <label><input type="radio" name="institution-type" value="organization" required> Organization</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="rep-last-name">Representative Last Name</label>
+          <input type="text" id="rep-last-name" name="rep-last-name" required>
+        </div>
+        <div class="form-group">
+          <label for="rep-first-name">Representative First Name</label>
+          <input type="text" id="rep-first-name" name="rep-first-name" required>
+        </div>
+        <div class="form-group">
+          <label for="rep-middle-name">Representative Middle Name</label>
+          <input type="text" id="rep-middle-name" name="rep-middle-name">
+        </div>
+        <div class="form-group">
+          <label for="rep-contact">Representative Contact Number</label>
+          <input type="tel" id="rep-contact" name="rep-contact" required>
+        </div>
+        <div class="form-group">
+          <label for="inst-region">Region</label>
+          <select id="inst-region" name="inst-region" required>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="inst-province">Province</label>
+          <select id="inst-province" name="inst-province" required>
+            <option value="">Select province</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="inst-city">City/Municipality</label>
+          <select id="inst-city" name="inst-city" required>
+            <option value="">Select city</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="inst-barangay">Barangay</label>
+          <select id="inst-barangay" name="inst-barangay" required>
+            <option value="">Select a barangay</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="inst-street">Street Address</label>
+          <input type="text" id="inst-street" name="inst-street" required>
+        </div>
+        <div class="form-group">
+          <label for="emergency-contact-name">Emergency Contact Name</label>
+          <input type="text" id="emergency-contact-name" name="emergency-contact-name" required>
+        </div>
+        <div class="form-group">
+          <label for="emergency-contact-number">Emergency Contact Number</label>
+          <input type="tel" id="emergency-contact-number" name="emergency-contact-number" required>
+        </div>
       </div>
-      <div class="form-group"><label for="province">Province</label><select id="province" name="province" required><option value="">Select a province</option></select></div>
-      <div class="form-group"><label for="city">City/Municipality</label><select id="city" name="city" required><option value="">Select a city</option></select></div>
-      <div class="form-group"><label for="barangay">Barangay</label><select id="barangay" name="barangay" required><option value="">Select a barangay</option></select></div>
-      <div class="form-group"><label for="street">Street Address</label><input type="text" id="street" name="street" required></div>
-      <div class="form-group"><label for="phone">Phone Number</label><input type="tel" id="phone" name="phone" required></div>
-      <div class="form-group"><label for="emergency-contact">Emergency Contact</label><input type="tel" id="emergency-contact" name="emergency-contact" required></div>
+
       <button type="submit">Register</button>
     </form>
     <p>Already have an account? <a href="login.html">Log in here</a></p>
   </main>
 
   <script>
+
+    // Redirect on submit (placeholder logic)
+    document.getElementById("registrationForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+      window.location.href = "member_dashboard.html";
+    });
+
+    // Show/hide fields based on role selection
+    document.getElementById("role").addEventListener("change", function () {
+      const role = this.value;
+      const individualFields = document.getElementById("individual-fields");
+      const institutionFields = document.getElementById("institution-fields");
+
+      if (role === "individual") {
+        individualFields.style.display = "block";
+        institutionFields.style.display = "none";
+      } else if (role === "institution") {
+        institutionFields.style.display = "block";
+        individualFields.style.display = "none";
+      } else {
+        individualFields.style.display = "none";
+        institutionFields.style.display = "none";
+      }
+    });
+
+    // Show/hide affiliation type fields
+    document.getElementById("affiliation-type").addEventListener("change", function () {
+      const affiliationType = this.value;
+      const organizationFields = document.getElementById("organization-fields");
+      const schoolFields = document.getElementById("school-fields");
+
+      if (affiliationType === "organization") {
+        organizationFields.style.display = "block";
+        schoolFields.style.display = "none";
+      } else if (affiliationType === "school") {
+        schoolFields.style.display = "block";
+        organizationFields.style.display = "none";
+      } else {
+        organizationFields.style.display = "none";
+        schoolFields.style.display = "none";
+      }
+    });
+    
     // Dynamic dropdowns script
     document.addEventListener('DOMContentLoaded', () => {
       const regionSelect = document.getElementById('region');

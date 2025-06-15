@@ -62,7 +62,7 @@ nav ul li a:hover {
 form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 20px; /* Maintain consistent spacing between all form groups */
 }
 
 .form-group {
@@ -110,6 +110,22 @@ a {
 
 a:hover {
   text-decoration: underline;
+}
+
+/* Institution-specific section styling */
+#institution-fields, #organization-fields, #school-fields, .field-container {
+  border: 1px solid #dcdcdc;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  margin-top: -10px;
+  transition: all 0.3s ease;
+}
+
+/* Radio button group styling */
+.radio-group {
+  display: flex;
+  gap: 20px; /* Adjust spacing between radio buttons */
 }
 
 @media screen and (max-width: 600px) {
