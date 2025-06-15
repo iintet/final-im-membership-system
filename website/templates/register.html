@@ -338,12 +338,13 @@
 
     document.getElementById("registrationForm").addEventListener("submit", function(event) {
       event.preventDefault();
-      window.location.href = "member_dashboard.html";
+      window.location.href = "/userdashboard";
     });
   </script> 
   
   <script src="{{ url_for('static', filename='register_individual.js') }}" defer></script>
 <script src="{{ url_for('static', filename='register_institution.js') }}" defer></script>
+<script src="{{ url_for('static', filename='register_save.js') }}" defer></script>
 
 
 </body>

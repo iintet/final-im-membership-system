@@ -46,16 +46,19 @@ def register():
     email = data.get('email')
     password = data.get('password')
     role = data.get('role')  # Get the role (individual or institution)
+    
     # Common fields
     streetaddress = data.get('streetaddress', '')
     emergencycontactname = data.get('emergencycontactname', '')
     emergencycontactnumber = data.get('emergencycontactnumber', '')
+    
     # Hash the password before storing it
     hashed_password = generate_password_hash(password)
+    
     # Prepare the user data to be inserted
     user_data = {
         'email': email,
-        'password': hashed_password,
+        'password': generate_password_hash(password),
         'role': role,
         'status': 'active',  # Default status
         'streetaddress': streetaddress,
@@ -87,6 +90,7 @@ def register():
             'representativemiddlename': data.get('rep-middle-name'),  # Align with schema
             'representativecontactnumber': data.get('rep-contact')  # Align with schema
         })
+        
     # Store the user in the database
     user_response = supabase.table('member').insert(user_data).execute()
     if user_response.error:
