@@ -25,7 +25,7 @@ def home():
 def register():
     return render_template('register.html')
 
-@views.route('/login', methods=['GET'])
+@views.route('auth/login', methods=['GET'])
 def login():
     return render_template('login.html')
 
@@ -91,6 +91,10 @@ def get_barangays():
         return jsonify(response.data), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+# -- MEMBER DASHBOARD ==
+@views.route('/userdashboard', methods=['GET'])
+def dashboard():
+    return render_template('user_dashboard.html')  # Create a dashboard.html file for the dashboard view
 
 # --- MEMBER ROUTES ---
 @views.route('/members', methods=['GET'])
