@@ -13,15 +13,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
     regionSelect.addEventListener('change', () => {
-        const regionId = regionSelect.value;
+        const regionid = regionSelect.value;
         provinceSelect.innerHTML = '<option value="">Loading...</option>';
         citySelect.innerHTML = '<option value="">Select a city</option>';
         barangaySelect.innerHTML = '<option value="">Select a barangay</option>';
-        if (!regionId) {
+        if (!regionid) {
             provinceSelect.innerHTML = '<option value="">Select a province</option>';
             return;
         }
-        fetch(`/api/provinces?region_id=${regionId}`)
+        fetch(`/api/provinces?regionid=${regionid}`)
             .then(res => res.json())
             .then(data => {
                 provinceSelect.innerHTML = '<option value="">Select a province</option>' +
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
             citySelect.innerHTML = '<option value="">Select a city</option>';
             return;
         }
-        fetch(`/api/cities?province_id=${provinceId}`)
+        fetch(`/api/cities?provinceid=${provinceId}`)
             .then(res => res.json())
             .then(data => {
                 citySelect.innerHTML = '<option value="">Select a city</option>' +
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
             barangaySelect.innerHTML = '<option value="">Select a barangay</option>';
             return;
         }
-        fetch(`/api/barangays?city_id=${cityId}`)
+        fetch(`/api/barangays?cityid=${cityId}`)
             .then(res => res.json())
             .then(data => {
                 barangaySelect.innerHTML = '<option value="">Select a barangay</option>' +
