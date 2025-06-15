@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, render_template, abort, request
 from . import models
 from .supabase_client import supabase
 from datetime import datetime
+import logging
 
 views = Blueprint('views', __name__)
 
@@ -45,20 +46,25 @@ def contact():
 def get_regions():
     try:
         response = supabase.table('region').select('*').execute()
-        if response.error:
+        logging.info(f"Supabase response: {response}")  # Log the response for debugging
+        
+        if hasattr(response, 'error') and response.error:
             return jsonify({'error': str(response.error)}), 500
+        
+        if response.data is None or not isinstance(response.data, list):
+            return jsonify({'error': 'No data found or invalid data format'}), 404
+        
         return jsonify(response.data), 200
     except Exception as e:
+        logging.error(f"Error fetching regions: {str(e)}")  # Log the error
         return jsonify({'error': str(e)}), 500
     
 @views.route('/api/provinces', methods=['GET'])
 def get_provinces():
-    regionid = request.args.get('regionid')
-    if not regionid:
-        return jsonify({'error': 'regionid parameter is required'}), 400
+    region_id = request.args.get('regionid')
     try:
-        response = supabase.table('province').select('*').eq('regionid', regionid).execute()
-        if response.error:
+        response = supabase.table('province').select('*').eq('regionid', region_id).execute()
+        if hasattr(response, 'error') and response.error:
             return jsonify({'error': str(response.error)}), 500
         return jsonify(response.data), 200
     except Exception as e:
@@ -66,12 +72,10 @@ def get_provinces():
     
 @views.route('/api/cities', methods=['GET'])
 def get_cities():
-    provinceid = request.args.get('provinceid')
-    if not provinceid:
-        return jsonify({'error': 'provinceid parameter is required'}), 400
+    province_id = request.args.get('provinceid')
     try:
-        response = supabase.table('city').select('*').eq('provinceid', provinceid).execute()
-        if response.error:
+        response = supabase.table('city').select('*').eq('provinceid', province_id).execute()
+        if hasattr(response, 'error') and response.error:
             return jsonify({'error': str(response.error)}), 500
         return jsonify(response.data), 200
     except Exception as e:
@@ -79,17 +83,14 @@ def get_cities():
     
 @views.route('/api/barangays', methods=['GET'])
 def get_barangays():
-    cityid = request.args.get('cityid')
-    if not cityid:
-        return jsonify({'error': 'cityid parameter is required'}), 400
+    city_id = request.args.get('cityid')
     try:
-        response = supabase.table('barangay').select('*').eq('cityid', cityid).execute()
-        if response.error:
+        response = supabase.table('barangay').select('*').eq('cityid', city_id).execute()
+        if hasattr(response, 'error') and response.error:
             return jsonify({'error': str(response.error)}), 500
         return jsonify(response.data), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-    
 
 # --- MEMBER ROUTES ---
 @views.route('/members', methods=['GET'])

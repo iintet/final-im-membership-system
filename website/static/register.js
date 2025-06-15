@@ -4,30 +4,63 @@ document.addEventListener('DOMContentLoaded', () => {
     const citySelect = document.getElementById('city');
     const barangaySelect = document.getElementById('barangay');
 
-    // Fetch Regions on load
+    // Hardcoded data for testing
+    const hardcodedRegions = [
+        { regionid: 1, regionname: 'Region 1' },
+        { regionid: 2, regionname: 'Region 2' }
+    ];
+
+    // Populate the region dropdown with hardcoded data
+    regionSelect.innerHTML = '<option value="">Select region</option>' +
+        hardcodedRegions.map(r => `<option value="${r.regionid}">${r.regionname}</option>`).join('');
+
+    // Uncomment the following code to fetch data from Supabase instead
+    
     fetch('/api/regions')
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return res.json();
+        })
         .then(data => {
+            if (!Array.isArray(data)) {
+                throw new Error('Expected an array but got: ' + JSON.stringify(data));
+            }
             regionSelect.innerHTML = '<option value="">Select region</option>' +
                 data.map(r => `<option value="${r.regionid}">${r.regionname}</option>`).join('');
+        })
+        .catch(error => {
+            console.error('Error fetching regions:', error);
+            regionSelect.innerHTML = '<option value="">Error loading regions</option>';
         });
+    
 
-    regionSelect.addEventListener('change', () => {
-        const regionid = regionSelect.value;
-        provinceSelect.innerHTML = '<option value="">Loading...</option>';
-        citySelect.innerHTML = '<option value="">Select a city</option>';
-        barangaySelect.innerHTML = '<option value="">Select a barangay</option>';
-        if (!regionid) {
-            provinceSelect.innerHTML = '<option value="">Select a province</option>';
-            return;
-        }
-        fetch(`/api/provinces?regionid=${regionid}`)
-            .then(res => res.json())
+    // Add event listeners for dynamic dropdowns
+    regionSelect.addEventListener('change', function() {
+        const selectedRegionId = this.value;
+        console.log('Selected Region ID:', selectedRegionId); // Log the selected region ID
+        fetch(`/api/provinces?regionid=${selectedRegionId}`)
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return res.json();
+            })
             .then(data => {
-                provinceSelect.innerHTML = '<option value="">Select a province</option>' +
+                if (!Array.isArray(data)) {
+                    throw new Error('Expected an array but got: ' + JSON.stringify(data));
+                }
+                provinceSelect.innerHTML = '<option value="">Select province</option>' +
                     data.map(p => `<option value="${p.provinceid}">${p.provincename}</option>`).join('');
+            })
+            .catch(error => {
+                console.error('Error fetching provinces:', error);
+                provinceSelect.innerHTML = '<option value="">Error loading provinces</option>';
             });
     });
+
+   
 
     provinceSelect.addEventListener('change', () => {
         const provinceId = provinceSelect.value;
@@ -38,10 +71,19 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         fetch(`/api/cities?provinceid=${provinceId}`)
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return res.json();
+            })
             .then(data => {
                 citySelect.innerHTML = '<option value="">Select a city</option>' +
                     data.map(c => `<option value="${c.cityid}">${c.cityname}</option>`).join('');
+            })
+            .catch(error => {
+                console.error('Error fetching cities:', error);
+                citySelect.innerHTML = '<option value="">Error loading cities</option>';
             });
     });
 
@@ -53,10 +95,19 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         fetch(`/api/barangays?cityid=${cityId}`)
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return res.json();
+            })
             .then(data => {
                 barangaySelect.innerHTML = '<option value="">Select a barangay</option>' +
                     data.map(b => `<option value="${b.barangayid}">${b.barangayname}</option>`).join('');
+            })
+            .catch(error => {
+                console.error('Error fetching barangays:', error);
+                barangaySelect.innerHTML = '<option value="">Error loading barangays</option>';
             });
     });
 });
