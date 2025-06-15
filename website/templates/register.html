@@ -141,10 +141,6 @@
               <label for="school-region">Region</label>
               <select id="school-region" name="school-region" required>
                 <option value="">Select region</option>
-                <option value="NCR">NCR</option>
-                <option value="Region I">Region I - Ilocos</option>
-                <option value="Region II">Region II - Cagayan Valley</option>
-                <option value="Region III">Region III - Central Luzon</option>
               </select>
             </div>
             <div class="form-group">
@@ -194,6 +190,7 @@
         <div class="form-group">
           <label for="inst-region">Region</label>
           <select id="inst-region" name="inst-region" required>
+            <option value="">Select region</option>
           </select>
         </div>
         <div class="form-group">
@@ -344,7 +341,10 @@
       window.location.href = "member_dashboard.html";
     });
   </script> 
-  <script src="{{ url_for('static', filename='register.js') }}" defer></script>
+  
+  <script src="{{ url_for('static', filename='register_individual.js') }}" defer></script>
+<script src="{{ url_for('static', filename='register_institution.js') }}" defer></script>
+
 
 </body>
 </html>

@@ -4,17 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const citySelect = document.getElementById('city');
     const barangaySelect = document.getElementById('barangay');
 
-    // Hardcoded data for testing
-    const hardcodedRegions = [
-        { regionid: 1, regionname: 'Region 1' },
-        { regionid: 2, regionname: 'Region 2' }
-    ];
-
-    // Populate the region dropdown with hardcoded data
-    regionSelect.innerHTML = '<option value="">Select region</option>' +
-        hardcodedRegions.map(r => `<option value="${r.regionid}">${r.regionname}</option>`).join('');
-
-    // Uncomment the following code to fetch data from Supabase instead
     
     fetch('/api/regions')
         .then(res => {
