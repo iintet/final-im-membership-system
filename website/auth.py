@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, render_template, redirect, url_for
+from flask import Blueprint, request, jsonify, render_template, redirect, url_for, session
 from .supabase_client import supabase
 from werkzeug.security import generate_password_hash, check_password_hash
 import re
@@ -22,27 +22,57 @@ def login():
     if not email or not password:
         return jsonify({'error': 'Email and password are required'}), 400
 
-    # Fetch user by email
-    user_response = supabase.table('member').select('*').eq('email', email).execute()
+    # Check member table first
+    member_response = supabase.table('member').select('*').eq('email', email).execute()
 
-    if user_response.data:
-        user = user_response.data[0]
+    if member_response.data:
+        member = member_response.data[0]
 
-        # Compare provided password with hashed password
-        if check_password_hash(user['password'], password):
+        if check_password_hash(member['password'], password):
+            session['user_type'] = 'member'
+            session['member_id'] = member['memberid']
+
             return jsonify({
                 'message': 'Login successful',
                 'user': {
-                    'memberid': user['memberid'],
-                    'email': user['email'],
-                    'role': user['role'],
-                    'status': user['status']
+                    'memberid': member['memberid'],
+                    'email': member['email'],
+                    'role': member['role'],
+                    'status': member['status'],
+                    'user_type': 'member'
                 }
             }), 200
         else:
             return jsonify({'error': 'Invalid credentials'}), 401
-    else:
-        return jsonify({'error': 'User not found'}), 404
+
+    # If not a member, check staff table
+    staff_response = supabase.table('staff').select('*').eq('email', email).execute()
+
+    if staff_response.data:
+        staff = staff_response.data[0]
+
+        if check_password_hash(staff['password'], password):
+            session['user_type'] = 'staff'
+            session['staff_id'] = staff['staffid']
+
+            print("Email:", email)
+            print("Password:", password)
+            print("Staff response:", staff_response.data)
+
+            return jsonify({
+                'message': 'Login successful',
+                'user': {
+                    'staffid': staff['staffid'],
+                    'email': staff['email'],
+                    'role': staff['role'],
+                    'fullname': staff['fullname'],
+                    'user_type': 'staff'
+                }
+            }), 200
+        else:
+            return jsonify({'error': 'Invalid credentials'}), 401
+
+    return jsonify({'error': 'User not found'}), 404
     
 # -- AUTH REGISTER --
 @auth.route('/auth/register', methods=['GET', 'POST'])
@@ -117,10 +147,7 @@ def register():
 # -- AUTH LOGOUT --
 @auth.route('auth/logout', methods=['POST'])
 def logout():
-    try:
-        supabase.auth.sign_out()
-        return jsonify({"message": "Logged out successfully"}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    session.clear()  # Clears all session keys
+    return redirect('/')
 
 

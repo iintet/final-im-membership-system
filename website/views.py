@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, render_template, abort, request
+from flask import Blueprint, jsonify, render_template, abort, request, session, redirect
 from . import models
 from .supabase_client import supabase
 from datetime import datetime
@@ -61,6 +61,30 @@ def eventsparticipation():
 def committeeparticipation():
     return render_template('user_committee_participation.html')
 
+# -- ADMIN SIDE BAR --
+@views.route('/admin/members')
+def admin_member_management():
+    return render_template('admin_member_management.html')
+
+@views.route('/admin/memberships')
+def admin_membership_management():
+    return render_template('admin_membership_management.html')
+
+@views.route('/admin/billing')
+def admin_billing_payment():
+    return render_template('admin_billing_payment.html')
+
+@views.route('/admin/events')
+def admin_event_management():
+    return render_template('admin_event_management.html')
+
+@views.route('/admin/committees')
+def admin_committee_dashboard():
+    return render_template('admin_committee_dashboard.html')
+
+@views.route('/admin/staff')
+def admin_staff_management():
+    return render_template('admin_staff_management.html')
 # API endpoints to fetch locations data from Supabase
 @views.route('/api/regions', methods=['GET'])
 def get_regions():
@@ -152,23 +176,32 @@ def get_schcities():
         return jsonify(response.data), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-    
+
+# -- ADMIN DASHBOARD --
+@views.route('/admindashboard')
+def admin_dashboard():
+    if session.get('user_type') != 'staff':
+        return redirect('/')
+    return render_template('admin_dashboard.html')
+
 # -- MEMBER DASHBOARD --
 @views.route('/userdashboard', methods=['GET'])
-def dashboard():
-    return render_template('user_dashboard.html')  # Create a dashboard.html file for the dashboard view
+def userdashboard():
+    if session.get('user_type') != 'member':
+        return redirect('/')
+    member_id = session.get('member_id')
+    return render_template('user_dashboard.html', member_id=member_id)
 
 @views.route('/usermembershipdetails')
 def membershipdetails():
-    # Simulate authenticated user's memberid from session or token
-    member_id = request.args.get('memberid') or "IND00001"
+    # Get member_id from session
+    member_id = session.get('member_id')
     if not member_id:
         return "Unauthorized", 401
 
     # Check if the member exists in the member table
     member_check_resp = supabase.table('member').select('memberid').eq('memberid', member_id).execute()
 
-    # Check if the response contains data
     if not member_check_resp.data:
         logging.error("Member check failed: Member not found")
         return "Unauthorized: Member not found", 401
@@ -178,7 +211,6 @@ def membershipdetails():
         'membershipregistrationid, typeid, startdate, enddate, status, membershiptype(name, description, annualfee, benefits)'
     ).eq('memberid', member_id).eq('status', 'Active').execute()
 
-    # Set current membership if any
     current_membership = current_resp.data[0] if current_resp.data else None
 
     # Get full registration history
@@ -186,7 +218,6 @@ def membershipdetails():
         'membershipregistrationid, typeid, startdate, enddate, status, membershiptype(name)'
     ).eq('memberid', member_id).order('startdate', desc=True).execute()
 
-    # Default to empty list if no history
     membership_history = history_resp.data if history_resp.data else []
 
     # Logging for debugging

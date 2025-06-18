@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Record Payment - MRSYS</title>
-  <link rel="stylesheet" href="admin_billing_payment.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='admin_billing_payment.css') }}" />
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-pRf5F1gk+T3OMIu6V+tRpEvZzK3eqp7I4hzRWhW/4rWkUazspB6PhN4szZGBDbZYAYhYz8bMjDdJbwGp+KZgWg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
@@ -21,7 +21,7 @@
       <a href="admin_staff_management.html">Staff Management</a>
     </nav>
     <div class="logout">
-      <a href="login.html">Log Out</a>
+      <a href="{{ url_for('views.home') }}">Log Out</a>
     </div>
   </div>
 

@@ -1,27 +1,27 @@
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Login JavaScript loaded"); // Debugging line
+    console.log("Login JavaScript loaded");
+
     const loginForm = document.getElementById('loginForm');
 
     if (!loginForm) {
-        console.error("Login form not found!"); // Debugging line
-        return; // Exit if the form is not found
+        console.error("Login form not found!");
+        return;
     }
 
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
 
     if (!emailInput || !passwordInput) {
-        console.error("Email or password input not found!"); // Debugging line
-        return; // Exit if inputs are not found
+        console.error("Email or password input not found!");
+        return;
     }
 
     loginForm.addEventListener('submit', (event) => {
-        event.preventDefault(); // Prevent the default form submission
+        event.preventDefault();
 
-        const email = emailInput.value; // Access the value of the email input
-        const password = passwordInput.value; // Access the value of the password input
+        const email = emailInput.value.trim();
+        const password = passwordInput.value.trim();
 
-        // Perform login request
         fetch('/auth/login', {
             method: 'POST',
             headers: {
@@ -36,10 +36,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return response.json();
         })
         .then(data => {
-            // Handle successful login
-            console.log('Login successful:', data);
-            // Redirect to the user dashboard
-            window.location.href = '/userdashboard'; // Change this to your actual dashboard URL
+            if (data.user.user_type === 'staff') {
+                window.location.href = '/admindashboard';
+            } else if (data.user.user_type === 'member') {
+                window.location.href = '/userdashboard';
+            }
         })
         .catch(error => {
             console.error('Error:', error);
