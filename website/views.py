@@ -92,7 +92,46 @@ def get_regions():
     except Exception as e:
         logging.error(f"Error fetching regions: {str(e)}")  # Log the error
         return jsonify({'error': str(e)}), 500
+
+@views.route('/api/schnames', methods=['GET'])
+def get_schnames():
+    city_id = request.args.get('cityid')
+    try:
+        response = supabase.table('schname').select('*').eq('cityid', city_id).execute()
+        logging.info(f"Supabase response: {response}")  # Log the response for debugging
+        
+        if hasattr(response, 'error') and response.error:
+            return jsonify({'error': str(response.error)}), 500
+        
+        if response.data is None or not isinstance(response.data, list):
+            return jsonify({'error': 'No data found or invalid data format'}), 404
+        
+        return jsonify(response.data), 200
+    except Exception as e:
+        logging.error(f"Error fetching regions: {str(e)}")  # Log the error
+        return jsonify({'error': str(e)}), 500
     
+@views.route('/api/schooltype', methods=['GET'])
+def get_school_type():
+    school_id = request.args.get('schoolid')
+    if not school_id:
+        return jsonify({'error': 'schoolid parameter is required'}), 400
+
+    try:
+        # 1. Get the typeid from schname
+        schname_resp = supabase.table('schname').select('typeid').eq('id', school_id).single().execute()
+        typeid = schname_resp.data['typeid']
+        if not typeid:
+            return jsonify({'error': 'School typeid not found'}), 404
+
+        # 2. Get the school type name from schtype
+        schtype_resp = supabase.table('schtype').select('type').eq('id', typeid).single().execute()
+        return jsonify({'schooltype': schtype_resp.data['type']}), 200
+
+    except Exception as e:
+        logging.error(f"Error fetching school type: {str(e)}")
+        return jsonify({'error': 'Internal server error'}), 500
+
 @views.route('/api/provinces', methods=['GET'])
 def get_provinces():
     region_id = request.args.get('regionid')
