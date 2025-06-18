@@ -54,25 +54,27 @@
         <table>
           <thead>
             <tr>
-              <th>Date</th>
+              <th>Start Date</th>
+              <th>End Date</th>
               <th>Membership Type</th>
               <th>Status</th>
-              <th>Remarks</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>June 6, 2024</td>
-              <td>Gold</td>
-              <td>Active</td>
-              <td>Initial Registration</td>
-            </tr>
-            <tr>
-              <td>June 6, 2023</td>
-              <td>Regular</td>
-              <td>Expired</td>
-              <td>Renewed to Gold</td>
-            </tr>
+            {% if membership_history %}
+              {% for reg in membership_history %}
+                <tr>
+                  <td>{{ reg.startdate }}</td>
+                  <td>{{ reg.enddate }}</td>
+                  <td>{{ reg.membershiptype.name }}</td>
+                  <td>{{ reg.status }}</td>
+                </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td colspan="4">No registration history found.</td>
+              </tr>
+            {% endif %}
           </tbody>
         </table>
       </section>

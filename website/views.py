@@ -45,9 +45,9 @@ def contact():
 def profile():
     return render_template('user_profile.html')
 
-@views.route('/usermembershipdetails')
-def membershipdetails():
-    return render_template('user_membership_details.html')
+# @views.route('/usermembershipdetails')
+# def membershipdetails():
+#     return render_template('user_membership_details.html')
 
 @views.route('/userbillingpayment')
 def billingpayment():
@@ -153,10 +153,52 @@ def get_schcities():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
-# -- MEMBER DASHBOARD ==
+# -- MEMBER DASHBOARD --
 @views.route('/userdashboard', methods=['GET'])
 def dashboard():
     return render_template('user_dashboard.html')  # Create a dashboard.html file for the dashboard view
+
+@views.route('/usermembershipdetails')
+def membershipdetails():
+    # Simulate authenticated user's memberid from session or token
+    member_id = request.args.get('memberid') or "IND00001"
+    if not member_id:
+        return "Unauthorized", 401
+
+    # Check if the member exists in the member table
+    member_check_resp = supabase.table('member').select('memberid').eq('memberid', member_id).execute()
+
+    # Check if the response contains data
+    if not member_check_resp.data:
+        logging.error("Member check failed: Member not found")
+        return "Unauthorized: Member not found", 401
+
+    # Get current active membership
+    current_resp = supabase.table('membershipregistration').select(
+        'membershipregistrationid, typeid, startdate, enddate, status, membershiptype(name, description, annualfee, benefits)'
+    ).eq('memberid', member_id).eq('status', 'Active').execute()
+
+    # Set current membership if any
+    current_membership = current_resp.data[0] if current_resp.data else None
+
+    # Get full registration history
+    history_resp = supabase.table('membershipregistration').select(
+        'membershipregistrationid, typeid, startdate, enddate, status, membershiptype(name)'
+    ).eq('memberid', member_id).order('startdate', desc=True).execute()
+
+    # Default to empty list if no history
+    membership_history = history_resp.data if history_resp.data else []
+
+    # Logging for debugging
+    logging.info(f"Current Membership: {current_membership}")
+    logging.info(f"Membership History: {membership_history}")
+
+    return render_template(
+        'user_membership_details.html',
+        current_membership=current_membership,
+        membership_history=membership_history
+    )
+
 
 # --- MEMBER ROUTES ---
 @views.route('/members', methods=['GET'])
