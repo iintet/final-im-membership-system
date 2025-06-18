@@ -104,7 +104,13 @@
           </div>
           <div class="form-group">
             <label for="emergency-contact-number">Emergency Contact Number</label>
-            <input type="tel" id="emergency-contact-number" name="emergency-contact-number" required>
+            <input
+              type="tel"
+              id="emergency-contact-number"
+              name="emergency-contact-number"
+              pattern="^(09)[0-9]{9}$"
+              title="Please enter a valid 11-digit Philippine mobile number starting with 09"
+              required/>
           </div>
           <div class="form-group">
             <label for="affiliation-type">Affiliation Type</label>
@@ -345,7 +351,7 @@
   <script src="{{ url_for('static', filename='register_individual.js') }}" defer></script>
 <script src="{{ url_for('static', filename='register_institution.js') }}" defer></script>
 <script src="{{ url_for('static', filename='register_save.js') }}" defer></script>
-
-
+<script src="{{ url_for('static', filename='register_data_validation.js') }}" defer></script>
+<script src="{{ url_for('static', filename='register_school.js') }}" defer></script>
 </body>
 </html>

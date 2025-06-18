@@ -1,8 +1,6 @@
 document.getElementById("registrationForm").addEventListener("submit", function(event) {
     event.preventDefault();
 
-    // Perform additional validation here...
-
     const formData = new FormData(this);
     const data = {};
 
@@ -19,16 +17,16 @@ document.getElementById("registrationForm").addEventListener("submit", function(
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error('Registration failed');
+            return response.json().then(err => { throw new Error(err.error); });
         }
         return response.json();
     })
     .then(data => {
         alert(data.message);
-        window.location.href = "/userdashboard";
+        window.location.href = "/userdashboard"; // Redirect to user dashboard
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('An error occurred during registration. Please try again.');
+        alert('An error occurred during registration: ' + error.message);
     });
 });

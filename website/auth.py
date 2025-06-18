@@ -1,8 +1,16 @@
 from flask import Blueprint, request, jsonify, render_template, redirect, url_for
 from .supabase_client import supabase
 from werkzeug.security import generate_password_hash, check_password_hash
+import re
 
 auth = Blueprint('auth', __name__)
+
+def clean_phone(phone_str):
+    # Remove spaces, dashes, and validate Philippine mobile numbers starting with 09 (11 digits)
+    phone = re.sub(r'[\s\-]', '', phone_str or '')
+    if not re.match(r'^09\d{9}$', phone):
+        raise ValueError("Invalid phone number format. Must start with 09 and be 11 digits.")
+    return phone
 
 # -- AUTH LOGIN --
 @auth.route('/auth/login', methods=['POST'])
@@ -46,19 +54,25 @@ def register():
     email = data.get('email')
     password = data.get('password')
     role = data.get('role')  # Get the role (individual or institution)
+
+    try:
+        # Validate and sanitize phone number
+        phone_clean = clean_phone(data.get('emergencycontactnumber'))
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
     
     # Common fields
     streetaddress = data.get('streetaddress', '')
     emergencycontactname = data.get('emergencycontactname', '')
     emergencycontactnumber = data.get('emergencycontactnumber', '')
-    
+
     # Hash the password before storing it
     hashed_password = generate_password_hash(password)
-    
+
     # Prepare the user data to be inserted
     user_data = {
         'email': email,
-        'password': generate_password_hash(password),
+        'password': hashed_password,
         'role': role,
         'status': 'active',  # Default status
         'streetaddress': streetaddress,
@@ -69,6 +83,7 @@ def register():
         'city': data.get('city'),  # Align with schema
         'barangay': data.get('barangay')  # Align with schema
     }
+
     # Handle individual fields
     if role == 'individual':
         user_data.update({
@@ -90,12 +105,13 @@ def register():
             'representativemiddlename': data.get('rep-middle-name'),  # Align with schema
             'representativecontactnumber': data.get('rep-contact')  # Align with schema
         })
-        
+
     # Store the user in the database
     user_response = supabase.table('member').insert(user_data).execute()
     if user_response.error:
         return jsonify({'error': str(user_response.error)}), 500
     return jsonify({'message': 'User  registered successfully'}), 201
+
 
 
 # -- AUTH LOGOUT --
