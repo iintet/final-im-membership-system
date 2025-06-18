@@ -41,6 +41,26 @@ def benefits():
 def contact():
     return render_template('front_page_contact.html')
 
+@views.route('/userprofile')
+def profile():
+    return render_template('user_profile.html')
+
+@views.route('/usermembershipdetails')
+def membershipdetails():
+    return render_template('user_membership_details.html')
+
+@views.route('/userbillingpayment')
+def billingpayment():
+    return render_template('user_billing_payment.html')
+
+@views.route('/usereventsparticipation')
+def eventsparticipation():
+    return render_template('user_events_participation.html')
+
+@views.route('/usercommitteeparticipation')
+def committeeparticipation():
+    return render_template('user_committee_participation.html')
+
 # API endpoints to fetch locations data from Supabase
 @views.route('/api/regions', methods=['GET'])
 def get_regions():
@@ -91,6 +111,48 @@ def get_barangays():
         return jsonify(response.data), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+
+# -- API FOR SCHOOL ADDRESS --
+@views.route('/api/schregions', methods=['GET'])
+def get_schregions():
+    try:
+        response = supabase.table('schregion').select('*').execute()
+        logging.info(f"Supabase response: {response}")  # Log the response for debugging
+        
+        if hasattr(response, 'error') and response.error:
+            return jsonify({'error': str(response.error)}), 500
+        
+        if response.data is None or not isinstance(response.data, list):
+            return jsonify({'error': 'No data found or invalid data format'}), 404
+        
+        return jsonify(response.data), 200
+    except Exception as e:
+        logging.error(f"Error fetching regions: {str(e)}")  # Log the error
+        return jsonify({'error': str(e)}), 500
+    
+@views.route('/api/schprovinces', methods=['GET'])
+def get_schprovinces():
+    region_id = request.args.get('regionid')
+    try:
+        response = supabase.table('schprovince').select('*').eq('regionid', region_id).execute()
+        if hasattr(response, 'error') and response.error:
+            return jsonify({'error': str(response.error)}), 500
+        return jsonify(response.data), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+@views.route('/api/schcities', methods=['GET'])
+def get_schcities():
+    province_id = request.args.get('provinceid')
+    try:
+        response = supabase.table('schcity').select('*').eq('provinceid', province_id).execute()
+        if hasattr(response, 'error') and response.error:
+            return jsonify({'error': str(response.error)}), 500
+        return jsonify(response.data), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
 # -- MEMBER DASHBOARD ==
 @views.route('/userdashboard', methods=['GET'])
 def dashboard():

@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Billing & Payments - MRSYS</title>
-  <link rel="stylesheet" href="user_billing_payment.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='user_billing_payment.css') }}">
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet"/>
 </head>
 <body>
@@ -13,12 +13,12 @@
       <div>
         <h2 class="logo">MRSYS</h2>
         <nav class="nav-menu">
-          <a href="user_dashboard.html">Home</a>
-          <a href="user_profile.html">My Profile</a>
-          <a href="user_membership_details.html">Membership Details</a>
+          <a href="{{ url_for('views.dashboard') }}">Home</a>
+          <a href="{{ url_for('views.profile') }}">My Profile</a>
+          <a href="{{ url_for('views.membershipdetails') }}">Membership Details</a>
           <a href="#" class="active">Billing & Payment</a>
-          <a href="user_events_participation.html">My Events Participation</a>
-          <a href="user_committee_participation.html">Committee Participation</a>
+          <a href="{{ url_for('views.eventsparticipation') }}">My Events Participation</a>
+          <a href="{{ url_for('views.committeeparticipation') }}">Committee Participation</a>
         </nav>
       </div>
       <div class="logout-section">
