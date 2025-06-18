@@ -6,6 +6,9 @@
   <title>Register - MRSYS</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='register.css') }}" />
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 </head>
 <body>
   <header>
@@ -132,34 +135,32 @@
           </div>
           <div id="school-fields" style="display: none;">
             <div class="form-group">
-              <label for="school-name">School Name</label>
-              <input type="text" id="school-name" name="school-name">
-            </div>
-            <div class="form-group">
-              <label for="school-type">Type</label>
-              <select id="school-type" name="school-type">
-                <option value="">Select type</option>
-                <option value="public">Public</option>
-                <option value="private">Private</option>
-              </select>
-            </div>
-            <div class="form-group">
               <label for="school-region">Region</label>
               <select id="school-region" name="school-region" required>
-                <option value="">Select region</option>
+                <option value="">Select school region</option>
               </select>
             </div>
             <div class="form-group">
               <label for="school-province">Province</label>
               <select id="school-province" name="school-province" required>
-                <option value="">Select province</option>
+                <option value="">Select school province</option>
               </select>
             </div>
             <div class="form-group">
               <label for="school-city">City/Municipality</label>
               <select id="school-city" name="school-city" required>
-                <option value="">Select city</option>
+                <option value="">Select school city/municipality</option>
               </select>
+            </div>
+            <div class="form-group">
+              <label for="school-name">School Name</label>
+              <select id="school-name" name="school-name" required>
+                <option value="">Select school name</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="school-type">Type</label>
+              <input type="text" id="school-type" name="school-type" readonly required>
             </div>
           </div>
         </div> <!-- End of field-container -->
@@ -341,6 +342,75 @@
           });
       });
     });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const regionSelect = document.getElementById('school-region');
+      const provinceSelect = document.getElementById('school-province');
+      const citySelect = document.getElementById('school-city');
+      const schoolSelect = document.getElementById('school-name');
+
+      fetch('/api/schregions')
+          .then(res => res.json())
+          .then(data => {
+              regionSelect.innerHTML = '<option value="">Select a school region</option>' +
+                  data.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
+          });
+
+      regionSelect.addEventListener('change', () => {
+          const regionId = regionSelect.value;
+          provinceSelect.innerHTML = '<option value="">Loading...</option>';
+          citySelect.innerHTML = '<option value="">Select a city</option>';
+          schoolSelect.innerHTML = '<option value="">Select a school</option>';
+          
+          if (!regionId) {
+              provinceSelect.innerHTML = '<option value="">Select a province</option>';
+              return;
+          }
+
+          fetch(`/api/schprovinces?id=${regionId}`)
+              .then(res => res.json())
+              .then(data => {
+                  provinceSelect.innerHTML = '<option value="">Select a province</option>' +
+                      data.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+              });
+      });
+
+      provinceSelect.addEventListener('change', () => {
+          const provinceId = provinceSelect.value;
+          citySelect.innerHTML = '<option value="">Loading...</option>';
+          schoolSelect.innerHTML = '<option value="">Select a school</option>';
+
+          if (!provinceId) {
+              citySelect.innerHTML = '<option value="">Select a city</option>';
+              return;
+          }
+
+          fetch(`/api/schcities?id=${provinceId}`)
+              .then(res => res.json())
+              .then(data => {
+                  citySelect.innerHTML = '<option value="">Select a city</option>' +
+                      data.map(c => `<option value="${c.cityid}">${c.cityname}</option>`).join('');
+              });
+      });
+
+      citySelect.addEventListener('change', () => {
+          const cityId = citySelect.value;
+          schoolSelect.innerHTML = '<option value="">Loading...</option>';
+
+          if (!cityId) {
+              schoolSelect.innerHTML = '<option value="">Select a school</option>';
+              return;
+          }
+
+          fetch(`/api/schnames?id=${cityId}`)
+              .then(res => res.json())
+              .then(data => {
+                  schoolSelect.innerHTML = '<option value="">Select a school</option>' +
+                      data.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+              });
+      });
+  });
+
 
     document.getElementById("registrationForm").addEventListener("submit", function(event) {
       event.preventDefault();
