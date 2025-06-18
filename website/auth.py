@@ -27,6 +27,7 @@ def login():
 
     if member_response.data:
         member = member_response.data[0]
+        print("Logging in member:", member) 
 
         if check_password_hash(member['password'], password):
             session['user_type'] = 'member'

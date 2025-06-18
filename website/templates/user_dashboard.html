@@ -19,6 +19,7 @@
           <a href="{{ url_for('views.billingpayment') }}">Billing & Payment</a>
           <a href="{{ url_for('views.eventsparticipation') }}">My Events Participation</a>
           <a href="{{ url_for('views.committeeparticipation') }}">Committee Participation</a>
+          
         </nav>
       </div>
       <div class="logout-section">
@@ -29,15 +30,19 @@
 
     <main class="dashboard-content">
       <section class="welcome-header">
-        <h1>Welcome back,<br>Member Name!</h1>
+        <h1>Welcome back, {{ fullname }}!</h1>
         <hr class="skyline-divider" />
       </section>
 
       <section class="info-cards">
         <div class="info-card">
           <h3>Membership Status</h3>
-          <p class="info-main">Active</p>
-          <p class="info-sub">Validity<br>June 6, 2025 - July 6, 2025</p>
+          <p class="info-main">{{ membership_status }}</p>
+          {% if validity_start and validity_end %}
+            <p class="info-sub">Validity<br>{{ validity_start }} - {{ validity_end }}</p>
+          {% else %}
+            <p class="info-sub">No active membership period</p>
+          {% endif %}
         </div>
         <div class="info-card">
           <h3>Outstanding Balance</h3>
@@ -53,9 +58,17 @@
       <section class="quick-actions">
         <h3>Quick Actions</h3>
         <div class="action-buttons">
-          <button>Renew Membership</button>
-          <button class="primary">Register for Event</button>
-          <button>Update Profile</button>
+          <a href="{{ url_for('views.billingpayment') }}">
+            <button>Renew Membership</button>
+          </a> 
+
+          <a href="{{ url_for('views.eventsparticipation') }}">
+            <button class="primary">Register for Event</button>
+          </a>
+
+          <a href="{{ url_for('views.profile') }}">
+            <button>Update Profile</button>
+          </a> 
         </div>
       </section>
     </main>

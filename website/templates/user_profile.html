@@ -41,22 +41,22 @@
 
           <div class="form-group">
             <label for="full-name">Full Name</label>
-            <input type="text" id="full-name" value="John A. Doe" disabled />
+            <input type="text" id="full-name" value="{{ fullname }}" disabled />
           </div>
 
           <div class="form-group">
             <label for="email">Email Address</label>
-            <input type="email" id="email" value="john@example.com" disabled />
+            <input type="email" id="email" value="{{ email }}" disabled />
           </div>
 
           <div class="form-group">
             <label for="phone">Contact Number</label>
-            <input type="tel" id="phone" value="0912 345 6789" disabled />
+            <input type="tel" id="phone" value="{{ phone }}" disabled />
           </div>
 
           <div class="form-group">
             <label for="address">Address</label>
-            <textarea id="address" rows="3" disabled>Street, City, Province, Zip Code</textarea>
+            <textarea id="address" rows="3" disabled>{{ address }}</textarea>
           </div>
         </fieldset>
 
@@ -65,7 +65,7 @@
           <legend>Emergency Contact</legend>
           <div class="form-group">
             <label for="emergency-contact">Contact Number</label>
-            <input type="tel" id="emergency-contact" value="0917 765 4321" disabled />
+            <input type="tel" id="emergency-contact" value="{{ emergency_contact }}" disabled />
           </div>
         </fieldset>
 
@@ -74,7 +74,7 @@
           <legend>Change Password</legend>
           <div class="form-group">
             <label for="current-password">Current Password</label>
-            <input type="password" id="current-password" value="12345678" disabled />
+            <input type="password" id="current-password" value="" disabled />
           </div>
           <div class="form-group">
             <label for="new-password">New Password</label>
@@ -101,6 +101,7 @@
     const cancelBtn = document.getElementById('cancelBtn');
     const form = document.getElementById('profileForm');
     const inputs = form.querySelectorAll('input, textarea');
+    inputs.forEach(input => input.disabled = true);
 
     editBtn.addEventListener('click', () => {
       inputs.forEach(input => input.disabled = false);
@@ -125,5 +126,6 @@
       alert('Changes saved successfully!');
     });
   </script>
+  <script src="{{ url_for('static', filename='user_profile.js') }}"></script>
 </body>
 </html>
