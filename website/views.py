@@ -384,91 +384,124 @@ def membershipdetails():
 @views.route('/userprofile', methods=['GET', 'POST'])
 def profile():
     if session.get('user_type') != 'member':
-        print("User  not member. Redirecting.")
         return redirect('/')
 
     member_id = session.get('member_id')
-    print("Session Member ID:", member_id)
+    if not member_id:
+        return redirect('/')
 
-    if request.method == 'POST':
-        # Handle the profile update logic here
-        data = request.json
-        return update_profile(data, member_id)  # Call the update function
+    try:
+        if request.method == 'POST':
+            data = request.get_json()
+            print("Payload received:", data)
+            return update_profile(data, member_id)
 
-    # Fetch member data for GET request
-    member_resp = supabase.table('member').select(
-        'streetaddress, email, emergencycontactnumber'
-    ).eq('memberid', member_id).execute()
-    member = member_resp.data[0] if member_resp.data else {}
+        # Fetch member info
+        member_resp = supabase.table('member').select(
+            'streetaddress, email, emergencycontactnumber, emergencycontactname, region, province, city, barangay'
+        ).eq('memberid', member_id).execute()
+        member = member_resp.data[0] if member_resp.data else {}
 
-    # Fetch individual data
-    individual_resp = supabase.table('individual').select(
-        'firstname, lastname, phone'
-    ).eq('memberid', member_id).execute()
-    individual = individual_resp.data[0] if individual_resp.data else {}
+        # Fetch individual info
+        individual_resp = supabase.table('individual').select(
+            'firstname, lastname, phone'
+        ).eq('memberid', member_id).execute()
+        individual = individual_resp.data[0] if individual_resp.data else {}
 
-    # Compose full name
-    fullname = f"{individual.get('firstname', '')} {individual.get('lastname', '')}".strip()
+        # Fetch name equivalents for location fields
+        region_resp = supabase.table('region').select('regionname').eq('regionid', member.get('region')).single().execute()
+        province_resp = supabase.table('province').select('provincename').eq('provinceid', member.get('province')).single().execute()
+        city_resp = supabase.table('city').select('cityname').eq('cityid', member.get('city')).single().execute()
+        barangay_resp = supabase.table('barangay').select('barangayname').eq('barangayid', member.get('barangay')).single().execute()
 
-    # Render profile template
-    return render_template(
-        'user_profile.html',
-        fullname=fullname,
-        email=member.get('email', ''),
-        phone=individual.get('phone', ''),
-        streetaddress=member.get('streetaddress', ''),
-        emergency_contact=member.get('emergencycontactnumber', '')
-    )
+        fullname = f"{individual.get('firstname', '')} {individual.get('lastname', '')}".strip()
+
+        return render_template(
+            'user_profile.html',
+            fullname=fullname,
+            email=member.get('email', ''),
+            phone=individual.get('phone', ''),
+            streetaddress=member.get('streetaddress', ''),
+            emergency_contact=member.get('emergencycontactnumber', ''),
+            emergency_contact_name=member.get('emergencycontactname', ''),
+            region_name=region_resp.data['regionname'] if region_resp.data else '',
+            province_name=province_resp.data['provincename'] if province_resp.data else '',
+            city_name=city_resp.data['cityname'] if city_resp.data else '',
+            barangay_name=barangay_resp.data['barangayname'] if barangay_resp.data else '',
+            region_id=member.get('region'),
+            province_id=member.get('province'),
+            city_id=member.get('city'),
+            barangay_id=member.get('barangay'),
+
+        )
+    except Exception as e:
+        print("Error rendering profile:", e)
+        return jsonify({'message': 'Internal server error'}), 500
+
+
 
 def update_profile(data, member_id):
     if session.get('user_type') != 'member':
         return jsonify({'message': 'Unauthorized'}), 403
 
-    # Extract profile info
-    phone = data.get('phone')
-    streetaddress = data.get('streetaddress')  # Ensure this is correctly extracted
-    emergency_contact = data.get('emergencycontactnumber')
+    try:
+        # Extract allowed fields from the frontend
+        phone = data.get('phone')
+        streetaddress = data.get('streetaddress')
+        emergency_contact = data.get('emergencycontactnumber')
+        emergency_contact_name = data.get('emergencycontactname')
 
-    # Update member table
-    member_update_response = supabase.table('member').update({
-        'streetaddress': streetaddress,  # Ensure this is being updated
-        'emergencycontactnumber': emergency_contact
-    }).eq('memberid', member_id).execute()
+        region = data.get('region')
+        province = data.get('province')
+        city = data.get('city')
+        barangay = data.get('barangay')
 
-    # Check for errors in the response
-    if member_update_response.get('error'):
-        return jsonify({'message': 'Failed to update member: ' + str(member_update_response['error'])}), 500
+        # Defensive check: ignore any forbidden field edits
+        blocked_fields = ['firstname', 'lastname', 'gender', 'dateofbirth']
+        for field in blocked_fields:
+            if field in data:
+                print(f"Ignoring restricted update attempt: {field}")
 
-    # Update individual table
-    individual_update_response = supabase.table('individual').update({
-        'phone': phone,
-    }).eq('memberid', member_id).execute()
+        # Update member table
+        member_update = {
+            'streetaddress': streetaddress,
+            'emergencycontactnumber': emergency_contact,
+            'emergencycontactname': emergency_contact_name,
+            'region': int(region) if region else None,
+            'province': int(province) if province else None,
+            'city': int(city) if city else None,
+            'barangay': int(barangay) if barangay else None
+        }
 
-    # Check for errors in the response
-    if individual_update_response.get('error'):
-        return jsonify({'message': 'Failed to update individual: ' + str(individual_update_response['error'])}), 500
+        supabase.table('member').update(member_update).eq('memberid', member_id).execute()
 
-    # Handle password change if provided
-    current_password = data.get('current_password')
-    new_password = data.get('new_password')
+        # Update individual phone separately
+        supabase.table('individual').update({
+            'phone': phone
+        }).eq('memberid', member_id).execute()
 
-    if current_password and new_password:
-        member_resp = supabase.table('member').select('password').eq('memberid', member_id).execute()
-        if not member_resp.data:
-            return jsonify({'message': 'Member not found'}), 404
+        # Password update if provided
+        if data.get('current_password') and data.get('new_password'):
+            member_resp = supabase.table('member').select('password').eq('memberid', member_id).execute()
+            if not member_resp.data:
+                return jsonify({'message': 'Member not found'}), 404
 
-        hashed = member_resp.data[0]['password']
-        if not check_password_hash(hashed, current_password):
-            return jsonify({'message': 'Current password is incorrect'}), 400
+            hashed = member_resp.data[0]['password']
+            if not check_password_hash(hashed, data['current_password']):
+                return jsonify({'message': 'Current password is incorrect'}), 400
 
-        new_hashed = generate_password_hash(new_password)
-        password_update_response = supabase.table('member').update({'password': new_hashed}).eq('memberid', member_id).execute()
+            new_hashed = generate_password_hash(data['new_password'])
+            supabase.table('member').update({'password': new_hashed}).eq('memberid', member_id).execute()
 
-        # Check for errors in the response
-        if password_update_response.get('error'):
-            return jsonify({'message': 'Failed to update password: ' + str(password_update_response['error'])}), 500
+            print("Payload received:", data)
 
-    return jsonify({'message': 'Profile updated successfully'})
+        return jsonify({'message': 'Profile updated successfully'})
+    
+    except Exception as e:
+        print("Profile update failed:", e)
+        return jsonify({'message': 'Server error while updating profile'}), 500
+
+
 
 @views.route('/userbillingpayment')
 def billingpayment():

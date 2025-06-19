@@ -165,3 +165,7 @@ textarea:disabled {
 .form-actions button:hover {
   background-color: #1e3d8f;
 }
+
+.skyline-divider {
+  display: none;
+}

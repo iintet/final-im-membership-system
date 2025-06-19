@@ -7,7 +7,12 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='user_profile.css') }}">
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet"/>
 </head>
-<body>
+<body
+  data-region-id="{{ region_id|default('') }}"
+  data-province-id="{{ province_id|default('') }}"
+  data-city-id="{{ city_id|default('') }}"
+  data-barangay-id="{{ barangay_id|default('') }}"
+>
   <div class="dashboard-container">
     <aside class="sidebar">
       <div>
@@ -31,50 +36,84 @@
       <section class="profile-header">
         <h1>My Profile</h1>
         <p class="subtitle">View and update your information below:</p>
-        <hr class="skyline-divider" />
       </section>
 
-      <form class="profile-form" id="profileForm">
-        <!-- Personal Information -->
+      <form id="profileForm" method="POST" onsubmit="return false;">
         <fieldset>
           <legend>Personal Information</legend>
+
           <div class="form-group">
             <label for="full-name">Full Name</label>
             <input type="text" id="full-name" value="{{ fullname }}" disabled />
           </div>
+
           <div class="form-group">
             <label for="email">Email Address</label>
             <input type="email" id="email" value="{{ email }}" disabled />
           </div>
+
           <div class="form-group">
             <label for="phone">Contact Number</label>
             <input type="tel" id="phone" name="phone" value="{{ phone }}" disabled />
           </div>
+
+          <div class="form-group">
+            <label for="streetaddress">Street Address</label>
+            <input type="text" id="streetaddress" name="streetaddress" value="{{ streetaddress }}" disabled />
+          </div>
+
+          <!-- Location: Show as text initially -->
+          <div class="form-group">
+            <label for="region">Region</label>
+            <input type="text" id="region-text" value="{{ region_name }}" disabled />
+            <select id="region" name="region" style="display:none;"></select>
+          </div>
+
+          <div class="form-group">
+            <label for="province">Province</label>
+            <input type="text" id="province-text" value="{{ province_name }}" disabled />
+            <select id="province" name="province" style="display:none;"></select>
+          </div>
+
+          <div class="form-group">
+            <label for="city">City</label>
+            <input type="text" id="city-text" value="{{ city_name }}" disabled />
+            <select id="city" name="city" style="display:none;"></select>
+          </div>
+
+          <div class="form-group">
+            <label for="barangay">Barangay</label>
+            <input type="text" id="barangay-text" value="{{ barangay_name }}" disabled />
+            <select id="barangay" name="barangay" style="display:none;"></select>
+          </div>
         </fieldset>
 
-        <!-- Emergency Contact -->
         <fieldset>
           <legend>Emergency Contact</legend>
+          <div class="form-group">
+            <label for="emergency-contact-name">Contact Person</label>
+            <input type="text" id="emergency-contact-name" name="emergencycontactname" value="{{ emergency_contact_name }}" disabled />
+          </div>
+
           <div class="form-group">
             <label for="emergency-contact">Contact Number</label>
             <input type="tel" id="emergency-contact" name="emergencycontactnumber" value="{{ emergency_contact }}" disabled />
           </div>
         </fieldset>
 
-        <!-- Change Password -->
         <fieldset>
           <legend>Change Password</legend>
           <div class="form-group">
             <label for="current-password">Current Password</label>
-            <input type="password" id="current-password" name="current_password" value="" disabled />
+            <input type="password" id="current-password" name="current_password" disabled />
           </div>
           <div class="form-group">
             <label for="new-password">New Password</label>
-            <input type="password" id="new-password" name="new_password" value="" disabled />
+            <input type="password" id="new-password" name="new_password" disabled />
           </div>
           <div class="form-group">
             <label for="confirm-password">Confirm New Password</label>
-            <input type="password" id="confirm-password" value="" disabled />
+            <input type="password" id="confirm-password" disabled />
           </div>
         </fieldset>
 
@@ -86,7 +125,203 @@
       </form>
     </main>
   </div>
-  <script src="{{ url_for('static', filename='user_profile.js') }}"></script>
 
-</body>
-</html>
+  <!-- <script src="{{ url_for('static', filename='user_profile.js') }}"></script> -->
+  <script>
+  const regionSelect = document.getElementById('region');
+  const provinceSelect = document.getElementById('province');
+  const citySelect = document.getElementById('city');
+  const barangaySelect = document.getElementById('barangay');
+  const form = document.getElementById('profileForm');
+
+  const inputsToToggle = [
+    'phone', 'streetaddress', 'emergency-contact', 'emergency-contact-name',
+    'current-password', 'new-password', 'confirm-password'
+  ];
+
+  const switchToDropdown = () => {
+    document.getElementById('region-text').style.display = 'none';
+    regionSelect.style.display = 'block';
+    document.getElementById('province-text').style.display = 'none';
+    provinceSelect.style.display = 'block';
+    document.getElementById('city-text').style.display = 'none';
+    citySelect.style.display = 'block';
+    document.getElementById('barangay-text').style.display = 'none';
+    barangaySelect.style.display = 'block';
+  };
+
+  const loadDropdowns = () => {
+    return fetch('/api/regions')
+      .then(res => res.json())
+      .then(data => {
+        regionSelect.innerHTML = '<option value="">Select region</option>' +
+          data.map(r => `<option value="${r.regionid}">${r.regionname}</option>`).join('');
+
+        regionSelect.addEventListener('change', () => {
+          const regionId = regionSelect.value;
+          provinceSelect.innerHTML = '<option value="">Loading...</option>';
+          citySelect.innerHTML = '<option value="">Select city</option>';
+          barangaySelect.innerHTML = '<option value="">Select barangay</option>';
+          if (!regionId) {
+            provinceSelect.innerHTML = '<option value="">Select province</option>';
+            return;
+          }
+          fetch(`/api/provinces?regionid=${regionId}`)
+            .then(res => res.json())
+            .then(provinces => {
+              provinceSelect.innerHTML = '<option value="">Select province</option>' +
+                provinces.map(p => `<option value="${p.provinceid}">${p.provincename}</option>`).join('');
+            });
+        });
+
+        provinceSelect.addEventListener('change', () => {
+          const provinceId = provinceSelect.value;
+          citySelect.innerHTML = '<option value="">Loading...</option>';
+          barangaySelect.innerHTML = '<option value="">Select barangay</option>';
+          if (!provinceId) {
+            citySelect.innerHTML = '<option value="">Select city</option>';
+            return;
+          }
+          fetch(`/api/cities?provinceid=${provinceId}`)
+            .then(res => res.json())
+            .then(cities => {
+              citySelect.innerHTML = '<option value="">Select city</option>' +
+                cities.map(c => `<option value="${c.cityid}">${c.cityname}</option>`).join('');
+            });
+        });
+
+        citySelect.addEventListener('change', () => {
+          const cityId = citySelect.value;
+          barangaySelect.innerHTML = '<option value="">Loading...</option>';
+          if (!cityId) {
+            barangaySelect.innerHTML = '<option value="">Select barangay</option>';
+            return;
+          }
+          fetch(`/api/barangays?cityid=${cityId}`)
+            .then(res => res.json())
+            .then(barangays => {
+              barangaySelect.innerHTML = '<option value="">Select barangay</option>' +
+                barangays.map(b => `<option value="${b.barangayid}">${b.barangayname}</option>`).join('');
+            });
+        });
+      });
+  };
+
+  const preselectLocation = () => {
+    const regionId = document.body.dataset.regionId;
+    const provinceId = document.body.dataset.provinceId;
+    const cityId = document.body.dataset.cityId;
+    const barangayId = document.body.dataset.barangayId;
+
+    if (!regionId) return;
+
+    regionSelect.value = regionId;
+
+    fetch(`/api/provinces?regionid=${regionId}`)
+      .then(res => res.json())
+      .then(provinces => {
+        provinceSelect.innerHTML = provinces.map(p => {
+          const id = p.provinceid || p.id;
+          const name = p.provincename || p.name;
+          return `<option value="${id}" ${id == provinceId ? 'selected' : ''}>${name}</option>`;
+        }).join('');
+        return fetch(`/api/cities?provinceid=${provinceId}`);
+      })
+      .then(res => res.json())
+      .then(cities => {
+        citySelect.innerHTML = cities.map(c => {
+          const id = c.cityid || c.id;
+          const name = c.cityname || c.name;
+          return `<option value="${id}" ${id == cityId ? 'selected' : ''}>${name}</option>`;
+        }).join('');
+        return fetch(`/api/barangays?cityid=${cityId}`);
+      })
+      .then(res => res.json())
+      .then(barangays => {
+        barangaySelect.innerHTML = barangays.map(b => {
+          const id = b.barangayid || b.id;
+          const name = b.barangayname || b.name;
+          return `<option value="${id}" ${id == barangayId ? 'selected' : ''}>${name}</option>`;
+        }).join('');
+      });
+  };
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const editBtn = document.getElementById('editBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const form = document.getElementById('profileForm');
+    
+
+    editBtn.addEventListener('click', () => {
+      saveBtn.disabled = false;
+      inputsToToggle.forEach(id => document.getElementById(id).disabled = false);
+      switchToDropdown();
+      loadDropdowns().then(() => {
+        preselectLocation();
+      });
+      editBtn.style.display = 'none';
+      saveBtn.style.display = 'inline-block';
+      cancelBtn.style.display = 'inline-block';
+    });
+
+    cancelBtn.addEventListener('click', () => location.reload());
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const payload = {
+        phone: document.getElementById('phone').value,
+        streetaddress: document.getElementById('streetaddress').value,
+        emergencycontactname: document.getElementById('emergency-contact-name').value,
+        emergencycontactnumber: document.getElementById('emergency-contact').value,
+        current_password: document.getElementById('current-password').value || undefined,
+        new_password: document.getElementById('new-password').value || undefined,
+        region: regionSelect.value,
+        province: provinceSelect.value,
+        city: citySelect.value,
+        barangay: barangaySelect.value
+      };
+
+      const response = await fetch("/userprofile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        const text = await response.text();  // fallback: HTML error page
+        console.error("Error response:", text);
+        alert("Error: " + response.status + " " + response.statusText);
+        return;
+      }
+
+      // Now it's safe to parse
+      const result = await response.json();
+      alert(result.message || "Saved!");
+
+      // Disable inputs again
+      inputsToToggle.forEach(id => document.getElementById(id).disabled = true);
+
+      // Hide dropdowns, show text fields
+      document.getElementById('region-text').style.display = 'block';
+      regionSelect.style.display = 'none';
+
+      document.getElementById('province-text').style.display = 'block';
+      provinceSelect.style.display = 'none';
+
+      document.getElementById('city-text').style.display = 'block';
+      citySelect.style.display = 'none';
+
+      document.getElementById('barangay-text').style.display = 'block';
+      barangaySelect.style.display = 'none';
+
+      // Reset button visibility
+      document.getElementById('editBtn').style.display = 'inline-block';
+      document.getElementById('saveBtn').style.display = 'none';
+      document.getElementById('cancelBtn').style.display = 'none';
+
+      window.location.reload();
+    });
+  }); // 👈 this closes DOMContentLoaded listener
+</script>
