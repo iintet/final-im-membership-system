@@ -25,37 +25,52 @@
   </div>
 
   <div class="main-content">
-    <a href="{{ url_for('views.admin_member_management') }}" class="back-btn emphasized">← Back to Member Management</a>
+  <h1>Member Management</h1>
+  <hr />
 
-    <h1>Member Details</h1>
-
-    <!-- Search Bar -->
-    <div class="search-section">
-      <form action="{{ url_for('views.admin_member_management') }}" method="get">
-        <input type="text" name="search" placeholder="Search by name or email..." value="{{ search_query or '' }}" required>
-        <button type="submit">Search</button>
-        {% if search_query %}
-          <a href="{{ url_for('views.admin_member_management') }}" class="clear-search">Clear</a>
-        {% endif %}
-      </form>
-    </div>
-
-    <!-- Member List -->
-    <div class="member-list">
-      {% if members %}
-        <ul>
-          {% for member in members %}
-            <li>
-              <strong>{{ member.firstname }} {{ member.lastname }}</strong><br>
-              Email: {{ member.email }}<br>
-              Phone: {{ member.emergencycontactnumber }}
-            </li>
-          {% endfor %}
-        </ul>
-      {% else %}
-        <p>No members found{% if search_query %} for "{{ search_query }}"{% endif %}.</p>
-      {% endif %}
-    </div>
+  <!-- Search Section -->
+  <div class="form-section">
+    <h2>Search Members</h2>
+    <form class="simple-search-form">
+      <input type="text" name="query" placeholder="Search by name or email..." />
+      <button type="submit">Search</button>
+    </form>
   </div>
+
+  <!-- Member Profiles Section (moved correctly below) -->
+  <div class="profile-section">
+    <h2>Member Profiles</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Membership</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Juan Dela Cruz</td>
+          <td>juan@example.com</td>
+          <td>Active</td>
+          <td>
+            <a href="admin_member_management_view.html" class="view-btn">View</a>
+            <a href="admin_member_management_edit.html" class="edit-btn">Edit</a>
+          </td>
+        </tr>
+        <tr>
+          <td>Maria Santos</td>
+          <td>maria@example.com</td>
+          <td>Inactive</td>
+          <td>
+            <a href="admin_member_management_view.html" class="view-btn">View</a>
+            <a href="admin_member_management_edit.html" class="edit-btn">Edit</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 </body>
 </html>
