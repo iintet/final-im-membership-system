@@ -12,12 +12,12 @@
     <div class="logo">MRSYS</div>
     <nav>
       <a href="#" class="active">Home</a>
-      <a href="admin_member_management.html">Member Management</a>
-      <a href="admin_membership_management.html">Membership Management</a>
-      <a href="admin_billing_payment.html">Billing & Payment</a>
-      <a href="admin_event_management.html">Event Management</a>
-      <a href="admin_committee_dashboard.html">Committee Dashboard</a>
-      <a href="admin_staff_management.html">Staff Management</a>
+      <a href="{{ url_for('views.admin_member_management') }}">Member Management</a>
+      <a href="{{ url_for('views.admin_membership_management') }}">Membership Management</a>
+      <a href="{{ url_for('views.admin_billing_payment') }}">Billing & Payment</a>
+      <a href="{{ url_for('views.admin_event_management') }}">Event Management</a>
+      <a href="{{ url_for('views.admin_committee_dashboard') }}">Committee Dashboard</a>
+      <a href="{{ url_for('views.admin_staff_management') }}">Staff Management</a>
     </nav>
     <div class="logout">
       <a href="{{ url_for('views.home') }}">Log Out</a>
@@ -31,15 +31,15 @@
     <div class="dashboard-grid">
       <div class="card">
         <h2>Total Members</h2>
-        <p>1,250</p>
+        <p>{{ total_members }}</p>
       </div>
       <div class="card">
         <h2>Active Memberships</h2>
-        <p>980</p>
+        <p>{{ active_memberships }}</p>
       </div>
       <div class="card">
         <h2>Upcoming Events</h2>
-        <p>3</p>
+        <p>{{ upcoming_events }}</p>
       </div>
     </div>
 
@@ -55,7 +55,7 @@
       </div>
       <div class="card actions">
         <h2>Quick Actions</h2>
-        <button class="light-blue">Register New Member</button>
+        <!-- <button class="light-blue" onclick="location.href='{{ url_for('views.admin_membership_management') }}'">Register New Member</button> -->
         <button class="medium-blue">Create New Event</button>
         <button class="dark-blue">View Billing Summary</button>
       </div>

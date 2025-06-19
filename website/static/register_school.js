@@ -1,8 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const regionSelect = document.getElementById('sch-region');
-    const provinceSelect = document.getElementById('sch-province');
-    const citySelect = document.getElementById('sch-city');
+    const regionSelect = document.getElementById('school-region');
+    const provinceSelect = document.getElementById('school-province');
+    const citySelect = document.getElementById('school-city');
  
+    
 
     
     fetch('/api/regions')

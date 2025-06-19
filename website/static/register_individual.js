@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const citySelect = document.getElementById('school-city');
     const schoolSelect = document.getElementById('school-name');
 
-    fetch('/api/schregion')
+    fetch('/api/schregions')
         .then(res => {
             if (!res.ok) {
                 throw new Error('Network response was not ok');

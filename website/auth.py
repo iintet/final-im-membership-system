@@ -4,6 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import re
 from . import auth  # adjust this based on your blueprint
 import logging
+import traceback
 
 auth = Blueprint('auth', __name__)
 
@@ -83,174 +84,158 @@ def register():
     if request.method == 'GET':
         return render_template('register.html')
 
-    data = request.get_json() or {}
-
-    email = data.get('email')
-    password = data.get('password')
-    role = data.get('role')
-
-    # Validation
-    if not email or not password or not role:
-        return jsonify({"error": "Missing required fields"}), 400
-
     try:
-        # Clean emergency contact
-        if role == 'individual':
-            emergencycontactname = data.get('individual-emergency-contact-name')
-            emergencycontactnumber = clean_phone(data.get('individual-emergency-contact-number'))
-        elif role == 'institution':
+        data = request.get_json() or {}
+        print("Received registration data:", data)
+
+        required_fields = ['email', 'password', 'role']
+        for field in required_fields:
+            if not data.get(field):
+                return jsonify({"error": f"{field} is required"}), 400
+
+        email = data['email']
+        password = data['password']
+        role = data['role']
+        affiliation_type = data.get("affiliation-type")
+
+        # 🔍 Duplicate email check
+        existing = supabase.table("member").select("email").eq("email", email).maybe_single().execute()
+        if existing and existing.get("data"):
+            return jsonify({"error": "Email already registered."}), 400
+
+        def safe_int(val, field):
+            try:
+                return int(val)
+            except (ValueError, TypeError):
+                raise ValueError(f"Invalid or missing value for {field}")
+
+        # 🔧 Address handling
+        if role == 'institution':
+            region = safe_int(data.get("inst-region"), "region")
+            province = safe_int(data.get("inst-province"), "province")
+            city = safe_int(data.get("inst-city"), "city")
+            barangay = safe_int(data.get("inst-barangay"), "barangay")
+            street = data.get("inst-street")
             emergencycontactname = data.get('institution-emergency-contact-name')
             emergencycontactnumber = clean_phone(data.get('institution-emergencycontactnumber'))
+
+        elif role == 'individual':
+            region = safe_int(data.get("region"), "region")
+            province = safe_int(data.get("province"), "province")
+            city = safe_int(data.get("city"), "city")
+            barangay = safe_int(data.get("barangay"), "barangay")
+            street = data.get("street")
+            emergencycontactname = data.get('individual-emergency-contact-name')
+            emergencycontactnumber = clean_phone(data.get('individual-emergency-contact-number'))
+
         else:
             return jsonify({"error": "Invalid role"}), 400
 
-        # Hash password
         hashed_password = generate_password_hash(password)
 
-        # Insert into member
         member_data = {
             "email": email,
             "password": hashed_password,
             "role": role,
             "status": "active",
-            "region": int(data.get("region")),
-            "province": int(data.get("province")),
-            "city": int(data.get("city")),
-            "barangay": int(data.get("barangay")),
-            "streetaddress": data.get("street"),
+            "region": region,
+            "province": province,
+            "city": city,
+            "barangay": barangay,
+            "streetaddress": street,
             "emergencycontactname": emergencycontactname,
             "emergencycontactnumber": emergencycontactnumber
         }
-        organization_name = data.get('organization-name')
-        organization_address = data.get('organization-address')
 
-        existing_org = supabase.table("organization") \
-            .select("organizationid") \
-            .eq("name", organization_name) \
-            .maybe_single() \
-            .execute()
-
-        if existing_org.data:
-            organizationid = existing_org.data['organizationid']
-        else:
-            # Insert and get the new ID
-            org_insert = supabase.table("organization").insert({
-                "name": organization_name,
-                "address": organization_address
-            }).execute()
-            organizationid = org_insert.data[0]['organizationid']
-        existing_org = supabase.table("organization") \
-            .select("organizationid") \
-            .eq("name", organization_name) \
-            .maybe_single() \
-            .execute()
-
-        if existing_org.data:
-            organizationid = existing_org.data['organizationid']
-        else:
-            # Insert and get the new ID
-            org_insert = supabase.table("organization").insert({
-                "name": organization_name,
-                "address": organization_address
-            }).execute()
-            organizationid = org_insert.data[0]['organizationid']
+        # 🧩 Now we insert the member first
         member_response = supabase.table("member").insert(member_data).execute()
         if not member_response.data:
-            raise Exception("Failed to insert member. No data returned from Supabase.")
-
-        schoolid = None
-        schoolid = None
-        
-        
-        # ✅ Get the generated memberid
+            raise Exception("Failed to insert member.")
         memberid = member_response.data[0]['memberid']
 
-        # Insert into role-specific table
-        if role == 'individual':
-            phone = clean_phone(data.get('phone'))
-            affiliation_type = data.get('affiliation-type')
-            schoolid = data.get('school-name') if affiliation_type == 'school' else None
-            
-            schoolid = None
-        if affiliation_type == 'school':
-            school_name = data.get('school-name')
-            school_region = int(data.get('school-region'))
-            school_province = int(data.get('school-province'))
-            school_city = int(data.get('school-city'))
-            school_type = data.get('school-type')
+        # 🛡️ Add rollback protection
+        try:
+            if role == "individual":
+                phone = clean_phone(data.get("phone"))
+                schoolid = None
+                organizationid = None
 
-            # Check if the school already exists
-            existing_school = supabase.table("school") \
-                .select("schoolid") \
-                .eq("name", school_name) \
-                .maybe_single() \
-                .execute()
+                if affiliation_type == "organization":
+                    org_name = data.get("organization-name")
+                    org_address = data.get("organization-address")
 
-            if existing_school.data:
-                schoolid = existing_school.data['schoolid']
-            else:
-                # Insert school and fetch the generated ID again
-                supabase.table("school").insert({
-                    "name": school_name,
-                    "region": school_region,
-                    "province": school_province,
-                    "city": school_city,
-                    "type": school_type
-                }).execute()
+                    if org_name:
+                        org_insert = supabase.table("organization").upsert(
+                            {
+                                "name": org_name,
+                                "address": org_address
+                            },
+                            on_conflict="name",
+                            returning="representation"
+                        ).execute()
 
-                # Now re-fetch the schoolid
-                schoolid_lookup = supabase.table("school") \
-                    .select("schoolid") \
-                    .eq("name", school_name) \
-                    .maybe_single() \
-                    .execute()
-        
-        if schoolid_lookup.data:
-            schoolid = schoolid_lookup.data['schoolid']
-        else:
-            raise Exception("Failed to retrieve schoolid after insertion.")
-        
-        individual_data = {
-            "memberid": memberid,
-            "lastname": data.get("last-name"),
-            "firstname": data.get("first-name"),
-            "middlename": data.get("middle-name"),
-            "gender": data.get("gender"),
-            "dateofbirth": data.get("dob"),
-            "phone": phone,
-            "affiliationtype": affiliation_type,
-            "schoolid": schoolid,
-            "organizationid": organizationid
-        }
+                        if org_insert.data and "id" in org_insert.data[0]:
+                            organizationid = org_insert.data[0]["id"]
+                        else:
+                            raise Exception("Organization insert failed or ID missing")
+                    else:
+                        # fallback: don't assign organizationid if name is empty
+                        organizationid = None
 
-        individual_response = supabase.table("individual").insert(individual_data).execute()
-        if not individual_response.data:
-            raise Exception(individual_response.error)
+                if affiliation_type == "school":
+                    schoolid = int(data.get("school-name"))  # Direct ID from dropdown
 
-        elif role == 'institution':
-            inst_data = {
+                individual_data = {
+                    "memberid": memberid,
+                    "lastname": data.get("last-name"),
+                    "firstname": data.get("first-name"),
+                    "middlename": data.get("middle-name"),
+                    "gender": data.get("gender"),
+                    "dateofbirth": data.get("dob"),
+                    "phone": phone,
+                    "affiliationtype": affiliation_type,
+                    "schoolid": schoolid,
+                    "organizationid": organizationid
+                }
+
+                supabase.table("individual").insert(individual_data).execute()
+
+            elif role == "institution":
+                inst_data = {
+                    "memberid": memberid,
+                    "name": data.get("institution-name"),
+                    "representativelastname": data.get("rep-last-name"),
+                    "representativefirstname": data.get("rep-first-name"),
+                    "representativemiddlename": data.get("rep-middle-name"),
+                    "representativecontactnumber": clean_phone(data.get("rep-contact")),
+                    "type": data.get("institution-type")
+                }
+
+                supabase.table("institutional").insert(inst_data).execute()
+
+            # ✅ Auto-create Membership Registration Record
+            supabase.table("membershipregistration").insert({
                 "memberid": memberid,
-                "name": data.get("institution-name"),
-                "representativelastname": data.get("rep-last-name"),
-                "representativefirstname": data.get("rep-first-name"),
-                "representativemiddlename": data.get("rep-middle-name"),
-                "representativecontactnumber": clean_phone(data.get("rep-contact")),
-                "type": data.get("institution-type")
-            }
+                "typeid": 1,
+                # HARDCODE
+                "status": "Pending",
+                "startdate": None,
+                "enddate": None
+            }).execute()
 
-            inst_response = supabase.table("institutional").insert(inst_data).execute()
-            if not inst_response.data:
-                raise Exception(inst_response.error)
+        except Exception as nested_error:
+            supabase.table("member").delete().eq("memberid", memberid).execute()
+            raise nested_error
 
-        # Optional: Set session
         session['user_type'] = 'member'
         session['member_id'] = memberid
 
-        return jsonify({"message": "Registration successful", "memberid": memberid}), 200
+        return jsonify({'message': 'Registration successful'})
 
     except Exception as e:
-        print("❌ Registration failed:", e)
-        return jsonify({"error": "Failed to register user"}), 500
+        print("Registration error:", e)
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
 
 
 # -- AUTH LOGOUT --
