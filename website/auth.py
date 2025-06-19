@@ -88,6 +88,7 @@ def register():
     email = data.get('email')
     password = data.get('password')
     role = data.get('role')
+    memberid = data.get('memberid')
 
     if not email or not password or not role:
         return jsonify({"error": "Missing required fields"}), 400
@@ -100,56 +101,64 @@ def register():
     # Hash the password
     hashed_password = generate_password_hash(password)
 
-    user_data = {
-        'email': email,
-        'password': hashed_password,
-        'role': role,
-        'status': 'active',
-        'streetaddress': data.get('streetaddress', ''),
-        'emergencycontactname': data.get('emergencycontactname', ''),
-        'emergencycontactnumber': phone_clean,
-        'region': data.get('region'),
-        'province': data.get('province'),
-        'city': data.get('city'),
-        'barangay': data.get('barangay')
-    }
-
-    if role == 'individual':
-        user_data.update({
-            'memberid': data.get('memberid'),
-            'lastname': data.get('last-name'),
-            'firstname': data.get('first-name'),
-            'middlename': data.get('middle-name'),
-            'gender': data.get('gender'),
-            'dateofbirth': data.get('dob'),
-            'phone': data.get('phone')
-        })
-    elif role == 'institution':
-        user_data.update({
-            'memberid': data.get('memberid'),
-            'name': data.get('institution-name'),
-            'representativelastname': data.get('rep-last-name'),
-            'representativefirstname': data.get('rep-first-name'),
-            'representativemiddlename': data.get('rep-middle-name'),
-            'representativecontactnumber': data.get('rep-contact')
-        })
-
     try:
-        response = supabase.table('member').insert(user_data).execute()
-        logging.info(f"Supabase insert response: {response}")
+        supabase.table('member').insert({
+            'memberid': memberid,
+            'email': email,
+            'password': hashed_password,
+            'role': role,
+            'status': 'active'
+        }).execute()
+    except Exception as e:
+        return jsonify({"error": "Failed to create member"}), 500
 
-        if hasattr(response, 'error') and response.error:
-            return jsonify({"error": str(response.error)}), 500
+    # Insert into individual or institution table
+    try:
+        if role == 'individual':
+            individual_data = {
+                'lastname': data.get('last-name'),
+                'firstname': data.get('first-name'),
+                'middlename': data.get('middle-name'),
+                'gender': data.get('gender'),
+                'dateofbirth': data.get('dob'),
+                'phone': data.get('phone'),
+                'streetaddress': data.get('streetaddress'),
+                'emergencycontactname': data.get('emergencycontactname'),
+                'emergencycontactnumber': data.get('emergencycontactnumber'),
+                'region': data.get('region'),
+                'province': data.get('province'),
+                'city': data.get('city'),
+                'barangay': data.get('barangay'),
+            }
+            supabase.table('individual').insert(individual_data).execute()
 
-        # Optionally set session
-        session['user_email'] = email
+        elif role == 'institution':
+            institution_data = {
+                'name': data.get('institution-name'),
+                'representativelastname': data.get('rep-last-name'),
+                'representativefirstname': data.get('rep-first-name'),
+                'representativemiddlename': data.get('rep-middle-name'),
+                'representativecontactnumber': data.get('rep-contact'),
+                'streetaddress': data.get('streetaddress'),
+                'emergencycontactname': data.get('emergencycontactname'),
+                'emergencycontactnumber': data.get('emergencycontactnumber'),
+                'region': data.get('region'),
+                'province': data.get('province'),
+                'city': data.get('city'),
+                'barangay': data.get('barangay'),
+            }
+            supabase.table('institution').insert(institution_data).execute()
 
-        # Redirect to dashboard
-        return redirect(url_for('views.dashboard'))  # adjust 'views.dashboard' to match your route name
+        # Auto-login (optional)
+        session['user_type'] = 'member'
+        session['member_id'] = memberid
+
+        return jsonify({"message": "Registration successful"}), 200
 
     except Exception as e:
-        logging.error(f"Error inserting user: {e}")
-        return jsonify({"error": str(e)}), 500
+        # Clean up the member if the individual/institution insert fails
+        supabase.table('member').delete().eq('memberid', memberid).execute()
+        return jsonify({"error": "Failed to insert user data"}), 500
 
 
 

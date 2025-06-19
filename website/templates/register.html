@@ -103,17 +103,18 @@
           </div>
           <div class="form-group">
             <label for="emergency-contact-name">Emergency Contact Name</label>
-            <input type="text" id="emergency-contact-name" name="emergency-contact-name" required>
+            <input type="text" id="emergency-contact-name-indiv" name="emergency-contact-name" required>
           </div>
           <div class="form-group">
             <label for="emergency-contact-number">Emergency Contact Number</label>
             <input
               type="tel"
-              id="emergency-contact-number"
-              name="emergency-contact-number"
+              id="emergency-contact-number-indiv"
+              name="emergencycontactnumber"
               pattern="^(09)[0-9]{9}$"
-              title="Please enter a valid 11-digit Philippine mobile number starting with 09"
-              required/>
+              title="Must be 11 digits starting with 09"
+              required
+            />
           </div>
           <div class="form-group">
             <label for="affiliation-type">Affiliation Type</label>
@@ -224,17 +225,23 @@
         </div>
         <div class="form-group">
           <label for="emergency-contact-name">Emergency Contact Name</label>
-          <input type="text" id="emergency-contact-name" name="emergency-contact-name" required>
+          <input type="text" id="emergency-contact-name-inst" name="emergency-contact-name" required>
         </div>
         <div class="form-group">
           <label for="emergency-contact-number">Emergency Contact Number</label>
-          <input type="tel" id="emergency-contact-number" name="emergency-contact-number" required>
-        </div>
+          <input
+            type="tel"
+            id="emergency-contact-number-inst"
+            name="emergencycontactnumber"
+            pattern="^(09)[0-9]{9}$"
+            title="Must be 11 digits starting with 09"
+            required
+          />
       </div>
 
       <button type="submit">Register</button>
     </form>
-    <p>Already have an account? <a href="login.html">Log in here</a></p>
+    <p>Already have an account? <a href="{{ url_for('auth.login') }}">Log in here</a></p>
   </main>
 
   <script>

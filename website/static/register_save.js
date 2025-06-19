@@ -2,7 +2,10 @@ document.getElementById("registrationForm").addEventListener("submit", function 
   event.preventDefault();
 
   const formData = new FormData(this);
+
+  // Convert to object
   const json = Object.fromEntries(formData.entries());
+  console.log("FormData JSON to be sent:", json); // ✅ DEBUG
 
   fetch("/auth/register", {
     method: "POST",
@@ -11,17 +14,18 @@ document.getElementById("registrationForm").addEventListener("submit", function 
     },
     body: JSON.stringify(json)
   })
-    .then(response => {
+    .then(async response => {
+      const result = await response.json();
       if (!response.ok) {
-        throw new Error("Registration failed");
+        console.error("Registration failed:", result.error);
+        alert(result.error || "Registration failed");
+        return;
       }
-      return response.json();
-    })
-    .then(data => {
-      console.log("Success:", data);
-      window.location.href = "/userdashboard";
+      console.log("Registration success:", result);
+      window.location.href = "/auth/login"; // or /userdashboard if needed
     })
     .catch(error => {
-      console.error("Error:", error);
+      console.error("Fetch error:", error);
+      alert("Something went wrong while registering.");
     });
 });
