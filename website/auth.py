@@ -99,12 +99,9 @@ def register():
         affiliation_type = data.get("affiliation-type")
 
         # 🔍 Duplicate email check
-        # 🔍 Duplicate email check with None-safe handling
         existing = supabase.table("member").select("email").eq("email", email).maybe_single().execute()
-
         if existing and existing.get("data"):
             return jsonify({"error": "Email already registered."}), 400
-
 
         def safe_int(val, field):
             try:
@@ -121,6 +118,7 @@ def register():
             street = data.get("inst-street")
             emergencycontactname = data.get('institution-emergency-contact-name')
             emergencycontactnumber = clean_phone(data.get('institution-emergencycontactnumber'))
+
         elif role == 'individual':
             region = safe_int(data.get("region"), "region")
             province = safe_int(data.get("province"), "province")
@@ -129,6 +127,7 @@ def register():
             street = data.get("street")
             emergencycontactname = data.get('individual-emergency-contact-name')
             emergencycontactnumber = clean_phone(data.get('individual-emergency-contact-number'))
+
         else:
             return jsonify({"error": "Invalid role"}), 400
 
@@ -148,21 +147,6 @@ def register():
             "emergencycontactnumber": emergencycontactnumber
         }
 
-        # Optional: Handle organization
-        organizationid = None
-        org_name = data.get("organization-name")
-        org_address = data.get("organization-address")
-        if org_name:
-            existing_org = supabase.table("organization").select("organizationid").eq("name", org_name).maybe_single().execute()
-            if existing_org.data:
-                organizationid = existing_org.data["organizationid"]
-            else:
-                inserted = supabase.table("organization").insert({
-                    "name": org_name,
-                    "address": org_address
-                }).execute()
-                organizationid = inserted.data[0]["organizationid"]
-
         # 🧩 Now we insert the member first
         member_response = supabase.table("member").insert(member_data).execute()
         if not member_response.data:
@@ -174,32 +158,32 @@ def register():
             if role == "individual":
                 phone = clean_phone(data.get("phone"))
                 schoolid = None
+                organizationid = None
+
+                if affiliation_type == "organization":
+                    org_name = data.get("organization-name")
+                    org_address = data.get("organization-address")
+
+                    if org_name:
+                        org_insert = supabase.table("organization").upsert(
+                            {
+                                "name": org_name,
+                                "address": org_address
+                            },
+                            on_conflict="name",
+                            returning="representation"
+                        ).execute()
+
+                        if org_insert.data and "id" in org_insert.data[0]:
+                            organizationid = org_insert.data[0]["id"]
+                        else:
+                            raise Exception("Organization insert failed or ID missing")
+                    else:
+                        # fallback: don't assign organizationid if name is empty
+                        organizationid = None
 
                 if affiliation_type == "school":
-                    school_name = data.get("school-name")
-                    school_region = safe_int(data.get("school-region"), "school-region")
-                    school_province = safe_int(data.get("school-province"), "school-province")
-                    school_city = safe_int(data.get("school-city"), "school-city")
-                    school_type = data.get("school-type")
-
-                    school_lookup = supabase.table("school").select("schoolid") \
-                        .eq("name", school_name).maybe_single().execute()
-                    if school_lookup.data:
-                        schoolid = school_lookup.data["schoolid"]
-                    else:
-                        supabase.table("school").insert({
-                            "name": school_name,
-                            "region": school_region,
-                            "province": school_province,
-                            "city": school_city,
-                            "type": school_type
-                        }).execute()
-
-                        recheck = supabase.table("school").select("schoolid") \
-                            .eq("name", school_name).maybe_single().execute()
-                        if not recheck.data:
-                            raise Exception("Failed to get school ID after insert.")
-                        schoolid = recheck.data["schoolid"]
+                    schoolid = int(data.get("school-name"))  # Direct ID from dropdown
 
                 individual_data = {
                     "memberid": memberid,
@@ -229,10 +213,19 @@ def register():
 
                 supabase.table("institutional").insert(inst_data).execute()
 
+            # ✅ Auto-create Membership Registration Record
+            supabase.table("membershipregistration").insert({
+                "memberid": memberid,
+                "typeid": 1,
+                # HARDCODE
+                "status": "Pending",
+                "startdate": None,
+                "enddate": None
+            }).execute()
+
         except Exception as nested_error:
-            # 💣 Cleanup: rollback member if the second insert failed
             supabase.table("member").delete().eq("memberid", memberid).execute()
-            raise nested_error  # re-raise to be caught by outer except
+            raise nested_error
 
         session['user_type'] = 'member'
         session['member_id'] = memberid
@@ -243,6 +236,7 @@ def register():
         print("Registration error:", e)
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
+
 
 # -- AUTH LOGOUT --
 @auth.route('auth/logout', methods=['POST'])
