@@ -267,7 +267,24 @@ def get_schcities():
 def admin_dashboard():
     if session.get('user_type') != 'staff':
         return redirect('/')
-    return render_template('admin_dashboard.html')
+     # Total Members
+    total_members_resp = supabase.table("member").select("*", count="exact").execute()
+    total_members = total_members_resp.count or 0
+
+    # Active Memberships (status = 'Active')
+    active_memberships_resp = supabase.table("membershipregistration").select("*", count="exact").eq("status", "Active").execute()
+    active_memberships = active_memberships_resp.count or 0
+
+    # Upcoming Events (eventdate >= today)
+    from datetime import date
+    today = str(date.today())
+    upcoming_events_resp = supabase.table("event").select("*", count="exact").gte("eventdate", today).execute()
+    upcoming_events = upcoming_events_resp.count or 0
+
+    return render_template("admin_dashboard.html",
+                           total_members=total_members,
+                           active_memberships=active_memberships,
+                           upcoming_events=upcoming_events)
 
 # -- MEMBER DASHBOARD --
 @views.route('/userdashboard', methods=['GET'])
@@ -452,10 +469,6 @@ def update_profile(data, member_id):
             return jsonify({'message': 'Failed to update password: ' + str(password_update_response['error'])}), 500
 
     return jsonify({'message': 'Profile updated successfully'})
-
-
-
-
 
 @views.route('/userbillingpayment')
 def billingpayment():
