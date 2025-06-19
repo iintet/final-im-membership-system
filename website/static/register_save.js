@@ -1,32 +1,27 @@
-document.getElementById("registrationForm").addEventListener("submit", function(event) {
-    event.preventDefault();
+document.getElementById("registrationForm").addEventListener("submit", function (event) {
+  event.preventDefault();
 
-    const formData = new FormData(this);
-    const data = {};
+  const formData = new FormData(this);
+  const json = Object.fromEntries(formData.entries());
 
-    formData.forEach((value, key) => {
-        data[key] = value;
-    });
-
-    fetch('/auth/register', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    })
+  fetch("/auth/register", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(json)
+  })
     .then(response => {
-        if (!response.ok) {
-            return response.json().then(err => { throw new Error(err.error); });
-        }
-        return response.json();
+      if (!response.ok) {
+        throw new Error("Registration failed");
+      }
+      return response.json();
     })
     .then(data => {
-        alert(data.message);
-        window.location.href = "/userdashboard"; // Redirect to user dashboard
+      console.log("Success:", data);
+      window.location.href = "/userdashboard";
     })
     .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred during registration: ' + error.message);
+      console.error("Error:", error);
     });
 });
