@@ -75,6 +75,7 @@ def admin_committee_dashboard():
 @views.route('/admin/staff')
 def admin_staff_management():
     return render_template('admin_staff_management.html')
+
 # API endpoints to fetch locations data from Supabase
 @views.route('/api/regions', methods=['GET'])
 def get_regions():
@@ -92,7 +93,78 @@ def get_regions():
     except Exception as e:
         logging.error(f"Error fetching regions: {str(e)}")  # Log the error
         return jsonify({'error': str(e)}), 500
+@views.route('/api/provinces', methods=['GET'])
+def get_provinces():
+    region_id = request.args.get('regionid')
+    try:
+        response = supabase.table('province').select('*').eq('regionid', region_id).execute()
+        if hasattr(response, 'error') and response.error:
+            return jsonify({'error': str(response.error)}), 500
+        return jsonify(response.data), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+@views.route('/api/cities', methods=['GET'])
+def get_cities():
+    province_id = request.args.get('provinceid')
+    try:
+        response = supabase.table('city').select('*').eq('provinceid', province_id).execute()
+        if hasattr(response, 'error') and response.error:
+            return jsonify({'error': str(response.error)}), 500
+        return jsonify(response.data), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
+@views.route('/api/barangays', methods=['GET'])
+def get_barangays():
+    city_id = request.args.get('barangayid')
+    try:
+        response = supabase.table('barangay').select('*').eq('cityid', city_id).execute()
+        if hasattr(response, 'error') and response.error:
+            return jsonify({'error': str(response.error)}), 500
+        return jsonify(response.data), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+@views.route('/api/instregions', methods=['GET'])
+def get_instregions():
+    try:
+        response = supabase.table('region').select('*').execute()
+        logging.info(f"Supabase response: {response}")  # Log the response for debugging
+        
+        if hasattr(response, 'error') and response.error:
+            return jsonify({'error': str(response.error)}), 500
+        
+        if response.data is None or not isinstance(response.data, list):
+            return jsonify({'error': 'No data found or invalid data format'}), 404
+        
+        return jsonify(response.data), 200
+    except Exception as e:
+        logging.error(f"Error fetching regions: {str(e)}")  # Log the error
+        return jsonify({'error': str(e)}), 500
+    
+@views.route('/api/instprovinces', methods=['GET'])
+def get_instprovinces():
+    region_id = request.args.get('regionid')
+    try:
+        response = supabase.table('province').select('*').eq('regionid', region_id).execute()
+        if hasattr(response, 'error') and response.error:
+            return jsonify({'error': str(response.error)}), 500
+        return jsonify(response.data), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+@views.route('/api/instcities', methods=['GET'])
+def get_instcities():
+    province_id = request.args.get('provinceid')
+    try:
+        response = supabase.table('city').select('*').eq('provinceid', province_id).execute()
+        if hasattr(response, 'error') and response.error:
+            return jsonify({'error': str(response.error)}), 500
+        return jsonify(response.data), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+     
 @views.route('/api/schnames', methods=['GET'])
 def get_schnames():
     city_id = request.args.get('cityid')
@@ -132,38 +204,7 @@ def get_school_type():
         logging.error(f"Error fetching school type: {str(e)}")
         return jsonify({'error': 'Internal server error'}), 500
 
-@views.route('/api/provinces', methods=['GET'])
-def get_provinces():
-    region_id = request.args.get('regionid')
-    try:
-        response = supabase.table('province').select('*').eq('regionid', region_id).execute()
-        if hasattr(response, 'error') and response.error:
-            return jsonify({'error': str(response.error)}), 500
-        return jsonify(response.data), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-    
-@views.route('/api/cities', methods=['GET'])
-def get_cities():
-    province_id = request.args.get('provinceid')
-    try:
-        response = supabase.table('city').select('*').eq('provinceid', province_id).execute()
-        if hasattr(response, 'error') and response.error:
-            return jsonify({'error': str(response.error)}), 500
-        return jsonify(response.data), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-    
-@views.route('/api/barangays', methods=['GET'])
-def get_barangays():
-    city_id = request.args.get('cityid')
-    try:
-        response = supabase.table('barangay').select('*').eq('cityid', city_id).execute()
-        if hasattr(response, 'error') and response.error:
-            return jsonify({'error': str(response.error)}), 500
-        return jsonify(response.data), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+
     
 
 # -- API FOR SCHOOL ADDRESS --
@@ -236,7 +277,7 @@ def userdashboard():
         data = info_resp.data[0]
         fullname = f"{data['firstname']} {data['lastname']}"
 
-    elif role == 'institutional':
+    elif role == 'institution':
         info_resp = supabase.table('institution').select('representativename').eq('memberid', member_id).execute()
         if not info_resp.data:
             return "Institution info not found", 404

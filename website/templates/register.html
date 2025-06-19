@@ -28,9 +28,18 @@
   <main class="register-container">
     <h2>Register</h2>
     <form id="registrationForm">
-      <div class="form-group"><label for="email">Email</label><input type="email" id="email" name="email" required></div>
-      <div class="form-group"><label for="password">Password</label><input type="password" id="password" name="password" required></div>
-      <div class="form-group"><label for="confirm-password">Confirm Password</label><input type="password" id="confirm-password" name="confirm-password" required></div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+      </div>
+      <div class="form-group">
+        <label for="confirm-password">Confirm Password</label>
+        <input type="password" id="confirm-password" name="confirm-password" required>
+      </div>
 
       <!-- Select Role Field -->
       <div class="form-group">
@@ -42,8 +51,9 @@
         </select>
       </div>
 
- <div id="individual-fields" style="display: none;">
-        <div class="field-container"> <!-- Container for individual fields -->
+      <!-- Individual Fields -->
+      <div id="individual-fields" style="display: none;">
+        <div class="field-container">
           <div class="form-group">
             <label for="first-name">First Name</label>
             <input type="text" id="first-name" name="first-name" required>
@@ -103,18 +113,11 @@
           </div>
           <div class="form-group">
             <label for="emergency-contact-name">Emergency Contact Name</label>
-            <input type="text" id="emergency-contact-name-indiv" name="emergency-contact-name" required>
+            <input type="text" name="individual-emergency-contact-name" id="emergency-contact-name-indiv">
           </div>
           <div class="form-group">
             <label for="emergency-contact-number">Emergency Contact Number</label>
-            <input
-              type="tel"
-              id="emergency-contact-number-indiv"
-              name="emergencycontactnumber"
-              pattern="^(09)[0-9]{9}$"
-              title="Must be 11 digits starting with 09"
-              required
-            />
+            <input type="tel" name="individual-emergency-contact-number" id="emergency-contact-number-indiv">
           </div>
           <div class="form-group">
             <label for="affiliation-type">Affiliation Type</label>
@@ -164,10 +167,11 @@
               <input type="text" id="school-type" name="school-type" readonly>
             </div>
           </div>
-        </div> <!-- End of field-container -->
+        </div>
       </div>
 
-       <div id="institution-fields" style="display: none;">
+      <!-- Institution Fields -->
+      <div id="institution-fields" style="display: none;">
         <div class="form-group">
           <label for="institution-name">Institution Name</label>
           <input type="text" id="institution-name" name="institution-name">
@@ -225,18 +229,12 @@
         </div>
         <div class="form-group">
           <label for="emergency-contact-name">Emergency Contact Name</label>
-          <input type="text" id="emergency-contact-name-inst" name="emergency-contact-name" required>
+          <input type="text" name="institution-emergency-contact-name" id="emergency-contact-name-inst">
         </div>
         <div class="form-group">
           <label for="emergency-contact-number">Emergency Contact Number</label>
-          <input
-            type="tel"
-            id="emergency-contact-number-inst"
-            name="emergencycontactnumber"
-            pattern="^(09)[0-9]{9}$"
-            title="Must be 11 digits starting with 09"
-            required
-          />
+          <input type="tel" name="institution-emergencycontactnumber" id="emergency-contact-number-inst">
+        </div>
       </div>
 
       <button type="submit">Register</button>
@@ -245,28 +243,25 @@
   </main>
 
   <script>
-
-    // Redirect on submit (placeholder logic)
-    document.getElementById("registrationForm").addEventListener("submit", function(event) {
-      event.preventDefault();
-      window.location.href = "member_dashboard.html";
-    });
-
     // Show/hide fields based on role selection
     document.getElementById("role").addEventListener("change", function () {
       const role = this.value;
       const individualFields = document.getElementById("individual-fields");
       const institutionFields = document.getElementById("institution-fields");
+      const registerButton = document.querySelector("button[type='submit']");
 
       if (role === "individual") {
         individualFields.style.display = "block";
         institutionFields.style.display = "none";
+        registerButton.style.display = "block"; // Ensure button is shown
       } else if (role === "institution") {
         institutionFields.style.display = "block";
         individualFields.style.display = "none";
+        registerButton.style.display = "block"; // Ensure button is shown
       } else {
         individualFields.style.display = "none";
         institutionFields.style.display = "none";
+        registerButton.style.display = "none"; // Hide button if no role is selected
       }
     });
 
@@ -287,13 +282,14 @@
         schoolFields.style.display = "none";
       }
     });
-    
+
     // Dynamic dropdowns script
     document.addEventListener('DOMContentLoaded', () => {
       const regionSelect = document.getElementById('region');
       const provinceSelect = document.getElementById('province');
       const citySelect = document.getElementById('city');
       const barangaySelect = document.getElementById('barangay');
+
       // Fetch Regions on load
       fetch('/api/regions')
         .then(res => res.json())
@@ -301,6 +297,7 @@
           regionSelect.innerHTML = '<option value="">Select region</option>' +
             data.map(r => `<option value="${r.regionid}">${r.regionname}</option>`).join('');
         });
+
       regionSelect.addEventListener('change', () => {
         const regionId = regionSelect.value;
         provinceSelect.innerHTML = '<option value="">Loading...</option>';
@@ -310,7 +307,7 @@
           provinceSelect.innerHTML = '<option value="">Select a province</option>';
           return;
         }
-        fetch(`/api/provinces?region_id=${regionId}`)
+        fetch(`/api/provinces?regionid=${regionId}`)
           .then(res => res.json())
           .then(data => {
             provinceSelect.innerHTML = '<option value="">Select a province</option>' +
@@ -326,7 +323,7 @@
           citySelect.innerHTML = '<option value="">Select a city</option>';
           return;
         }
-        fetch(`/api/cities?province_id=${provinceId}`)
+        fetch(`/api/cities?provinceid=${provinceId}`)
           .then(res => res.json())
           .then(data => {
             citySelect.innerHTML = '<option value="">Select a city</option>' +
@@ -341,7 +338,7 @@
           barangaySelect.innerHTML = '<option value="">Select a barangay</option>';
           return;
         }
-        fetch(`/api/barangays?city_id=${cityId}`)
+        fetch(`/api/barangays?cityid=${cityId}`)
           .then(res => res.json())
           .then(data => {
             barangaySelect.innerHTML = '<option value="">Select a barangay</option>' +
@@ -350,6 +347,7 @@
       });
     });
 
+    // School dynamic dropdowns
     document.addEventListener('DOMContentLoaded', () => {
       const regionSelect = document.getElementById('school-region');
       const provinceSelect = document.getElementById('school-province');
@@ -416,19 +414,13 @@
                       data.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
               });
       });
-  });
-
-
-    document.getElementById("registrationForm").addEventListener("submit", function(event) {
-      event.preventDefault();
-      window.location.href = "/userdashboard";
     });
-  </script> 
-  
+  </script>
+
   <script src="{{ url_for('static', filename='register_individual.js') }}" defer></script>
-<script src="{{ url_for('static', filename='register_institution.js') }}" defer></script>
-<script src="{{ url_for('static', filename='register_save.js') }}" defer></script>
-<script src="{{ url_for('static', filename='register_data_validation.js') }}" defer></script>
-<script src="{{ url_for('static', filename='register_school.js') }}" defer></script>
+
+  <script src="{{ url_for('static', filename='register_save.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='register_data_validation.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='register_school.js') }}" defer></script>
 </body>
 </html>

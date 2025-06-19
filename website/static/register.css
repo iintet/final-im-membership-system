@@ -119,7 +119,12 @@ a:hover {
   border-radius: 8px;
   background-color: #f9f9f9;
   margin-top: -10px;
+  margin-bottom: 20px;
   transition: all 0.3s ease;
+}
+
+button[type="submit"] {
+  margin-top: 10px;
 }
 
 /* Radio button group styling */
