@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Staff Management</title>
-  <link rel="stylesheet" href="admin_staff_management.css" />
   <link rel="stylesheet" href="{{ url_for('static', filename='admin_staff_management.css') }}" />
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet">
 </head>
@@ -14,14 +13,14 @@
     <nav>
       <a href="{{ url_for('views.admin_dashboard') }}">Home</a>
       <a href="{{ url_for('views.admin_member_management') }}">Member Management</a>
-      <a href="{{ url_for('views.admin_membership_management') }}" class="active">Membership Management</a>
+      <a href="{{ url_for('views.admin_membership_management') }}">Membership Management</a>
       <a href="{{ url_for('views.admin_billing_payment') }}">Billing & Payment</a>
       <a href="{{ url_for('views.admin_event_management') }}">Event Management</a>
       <a href="{{ url_for('views.admin_committee_dashboard') }}">Committee Dashboard</a>
       <a href="#" class="active">Staff Management</a>
     </nav>
     <div class="logout">
-      <a href="{{ url_for('views.home') }}">Log Out</a>
+      <a href="{{ url_for('views.home') }}"><i class="fas fa-sign-out-alt"></i> Log Out</a>
     </div>
   </div>
 

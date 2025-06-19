@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Event Registrations</title>
-  <link rel="stylesheet" href="admin_event_management.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='admin_event_management.css') }}" />
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
@@ -12,13 +12,13 @@
   <div class="sidebar">
     <div class="logo">MRSYS</div>
     <nav>
-      <a href="admin_dashboard.html"><i class="fas fa-home"></i> Home</a>
-      <a href="admin_member_management.html"><i class="fas fa-user"></i> Member Management</a>
-      <a href="admin_membership_management.html"><i class="fas fa-id-card"></i> Membership Management</a>
-      <a href="admin_billing_payment.html"><i class="fas fa-money-bill-wave"></i> Billing & Payment</a>
-      <a href="admin_event_management.html" class="active"><i class="fas fa-calendar-alt"></i> Event Management</a>
-      <a href="admin_committee_dashboard.html"><i class="fas fa-users-cog"></i> Committee Dashboard</a>
-      <a href="admin_staff_management.html"><i class="fas fa-user-shield"></i> Staff Management</a>
+      <a href="{{ url_for('views.admin_dashboard') }}">Home</a>
+      <a href="{{ url_for('views.admin_member_management') }}">Member Management</a>
+      <a href="{{ url_for('views.admin_membership_management') }}">Membership Management</a>
+      <a href="{{ url_for('views.admin_billing_payment') }}">Billing & Payment</a>
+      <a href="#" class="active">Event Management</a>
+      <a href="{{ url_for('views.admin_committee_dashboard') }}">Committee Dashboard</a>
+      <a href="{{ url_for('views.admin_staff_management') }}">Staff Management</a>
     </nav>
     <div class="logout">
       <a href="{{ url_for('views.home') }}"><i class="fas fa-sign-out-alt"></i> Log Out</a>

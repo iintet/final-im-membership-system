@@ -12,7 +12,7 @@
     <div class="logo">MRSYS</div>
     <nav>
       <a href="{{ url_for('views.admin_dashboard') }}">Home</a>
-      <a href="{{ url_for('views.admin_member_management') }}" class="active">Member Management</a>
+      <a href="#" class="active">Member Management</a>
       <a href="{{ url_for('views.admin_membership_management') }}">Membership Management</a>
       <a href="{{ url_for('views.admin_billing_payment') }}">Billing & Payment</a>
       <a href="{{ url_for('views.admin_event_management') }}">Event Management</a>
@@ -20,7 +20,7 @@
       <a href="{{ url_for('views.admin_staff_management') }}">Staff Management</a>
     </nav>
     <div class="logout">
-      <a href="{{ url_for('views.home') }}">Log Out</a>
+      <a href="{{ url_for('views.home') }}"><i class="fas fa-sign-out-alt"></i> Log Out</a>
     </div>
   </div>
 
