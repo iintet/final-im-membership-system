@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Committee List</title>
+  <link rel="stylesheet" href="admin_committee_dashboard.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+  <div class="sidebar">
+    <div class="logo">MRSYS</div>
+    <nav>
+      <a href="admin_dashboard.html"><i class="fas fa-home"></i> Home</a>
+      <a href="admin_member_management.html"><i class="fas fa-user"></i> Member Management</a>
+      <a href="admin_membership_management.html"><i class="fas fa-id-card"></i> Membership Management</a>
+      <a href="admin_billing_payment.html"><i class="fas fa-money-bill-wave"></i> Billing & Payment</a>
+      <a href="admin_event_management.html"><i class="fas fa-calendar-alt"></i> Event Management</a>
+      <a href="admin_committee_dashboard.html" class="active"><i class="fas fa-users-cog"></i> Committee Dashboard</a>
+      <a href="admin_staff_management.html"><i class="fas fa-user-shield"></i> Staff Management</a>
+    </nav>
+    <div class="logout">
+      <a href="login.html"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <a href="admin_committee_dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Committee Dashboard</a>
+    <h1>List of Committees</h1>
+    <p class="subtitle">Overview of all current committees and their statuses</p>
+
+    <div class="card full-width">
+      <table class="committee-table">
+        <thead>
+          <tr>
+            <th>Committee Name</th>
+            <th>Status</th>
+            <th>Total Members</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Research & Development</td>
+            <td><span class="badge active">Active</span></td>
+            <td>10</td>
+          </tr>
+          <tr>
+            <td>Community Outreach</td>
+            <td><span class="badge inactive">Inactive</span></td>
+            <td>7</td>
+          </tr>
+          <tr>
+            <td>Finance Committee</td>
+            <td><span class="badge active">Active</span></td>
+            <td>5</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

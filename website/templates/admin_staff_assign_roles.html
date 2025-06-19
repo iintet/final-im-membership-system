@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Assign Staff Roles</title>
+  <link rel="stylesheet" href="admin_staff_management.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+  <div class="sidebar">
+    <div class="logo">MRSYS</div>
+    <nav>
+      <a href="admin_dashboard.html"><i class="fas fa-home"></i> Home</a>
+      <a href="admin_member_management.html"><i class="fas fa-user"></i> Member Management</a>
+      <a href="admin_membership_management.html"><i class="fas fa-id-card"></i> Membership Management</a>
+      <a href="admin_billing_payment.html"><i class="fas fa-money-bill-wave"></i> Billing & Payment</a>
+      <a href="admin_event_management.html"><i class="fas fa-calendar-alt"></i> Event Management</a>
+      <a href="admin_committee_dashboard.html"><i class="fas fa-users-cog"></i> Committee Dashboard</a>
+      <a href="admin_staff_management.html" class="active"><i class="fas fa-user-shield"></i> Staff Management</a>
+    </nav>
+    <div class="logout">
+      <a href="login.html"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <a href="admin_staff_management.html" class="blue-btn">← Back to Staff Dashboard</a>
+    <h1>Assign Staff Roles</h1>
+    <hr />
+
+    <div class="card">
+      <h2>Current Staff Roles</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Current Role</th>
+            <th>Assign New Role</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Jane Doe</td>
+            <td>jane@example.com</td>
+            <td>Assistant</td>
+            <td>
+              <select>
+                <option value="admin">Admin</option>
+                <option value="assistant" selected>Assistant</option>
+                <option value="moderator">Moderator</option>
+              </select>
+            </td>
+            <td>
+              <button class="blue-btn">Update</button>
+            </td>
+          </tr>
+          <tr>
+            <td>John Smith</td>
+            <td>john@example.com</td>
+            <td>Moderator</td>
+            <td>
+              <select>
+                <option value="admin">Admin</option>
+                <option value="assistant">Assistant</option>
+                <option value="moderator" selected>Moderator</option>
+              </select>
+            </td>
+            <td>
+              <button class="blue-btn">Update</button>
+            </td>
+          </tr>
+          <!-- Add more rows dynamically -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

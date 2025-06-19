@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Event Registrations</title>
+  <link rel="stylesheet" href="admin_event_management.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+  <div class="sidebar">
+    <div class="logo">MRSYS</div>
+    <nav>
+      <a href="admin_dashboard.html"><i class="fas fa-home"></i> Home</a>
+      <a href="admin_member_management.html"><i class="fas fa-user"></i> Member Management</a>
+      <a href="admin_membership_management.html"><i class="fas fa-id-card"></i> Membership Management</a>
+      <a href="admin_billing_payment.html"><i class="fas fa-money-bill-wave"></i> Billing & Payment</a>
+      <a href="admin_event_management.html" class="active"><i class="fas fa-calendar-alt"></i> Event Management</a>
+      <a href="admin_committee_dashboard.html"><i class="fas fa-users-cog"></i> Committee Dashboard</a>
+      <a href="admin_staff_management.html"><i class="fas fa-user-shield"></i> Staff Management</a>
+    </nav>
+    <div class="logout">
+      <a href="login.html"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <a href="admin_event_management.html" class="blue-button" style="margin-bottom: 20px; display: inline-block;">
+      <i class="fas fa-arrow-left"></i> Back to Event Management
+    </a>
+
+    <h1>Event Registrations</h1>
+    <hr />
+
+    <div class="card">
+      <h2>Registered Members</h2>
+      <table class="registration-table">
+        <thead>
+          <tr>
+            <th>Member Name</th>
+            <th>Event Name</th>
+            <th>Date Registered</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Juan Dela Cruz</td>
+            <td>Annual General Meeting</td>
+            <td>2025-06-10</td>
+            <td><span class="badge approved">Confirmed</span></td>
+          </tr>
+          <tr>
+            <td>Maria Santos</td>
+            <td>Volunteer Orientation</td>
+            <td>2025-06-12</td>
+            <td><span class="badge pending">Pending</span></td>
+          </tr>
+          <tr>
+            <td>Michael Reyes</td>
+            <td>Annual General Meeting</td>
+            <td>2025-06-08</td>
+            <td><span class="badge cancelled">Cancelled</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

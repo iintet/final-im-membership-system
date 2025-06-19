@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Committee Role Assignment</title>
+  <link rel="stylesheet" href="admin_committee_dashboard.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+  <div class="sidebar">
+    <div class="logo">MRSYS</div>
+    <nav>
+      <a href="admin_dashboard.html"><i class="fas fa-home"></i> Home</a>
+      <a href="admin_member_management.html"><i class="fas fa-user"></i> Member Management</a>
+      <a href="admin_membership_management.html"><i class="fas fa-id-card"></i> Membership Management</a>
+      <a href="admin_billing_payment.html"><i class="fas fa-money-bill-wave"></i> Billing & Payment</a>
+      <a href="admin_event_management.html"><i class="fas fa-calendar-alt"></i> Event Management</a>
+      <a href="admin_committee_dashboard.html" class="active"><i class="fas fa-users-cog"></i> Committee Dashboard</a>
+      <a href="admin_staff_management.html"><i class="fas fa-user-shield"></i> Staff Management</a>
+    </nav>
+    <div class="logout">
+      <a href="login.html"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <a href="admin_committee_dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Committee Dashboard</a>
+    <h1>Role Assignments</h1>
+    <p class="subtitle">Assign roles such as Head, Subhead, or Member to committee participants.</p>
+
+    <!-- Role Assignment Form -->
+    <div class="card">
+      <h2>Assign a Role</h2>
+      <form class="event-form">
+        <div class="form-group">
+          <label for="member">Select Member</label>
+          <select id="member" required>
+            <option value="">-- Choose a member --</option>
+            <option value="juan">Juan Dela Cruz</option>
+            <option value="maria">Maria Santos</option>
+            <option value="ella">Ella Cruz</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="committee">Select Committee</label>
+          <select id="committee" required>
+            <option value="">-- Choose a committee --</option>
+            <option value="rnd">Research & Development</option>
+            <option value="finance">Finance</option>
+            <option value="outreach">Community Outreach</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="role">Select Role</label>
+          <select id="role" required>
+            <option value="">-- Choose a role --</option>
+            <option value="head">Head</option>
+            <option value="subhead">Subhead</option>
+            <option value="member">Member</option>
+          </select>
+        </div>
+
+        <button type="submit">Assign Role</button>
+      </form>
+    </div>
+
+    <!-- Assigned Roles Table -->
+    <div class="card">
+      <h2>Current Role Assignments</h2>
+      <table class="event-table">
+        <thead>
+          <tr>
+            <th>Member</th>
+            <th>Committee</th>
+            <th>Role</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Juan Dela Cruz</td>
+            <td>Finance</td>
+            <td>Head</td>
+            <td>
+              <button class="blue-button">Edit</button>
+              <button class="blue-button">Remove</button>
+            </td>
+          </tr>
+          <tr>
+            <td>Maria Santos</td>
+            <td>Community Outreach</td>
+            <td>Member</td>
+            <td>
+              <button class="blue-button">Edit</button>
+              <button class="blue-button">Remove</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

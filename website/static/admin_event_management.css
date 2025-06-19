@@ -10,8 +10,10 @@ body {
   height: 100vh;
   background-color: #f4f4f4;
   color: #001F54;
+  overflow: hidden;
 }
 
+/* Sidebar */
 .sidebar {
   width: 250px;
   background-color: #001F54;
@@ -19,15 +21,20 @@ body {
   padding: 30px 20px;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
 }
 
 .sidebar .logo {
   font-size: 2rem;
+  font-weight: bold;
   margin-bottom: 40px;
 }
 
-.sidebar nav a {
-  display: block;
+.sidebar nav a,
+.sidebar .logout a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   padding: 12px 0;
   color: white;
   text-decoration: none;
@@ -36,7 +43,8 @@ body {
 }
 
 .sidebar nav a.active,
-.sidebar nav a:hover {
+.sidebar nav a:hover,
+.sidebar .logout a:hover {
   font-weight: bold;
   text-decoration: underline;
 }
@@ -47,21 +55,14 @@ body {
   border-top: 1px solid #ccc;
 }
 
-.logout a {
-  display: block;
-  color: white;
-  text-decoration: none;
-  font-weight: 400;
-  padding: 12px 0;
-}
-
+/* Main Content */
 .main-content {
   flex-grow: 1;
   padding: 40px;
   overflow-y: auto;
 }
 
-h1 {
+.main-content h1 {
   font-size: 2.5rem;
   margin-bottom: 10px;
 }
@@ -73,6 +74,7 @@ hr {
   background-color: #ccc;
 }
 
+/* Card Layout */
 .card {
   background-color: white;
   border: 1px solid #ddd;
@@ -89,9 +91,10 @@ hr {
 
 .card p {
   font-size: 1rem;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
+/* Blue Buttons */
 .blue-button {
   background-color: #007BFF;
   color: white;
@@ -100,10 +103,149 @@ hr {
   border-radius: 6px;
   cursor: pointer;
   font-size: 1rem;
-  margin-right: 10px;
-  transition: background-color 0.3s ease;
+  margin: 5px 10px 5px 0;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0, 123, 255, 0.2);
+  text-decoration: none;
+  display: inline-block;
 }
 
 .blue-button:hover {
   background-color: #0056b3;
+  transform: translateY(-1px);
+}
+
+/* Event Form */
+.event-form {
+  background: #fff;
+  padding: 20px;
+  margin-bottom: 30px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.event-form .form-group {
+  margin-bottom: 15px;
+}
+
+.event-form label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: bold;
+}
+
+.event-form input,
+.event-form textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.event-form button {
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.event-form button:hover {
+  background-color: #0056b3;
+}
+
+/* Event Table */
+.event-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.event-table th,
+.event-table td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+.event-table th {
+  background-color: #001F54;
+  color: white;
+}
+
+.event-table td button {
+  margin-right: 8px;
+}
+
+/* Event Registrations Table */
+.registration-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.registration-table thead {
+  background-color: #001F54;
+  color: white;
+}
+
+.registration-table th,
+.registration-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+/* Status Badges */
+.badge {
+  display: inline-block;
+  min-width: 100px;
+  text-align: center;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  color: white;
+  white-space: nowrap;
+}
+
+.badge.approved {
+  background-color: #28a745;
+}
+
+.badge.pending {
+  background-color: #ffc107;
+  color: #333;
+}
+
+.badge.cancelled {
+  background-color: #dc3545;
+}
+
+/* Back Button */
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  font-size: 1rem;
+  color: #007BFF;
+  text-decoration: none;
+  font-weight: bold;
+  margin-bottom: 20px;
+  gap: 8px;
+  transition: color 0.3s ease;
+}
+
+.back-btn:hover {
+  color: #0056b3;
 }
