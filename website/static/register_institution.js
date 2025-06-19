@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const regionSelect = document.getElementById('inst-region');
+        if (!regionSelect) return; // Stop here if element not found
+
     const provinceSelect = document.getElementById('inst-province');
     const citySelect = document.getElementById('inst-city');
     const barangaySelect = document.getElementById('inst-barangay');
@@ -54,4 +56,27 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     });
 
+    citySelect.addEventListener('change', () => {
+        const cityId = citySelect.value;
+        barangaySelect.innerHTML = '<option value="">Loading...</option>';
+        if (!cityId) {
+            barangaySelect.innerHTML = '<option value="">Select a barangay</option>';
+            return;
+        }
+        fetch(`/api/instbarangays?cityid=${cityId}`)
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return res.json();
+            })
+            .then(data => {
+                barangaySelect.innerHTML = '<option value="">Select a barangay</option>' +
+                    data.map(b => `<option value="${b.barangayid}">${b.barangayname}</option>`).join('');
+            })
+            .catch(error => {
+                console.error('Error fetching barangays:', error);
+                barangaySelect.innerHTML = '<option value="">Error loading barangays</option>';
+            });
+    });
 });
