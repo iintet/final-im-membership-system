@@ -223,4 +223,49 @@ document.addEventListener('DOMContentLoaded', () => {
                 schoolTypeInput.value = 'Error';
             });
     });
+
+    document.getElementById("affiliation-type").addEventListener("change", function () {
+        const affiliationType = this.value;
+        const organizationFields = document.getElementById("organization-fields");
+        const schoolFields = document.getElementById("school-fields");
+        const orgName = document.getElementById("organization-name");
+        const orgAddress = document.getElementById("organization-address");
+        const schoolRegion = document.getElementById("school-region");
+        const schoolProvince = document.getElementById("school-province");
+        const schoolCity = document.getElementById("school-city");
+        const schoolName = document.getElementById("school-name");
+
+        if (affiliationType === "organization") {
+            organizationFields.style.display = "block";
+            schoolFields.style.display = "none";
+
+            // Add required only to organization fields
+            orgName.setAttribute("required", "required");
+            orgAddress.setAttribute("required", "required");
+            schoolRegion.removeAttribute("required");
+            schoolProvince.removeAttribute("required");
+            schoolCity.removeAttribute("required");
+            schoolName.removeAttribute("required");
+        } else if (affiliationType === "school") {
+            schoolFields.style.display = "block";
+            organizationFields.style.display = "none";
+
+            // Add required only to school fields
+            schoolRegion.setAttribute("required", "required");
+            schoolProvince.setAttribute("required", "required");
+            schoolCity.setAttribute("required", "required");
+            schoolName.setAttribute("required", "required");
+            orgName.removeAttribute("required");
+            orgAddress.removeAttribute("required");
+        } else {
+            organizationFields.style.display = "none";
+            schoolFields.style.display = "none";
+            orgName.removeAttribute("required");
+            orgAddress.removeAttribute("required");
+            schoolRegion.removeAttribute("required");
+            schoolProvince.removeAttribute("required");
+            schoolCity.removeAttribute("required");
+            schoolName.removeAttribute("required");
+        }
+    });
 });

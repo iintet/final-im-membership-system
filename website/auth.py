@@ -2,6 +2,8 @@ from flask import Blueprint, request, jsonify, render_template, redirect, url_fo
 from .supabase_client import supabase
 from werkzeug.security import generate_password_hash, check_password_hash
 import re
+from . import auth  # adjust this based on your blueprint
+import logging
 
 auth = Blueprint('auth', __name__)
 
@@ -80,68 +82,75 @@ def login():
 def register():
     if request.method == 'GET':
         return render_template('register.html')
-    
+
     data = request.get_json() or {}
+
     email = data.get('email')
     password = data.get('password')
-    role = data.get('role')  # Get the role (individual or institution)
+    role = data.get('role')
+
+    if not email or not password or not role:
+        return jsonify({"error": "Missing required fields"}), 400
 
     try:
-        # Validate and sanitize phone number
-        phone_clean = clean_phone(data.get('emergencycontactnumber'))
+        phone_clean = clean_phone(data.get('emergencycontactnumber', ''))
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
-    
-    # Common fields
-    streetaddress = data.get('streetaddress', '')
-    emergencycontactname = data.get('emergencycontactname', '')
-    emergencycontactnumber = data.get('emergencycontactnumber', '')
 
-    # Hash the password before storing it
+    # Hash the password
     hashed_password = generate_password_hash(password)
 
-    # Prepare the user data to be inserted
     user_data = {
         'email': email,
         'password': hashed_password,
         'role': role,
-        'status': 'active',  # Default status
-        'streetaddress': streetaddress,
-        'emergencycontactname': emergencycontactname,
-        'emergencycontactnumber': emergencycontactnumber,
-        'region': data.get('region'),  # Align with schema
-        'province': data.get('province'),  # Align with schema
-        'city': data.get('city'),  # Align with schema
-        'barangay': data.get('barangay')  # Align with schema
+        'status': 'active',
+        'streetaddress': data.get('streetaddress', ''),
+        'emergencycontactname': data.get('emergencycontactname', ''),
+        'emergencycontactnumber': phone_clean,
+        'region': data.get('region'),
+        'province': data.get('province'),
+        'city': data.get('city'),
+        'barangay': data.get('barangay')
     }
 
-    # Handle individual fields
     if role == 'individual':
         user_data.update({
-            'memberid': data.get('memberid'),  # Align with schema
-            'lastname': data.get('last-name'),  # Align with schema
-            'firstname': data.get('first-name'),  # Align with schema
-            'middlename': data.get('middle-name'),  # Align with schema
-            'gender': data.get('gender'),  # Align with schema
-            'dateofbirth': data.get('dob'),  # Align with schema
-            'phone': data.get('phone')  # Align with schema
+            'memberid': data.get('memberid'),
+            'lastname': data.get('last-name'),
+            'firstname': data.get('first-name'),
+            'middlename': data.get('middle-name'),
+            'gender': data.get('gender'),
+            'dateofbirth': data.get('dob'),
+            'phone': data.get('phone')
         })
-    # Handle institution fields
     elif role == 'institution':
         user_data.update({
-            'memberid': data.get('memberid'),  # Align with schema
-            'name': data.get('institution-name'),  # Align with schema
-            'representativelastname': data.get('rep-last-name'),  # Align with schema
-            'representativefirstname': data.get('rep-first-name'),  # Align with schema
-            'representativemiddlename': data.get('rep-middle-name'),  # Align with schema
-            'representativecontactnumber': data.get('rep-contact')  # Align with schema
+            'memberid': data.get('memberid'),
+            'name': data.get('institution-name'),
+            'representativelastname': data.get('rep-last-name'),
+            'representativefirstname': data.get('rep-first-name'),
+            'representativemiddlename': data.get('rep-middle-name'),
+            'representativecontactnumber': data.get('rep-contact')
         })
 
-    # Store the user in the database
-    user_response = supabase.table('member').insert(user_data).execute()
-    if user_response.error:
-        return jsonify({'error': str(user_response.error)}), 500
-    return jsonify({'message': 'User  registered successfully'}), 201
+    try:
+        response = supabase.table('member').insert(user_data).execute()
+        logging.info(f"Supabase insert response: {response}")
+
+        if hasattr(response, 'error') and response.error:
+            return jsonify({"error": str(response.error)}), 500
+
+        # Optionally set session
+        session['user_email'] = email
+
+        # Redirect to dashboard
+        return redirect(url_for('views.dashboard'))  # adjust 'views.dashboard' to match your route name
+
+    except Exception as e:
+        logging.error(f"Error inserting user: {e}")
+        return jsonify({"error": str(e)}), 500
+
 
 
 
