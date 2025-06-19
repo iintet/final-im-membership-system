@@ -11,13 +11,13 @@
   <div class="sidebar">
     <div class="logo">MRSYS</div>
     <nav>
-      <a href="admin_dashboard.html">Home</a>
-      <a href="admin_member_management.html">Member Management</a>
+      <a href="{{ url_for('views.admin_dashboard') }}">Home</a>
+      <a href="{{ url_for('views.admin_member_management') }}">Member Management</a>
       <a href="#" class="active">Membership Management</a>
-      <a href="admin_billing_payment.html">Billing & Payment</a>
-      <a href="admin_event_management.html">Event Management</a>
-      <a href="admin_committee_dashboard.html">Committee Dashboard</a>
-      <a href="admin_staff_management.html">Staff Management</a>
+      <a href="{{ url_for('views.admin_billing_payment') }}">Billing & Payment</a>
+      <a href="{{ url_for('views.admin_event_management') }}">Event Management</a>
+      <a href="{{ url_for('views.admin_committee_dashboard') }}">Committee Dashboard</a>
+      <a href="{{ url_for('views.admin_staff_management') }}">Staff Management</a>
     </nav>
     <div class="logout">
       <a href="{{ url_for('views.home') }}">Log Out</a>

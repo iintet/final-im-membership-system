@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const saveBtn = document.getElementById('saveBtn');
   const cancelBtn = document.getElementById('cancelBtn');
   const form = document.getElementById('profileForm');
-  const inputs = form.querySelectorAll('input, textarea');
+  const inputs = form.querySelectorAll('input');
 
   inputs.forEach(input => input.disabled = true);
 
@@ -21,25 +21,13 @@ document.addEventListener('DOMContentLoaded', () => {
     cancelBtn.style.display = 'none';
   });
 
-
-    });
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const phone = document.getElementById('phone').value;
-    const address = document.getElementById('address').value; // Ensure this is captured
     const emergencyContact = document.getElementById('emergency-contact').value;
     const currentPassword = document.getElementById('current-password').value;
     const newPassword = document.getElementById('new-password').value;
-
-    // Log the values for debugging
-    console.log("Submitting data:", {
-      phone: phone,
-      address: address,
-      emergencycontactnumber: emergencyContact,
-      current_password: currentPassword,
-      new_password: newPassword
-    });
 
     const response = await fetch("/userprofile", {
       method: "POST",
@@ -47,9 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        phone: phone || undefined, // Send as undefined if empty
-        address: address || undefined, // Send as undefined if empty
-        emergencycontactnumber: emergencyContact || undefined, // Send as undefined if empty
+        phone: phone,
+        emergencycontactnumber: emergencyContact,
         current_password: currentPassword || undefined,
         new_password: newPassword || undefined
       })
@@ -69,5 +56,4 @@ document.addEventListener('DOMContentLoaded', () => {
     saveBtn.style.display = 'none';
     cancelBtn.style.display = 'none';
   });
-
-
+});
