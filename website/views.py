@@ -42,7 +42,6 @@ def benefits():
 def contact():
     return render_template('front_page_contact.html')
 
-
 @views.route('/usereventsparticipation')
 def eventsparticipation():
     return render_template('user_events_participation.html')
@@ -204,9 +203,6 @@ def get_school_type():
         logging.error(f"Error fetching school type: {str(e)}")
         return jsonify({'error': 'Internal server error'}), 500
 
-
-    
-
 # -- API FOR SCHOOL ADDRESS --
 @views.route('/api/schregions', methods=['GET'])
 def get_schregions():
@@ -356,27 +352,44 @@ def profile():
     member_id = session.get('member_id')
     print("Session Member ID:", member_id)
 
-    # Fetch member table
-    member_resp = supabase.table('member').select('email, streetaddress, emergencycontactnumber').eq('memberid', member_id).execute()
-    print("Member response:", member_resp.data)
+    # Fetch member data
+    member_resp = supabase.table('member').select(
+        'streetaddress, region, province, city, barangay, email, emergencycontactnumber'
+    ).eq('memberid', member_id).execute()
     member = member_resp.data[0] if member_resp.data else {}
 
-    # Fetch individual table
-    individual_resp = supabase.table('individual').select('firstname, lastname, phone').eq('memberid', member_id).execute()
-    print("Individual response:", individual_resp.data)
+    # Fetch individual data
+    individual_resp = supabase.table('individual').select(
+        'firstname, lastname, phone'
+    ).eq('memberid', member_id).execute()
     individual = individual_resp.data[0] if individual_resp.data else {}
 
+    # Compose full name
     fullname = f"{individual.get('firstname', '')} {individual.get('lastname', '')}".strip()
 
+    # Fetch region/province/city/barangay names
+    region_name = supabase.table('region').select('regionname').eq('regionid', member.get('region')).execute().data[0]['regionname']
+    province_name = supabase.table('province').select('provincename').eq('provinceid', member.get('province')).execute().data[0]['provincename']
+    city_name = supabase.table('city').select('cityname').eq('cityid', member.get('city')).execute().data[0]['cityname']
+    barangay_name = supabase.table('barangay').select('barangayname').eq('barangayid', member.get('barangay')).execute().data[0]['barangayname']
+
+    # Compose full address
+    full_address = f"{member.get('streetaddress', '')}, {barangay_name}, {city_name}, {province_name}, {region_name}"
+
+    # Render profile template
     return render_template(
         'user_profile.html',
         fullname=fullname,
         email=member.get('email', ''),
         phone=individual.get('phone', ''),
-        address=member.get('streetaddress', ''),
-        emergency_contact=member.get('emergencycontactnumber')
+        address=full_address,
+        emergency_contact=member.get('emergencycontactnumber', ''),
+        streetaddress=member.get('streetaddress', ''),
+        region=member.get('region'),
+        province=member.get('province'),
+        city=member.get('city'),
+        barangay=member.get('barangay')
     )
-
 @views.route('/profile/update', methods=['POST'])
 def update_profile():
     if session.get('user_type') != 'member':
@@ -387,17 +400,28 @@ def update_profile():
 
     # Extract profile info
     phone = data.get('phone')
-    address = data.get('address')
+    streetaddress = data.get('address')
     emergency_contact = data.get('emergencycontactnumber')
 
+    # Address dropdowns
+    region = data.get('region')       # ID (e.g., "01")
+    province = data.get('province')   # ID
+    city = data.get('city')           # ID
+    barangay = data.get('barangay')   # ID
+
+    # Update member table
     supabase.table('member').update({
-        'address': address,
+        'streetaddress': streetaddress,
+        'region': region,
+        'province': province,
+        'city': city,
+        'barangay': barangay,
         'emergencycontactnumber': emergency_contact
     }).eq('memberid', member_id).execute()
 
     # Update individual table
     supabase.table('individual').update({
-        'contactno': phone,
+        'phone': phone,
     }).eq('memberid', member_id).execute()
 
     # Handle password change if provided
@@ -416,13 +440,23 @@ def update_profile():
         new_hashed = generate_password_hash(new_password)
         supabase.table('member').update({'password': new_hashed}).eq('memberid', member_id).execute()
 
-        update_result = supabase.table('member').update({'password': new_hashed}).eq('memberid', member_id).execute()
-        print("Update result:", update_result)
-
-
     return jsonify({'message': 'Profile updated successfully'})
 
+# -- API FOR PROFILE --
+@views.route('/api/provinces/<region_id>')
+def get_userprovinces(region_id):
+    response = supabase.table('province').select('provinceid, provincename').eq('regionid', region_id).execute()
+    return jsonify(response.data)
 
+@views.route('/api/cities/<province_id>')
+def get_usercities(province_id):
+    response = supabase.table('city').select('cityid, cityname').eq('provinceid', province_id).execute()
+    return jsonify(response.data)
+
+@views.route('/api/barangays/<city_id>')
+def get_userbarangays(city_id):
+    response = supabase.table('barangay').select('barangayid, barangayname').eq('cityid', city_id).execute()
+    return jsonify(response.data)
 
 @views.route('/userbillingpayment')
 def billingpayment():

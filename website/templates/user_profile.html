@@ -51,21 +51,53 @@
 
           <div class="form-group">
             <label for="phone">Contact Number</label>
-            <input type="tel" id="phone" value="{{ phone }}" disabled />
+            <input type="tel" id="phone" name="phone" value="{{ phone }}" disabled />
+
+          </div>
+
+        <!-- Address Details -->
+        <fieldset>
+          <legend>Address</legend>
+
+          <div class="form-group">
+            <label for="address">Street Address</label>
+            <input type="text" id="address" value="{{ streetaddress }}" disabled />
           </div>
 
           <div class="form-group">
-            <label for="address">Address</label>
-            <textarea id="address" rows="3" disabled>{{ address }}</textarea>
+            <label for="region">Region</label>
+            <select id="region" disabled>
+              <option value="">Select region</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="province">Province</label>
+            <select id="province" disabled>
+              <option value="">Select province</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="city">City</label>
+            <select id="city" disabled>
+              <option value="">Select city</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="barangay">Barangay</label>
+            <select id="barangay" disabled>
+              <option value="">Select barangay</option>
+            </select>
           </div>
         </fieldset>
-
         <!-- Emergency Contact -->
         <fieldset>
           <legend>Emergency Contact</legend>
           <div class="form-group">
             <label for="emergency-contact">Contact Number</label>
-            <input type="tel" id="emergency-contact" value="{{ emergency_contact }}" disabled />
+            <input type="tel" id="emergency-contact" name="emergencycontactnumber" value="{{ emergency_contact }}" disabled />
           </div>
         </fieldset>
 
@@ -74,11 +106,13 @@
           <legend>Change Password</legend>
           <div class="form-group">
             <label for="current-password">Current Password</label>
-            <input type="password" id="current-password" value="" disabled />
+            <input type="password" id="current-password" name="current_password" value="" disabled />
+
           </div>
           <div class="form-group">
             <label for="new-password">New Password</label>
-            <input type="password" id="new-password" value="" disabled />
+            <input type="password" id="new-password" name="new_password" value="" disabled />
+
           </div>
           <div class="form-group">
             <label for="confirm-password">Confirm New Password</label>
@@ -125,6 +159,13 @@
       cancelBtn.style.display = 'none';
       alert('Changes saved successfully!');
     });
+  </script>
+
+  <script>
+    window.selectedRegion = "{{ region }}";
+    window.selectedProvince = "{{ province }}";
+    window.selectedCity = "{{ city }}";
+    window.selectedBarangay = "{{ barangay }}";
   </script>
   <script src="{{ url_for('static', filename='user_profile.js') }}"></script>
 </body>
