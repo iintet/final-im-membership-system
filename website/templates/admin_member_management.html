@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Member Details</title>
+  <title>Member Management</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='admin_member_management.css') }}" />
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet">
 </head>
@@ -25,52 +25,57 @@
   </div>
 
   <div class="main-content">
-  <h1>Member Management</h1>
-  <hr />
+    <h1>Member Management</h1>
+    <hr />
 
-  <!-- Search Section -->
-  <div class="form-section">
-    <h2>Search Members</h2>
-    <form class="simple-search-form">
-      <input type="text" name="query" placeholder="Search by name or email..." />
-      <button type="submit">Search</button>
-    </form>
-  </div>
+    <!-- Search Form -->
+    <div class="form-section">
+      <h2>Search Members</h2>
+      <form class="simple-search-form" method="get" action="{{ url_for('views.admin_member_management') }}">
+        <input type="text" name="query" placeholder="Search by name or email..." value="{{ request.args.get('query', '') }}">
+        <button type="submit">Search</button>
+      </form>
+    </div>
 
-  <!-- Member Profiles Section (moved correctly below) -->
-  <div class="profile-section">
-    <h2>Member Profiles</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Membership</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Juan Dela Cruz</td>
-          <td>juan@example.com</td>
-          <td>Active</td>
-          <td>
-            <a href="admin_member_management_view.html" class="view-btn">View</a>
-            <a href="admin_member_management_edit.html" class="edit-btn">Edit</a>
-          </td>
-        </tr>
-        <tr>
-          <td>Maria Santos</td>
-          <td>maria@example.com</td>
-          <td>Inactive</td>
-          <td>
-            <a href="admin_member_management_view.html" class="view-btn">View</a>
-            <a href="admin_member_management_edit.html" class="edit-btn">Edit</a>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <!-- Member Table -->
+    <div class="profile-section">
+      <h2>Member Profiles</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Membership Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if members %}
+            {% for member in members %}
+              <tr>
+                <td>
+                  {% if member.role == 'individual' %}
+                    {{ member.firstname }} {{ member.middlename or '' }} {{ member.lastname }}
+                  {% else %}
+                    {{ member.representativefirstname }} {{ member.representativefirstname }}
+                  {% endif %}
+                </td>
+                <td>{{ member.email }}</td>
+                <td>{{ member.status }}</td>
+                <td>
+                  <a href="{{ url_for('views.admin_member_view', memberid=member.memberid) }}" class="view-btn">View</a>
+                  <a href="{{ url_for('views.admin_member_edit', memberid=member.memberid) }}" class="edit-btn">Edit</a>
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="4">No members found.</td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
   </div>
-</div>
 </body>
 </html>

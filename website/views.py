@@ -26,7 +26,7 @@ def home():
 def register():
     return render_template('register.html')
 
-@views.route('auth/login', methods=['GET'])
+@views.route('/auth/login', methods=['GET'])
 def login():
     return render_template('login.html')
 
@@ -51,22 +51,12 @@ def eventsparticipation():
 def committeeparticipation():
     return render_template('user_committee_participation.html')
 
-# -- ADMIN SIDE BAR --
-@views.route('/admin/members')
-def admin_member_management():
-    return render_template('admin_member_management.html')
+# -- ADMIN SIDE BAR
 
 @views.route('/admin/memberships')
 def admin_membership_management():
     return render_template('admin_membership_management.html')
 
-@views.route('/admin/billing')
-def admin_billing_payment():
-    return render_template('admin_billing_payment.html')
-
-@views.route('/admin/events')
-def admin_event_management():
-    return render_template('admin_event_management.html')
 
 @views.route('/admin/committees')
 def admin_committee_dashboard():
@@ -93,6 +83,7 @@ def get_regions():
     except Exception as e:
         logging.error(f"Error fetching regions: {str(e)}")  # Log the error
         return jsonify({'error': str(e)}), 500
+
 @views.route('/api/provinces', methods=['GET'])
 def get_provinces():
     region_id = request.args.get('regionid')
@@ -128,8 +119,7 @@ def get_barangays():
     except Exception as e:
         logging.error(f"Error fetching barangays for cityid={city_id}: {e}")
         return jsonify({'error': str(e)}), 500
-
-    
+ 
 @views.route('/api/instregions', methods=['GET'])
 def get_instregions():
     try:
@@ -220,8 +210,6 @@ def get_school_type():
         return jsonify({'error': 'Internal server error'}), 500
 
 
-    
-
 # -- API FOR SCHOOL ADDRESS --
 @views.route('/api/schregions', methods=['GET'])
 def get_schregions():
@@ -285,6 +273,56 @@ def admin_dashboard():
                            total_members=total_members,
                            active_memberships=active_memberships,
                            upcoming_events=upcoming_events)
+# -- MEMBER MANAGEMENT --
+
+@views.route('/admin/member-management', methods=['GET'])
+def admin_member_management():
+    search = request.args.get('query', '').strip().lower()
+
+    # Get all members
+    member_data = supabase.table("member").select("*").execute().data or []
+    individual_data = supabase.table("individual").select("*").execute().data or []
+    institutional_data = supabase.table("institutional").select("*").execute().data or []
+
+    enriched_members = []
+
+    for m in member_data:
+        member = m.copy()
+
+        if member['role'] == 'individual':
+            info = next((i for i in individual_data if i['memberid'] == member['memberid']), {})
+            member.update(info)
+            full_name = f"{info.get('firstname', '')} {info.get('middlename', '')} {info.get('lastname', '')}"
+        else:
+            info = next((i for i in institutional_data if i['memberid'] == member['memberid']), {})
+            member.update(info)
+            full_name = f"{info.get('representativefirstname', '')} {info.get('representativelastname', '')}"
+
+        # Apply search filter
+        if search and search not in full_name.lower() and search not in member.get("email", "").lower():
+            continue
+
+        enriched_members.append(member)
+
+    return render_template('admin_member_management.html', members=enriched_members)
+
+@views.route('/admin/member/view/<memberid>')
+def admin_member_view(memberid):
+    # Query individual/institutional/member by memberid
+    return render_template('admin_member_management_view.html', memberid=memberid)
+
+@views.route('/admin/member/edit/<memberid>')
+def admin_member_edit(memberid):
+    return render_template('admin_member_management_edit.html', memberid=memberid)
+
+@views.route('/admin/events')
+def admin_event_management():
+    return render_template('admin_event_management.html')
+
+@views.route('/admin/billing')
+def admin_billing_payment():
+    return render_template('admin_billing_payment.html')
+
 
 # -- MEMBER DASHBOARD --
 @views.route('/userdashboard', methods=['GET'])
@@ -438,8 +476,6 @@ def profile():
         print("Error rendering profile:", e)
         return jsonify({'message': 'Internal server error'}), 500
 
-
-
 def update_profile(data, member_id):
     if session.get('user_type') != 'member':
         return jsonify({'message': 'Unauthorized'}), 403
@@ -501,10 +537,34 @@ def update_profile(data, member_id):
         print("Profile update failed:", e)
         return jsonify({'message': 'Server error while updating profile'}), 500
 
-
-
 @views.route('/userbillingpayment')
 def billingpayment():
     if session.get('user_type') != 'member':
         return redirect('/')
     return render_template('user_billing_payment.html')
+
+@views.route('/api/events', methods=['POST'])
+def create_event():
+    if session.get('user_type') != 'staff':
+        return jsonify({'error': 'Unauthorized'}), 403
+
+    data = request.get_json()
+    required_fields = ['eventname', 'eventdate', 'location', 'description']
+    missing = [f for f in required_fields if not data.get(f)]
+    if missing:
+        return jsonify({'error': f"Missing required fields: {', '.join(missing)}"}), 400
+
+    try:
+        response = supabase.table('event').insert({
+            'eventname': data['eventname'],
+            'eventdate': data['eventdate'],
+            'location': data['location'],
+            'description': data['description']
+        }).execute()
+
+        if hasattr(response, 'error') and response.error:
+            return jsonify({'error': str(response.error)}), 500
+
+        return jsonify({'message': 'Event created successfully', 'event': response.data}), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
