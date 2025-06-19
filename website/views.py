@@ -42,6 +42,7 @@ def benefits():
 def contact():
     return render_template('front_page_contact.html')
 
+
 @views.route('/usereventsparticipation')
 def eventsparticipation():
     return render_template('user_events_participation.html')
@@ -114,16 +115,20 @@ def get_cities():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@views.route('/api/barangays', methods=['GET'])
+@views.route('/api/barangays', methods=['GET'])  # Match JS call
 def get_barangays():
-    city_id = request.args.get('barangayid')
+    city_id = request.args.get('cityid')
     try:
         response = supabase.table('barangay').select('*').eq('cityid', city_id).execute()
+
         if hasattr(response, 'error') and response.error:
             return jsonify({'error': str(response.error)}), 500
+
         return jsonify(response.data), 200
     except Exception as e:
+        logging.error(f"Error fetching barangays for cityid={city_id}: {e}")
         return jsonify({'error': str(e)}), 500
+
     
 @views.route('/api/instregions', methods=['GET'])
 def get_instregions():
@@ -163,7 +168,18 @@ def get_instcities():
         return jsonify(response.data), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-     
+
+@views.route('/api/instbarangays', methods=['GET'])
+def get_instbarangays():
+    city_id = request.args.get('cityid')  # ✅ Correct key
+    try:
+        response = supabase.table('barangay').select('*').eq('cityid', city_id).execute()
+        if hasattr(response, 'error') and response.error:
+            return jsonify({'error': str(response.error)}), 500
+        return jsonify(response.data), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
 @views.route('/api/schnames', methods=['GET'])
 def get_schnames():
     city_id = request.args.get('cityid')
@@ -202,6 +218,9 @@ def get_school_type():
     except Exception as e:
         logging.error(f"Error fetching school type: {str(e)}")
         return jsonify({'error': 'Internal server error'}), 500
+
+
+    
 
 # -- API FOR SCHOOL ADDRESS --
 @views.route('/api/schregions', methods=['GET'])
@@ -259,26 +278,28 @@ def userdashboard():
     member_id = session.get('member_id')
 
     # Step 1: Get role from member table
-    role_resp = supabase.table('member').select('role').eq('memberid', member_id).execute()
-    if not role_resp.data:
+    role_resp = supabase.table('member').select('role').eq('memberid', member_id).maybe_single().execute()
+    if not role_resp or not role_resp.data:
         return "Member role not found", 404
 
-    role = role_resp.data[0]['role']
+    role = role_resp.data['role']
 
-    # Step 2: Depending on role, get name
+    # Step 2: Depending on role, get full name
     if role == 'individual':
-        info_resp = supabase.table('individual').select('firstname, lastname').eq('memberid', member_id).execute()
-        if not info_resp.data:
+        info_resp = supabase.table('individual').select('firstname, lastname').eq('memberid', member_id).maybe_single().execute()
+        if not info_resp or not info_resp.data:
             return "Individual info not found", 404
-        data = info_resp.data[0]
+        data = info_resp.data
         fullname = f"{data['firstname']} {data['lastname']}"
 
     elif role == 'institution':
-        info_resp = supabase.table('institution').select('representativename').eq('memberid', member_id).execute()
-        if not info_resp.data:
-            return "Institution info not found", 404
-        data = info_resp.data[0]
-        fullname = data['representativename']
+        info_resp = supabase.table('institutional').select(
+            'representativefirstname, representativemiddlename, representativelastname'
+        ).eq('memberid', member_id).maybe_single().execute()
+        if not info_resp or not info_resp.data:
+            return "Institutional info not found", 404
+        data = info_resp.data
+        fullname = f"{data['representativefirstname']} {data.get('representativemiddlename') or ''} {data['representativelastname']}".strip()
 
     else:
         return "Unknown role", 400
@@ -286,12 +307,12 @@ def userdashboard():
     # Step 3: Get membership status
     membership_resp = supabase.table('membershipregistration').select(
         'status, startdate, enddate'
-    ).eq('memberid', member_id).eq('status', 'Active').execute()
+    ).eq('memberid', member_id).eq('status', 'Active').maybe_single().execute()
 
-    if membership_resp.data:
-        membership_status = membership_resp.data[0]['status']
-        validity_start = membership_resp.data[0]['startdate']
-        validity_end = membership_resp.data[0]['enddate']
+    if membership_resp and membership_resp.data:
+        membership_status = membership_resp.data['status']
+        validity_start = membership_resp.data['startdate']
+        validity_end = membership_resp.data['enddate']
     else:
         membership_status = "No Active Membership"
         validity_start = None
