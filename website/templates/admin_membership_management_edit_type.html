@@ -1,65 +1,44 @@
-
-  <!DOCTYPE html>
-  <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Membership History</title>
-    <link rel="stylesheet" href="admin_membership_management.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  </head>
-  <body>
-    <div class="sidebar">
-      <div class="logo">MRSYS</div>
-      <nav>
-        <a href="admin_dashboard.html"><i class="fas fa-home"></i> Home</a>
-        <a href="admin_member_management.html"><i class="fas fa-user"></i> Member Management</a>
-        <a href="admin_membership_management.html" class="active"><i class="fas fa-id-card"></i> Membership Management</a>
-        <a href="admin_billing_payment.html"><i class="fas fa-money-bill-wave"></i> Billing & Payment</a>
-        <a href="admin_event_management.html"><i class="fas fa-calendar-alt"></i> Event Management</a>
-        <a href="admin_committee_dashboard.html"><i class="fas fa-users-cog"></i> Committee Dashboard</a>
-        <a href="admin_staff_management.html"><i class="fas fa-user-shield"></i> Staff Management</a>
-      </nav>
-      <div class="logout">
-        <a href="login.html">Log Out</a>
-      </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Edit Membership Types</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='admin_membership_management.css') }}" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="sidebar">
+    <div class="logo">MRSYS</div>
+    <nav>
+      <a href="{{ url_for('views.admin_dashboard') }}">Home</a>
+      <a href="{{ url_for('views.admin_member_management') }}">Member Management</a>
+      <a href="{{ url_for('views.admin_membership_management') }}" class="active">Membership Management</a>
+      <a href="{{ url_for('views.admin_billing_payment') }}">Billing & Payment</a>
+      <a href="{{ url_for('views.admin_event_management') }}">Event Management</a>
+      <a href="{{ url_for('views.admin_committee_dashboard') }}">Committee Dashboard</a>
+      <a href="{{ url_for('views.admin_staff_management') }}">Staff Management</a>
+    </nav>
+    <div class="logout">
+      <a href="{{ url_for('views.home') }}">Log Out</a>
     </div>
+  </div>
 
-    <div class="main-content">
-      <a href="admin_membership_management.html" class= "back-btn emphasized">
-        <i class="fas fa-arrow-left"></i> Back to Membership Management</a>
-      <h1>Membership Registration History</h1>
-      <p class="subtitle">Review the outcome of all registration requests</p>
+  <div class="main-content">
+    <a href="admin_membership_management.html" class= "back-btn emphasized"> ←
+      <i class="fas fa-arrow-left"></i> Back to Membership Management</a>
+    <h1>Edit Membership Types</h1>
+    <p class="subtitle">Manage your available membership types</p>
 
-      <div class="card full-width">
-        <table class="history-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Registration Date</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>John Doe</td>
-              <td>June 1, 2025</td>
-              <td><span class="badge approved">Approved</span></td>
-            </tr>
-            <tr>
-              <td>Jane Smith</td>
-              <td>June 3, 2025</td>
-              <td><span class="badge rejected">Rejected</span></td>
-            </tr>
-            <tr>
-              <td>Victor Cheng</td>
-              <td>June 5, 2025</td>
-              <td><span class="badge approved">Approved</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <div class="card">
+      <h2>Current Types</h2>
+      <ul class="membership-list">
+        <li>Basic <button class="red-btn">Delete</button></li>
+        <li>Platinum <button class="red-btn">Delete</button></li>
+        <li>Student <button class="red-btn">Delete</button></li>
+      </ul>
+      <a href="admin_add_membership_type.html" class="blue-btn">Add New Membership Type</a>
     </div>
-  </body>
-  </html>
+  </div>
+</body>
+</html>
