@@ -51,10 +51,6 @@ def committeeparticipation():
     return render_template('user_committee_participation.html')
 
 # -- ADMIN SIDE BAR --
-@views.route('/admin/memberships')
-def admin_membership_management():
-    return render_template('admin_membership_management.html')
-
 @views.route('/admin/committees')
 def admin_committee_dashboard():
     return render_template('admin_committee_dashboard.html')
@@ -442,6 +438,88 @@ def admin_event_management():
 @views.route('/admin/billing')
 def admin_billing_payment():
     return render_template('admin_billing_payment.html')
+
+# -- MEMBERSHIP MANAGEMENT --
+@views.route('/admin/memberships')
+def admin_membership_management():
+    return render_template('admin_membership_management.html')
+
+@views.route('/admin/membership/edit')
+def admin_membership_edit():
+    membership_types = supabase.table('membershiptype').select('*').execute().data or []
+    return render_template('admin_membership_management_edit_type.html', membership_types=membership_types)
+
+@views.route('/admin/membership/history', methods=['GET'])
+def admin_membership_registration_history():
+    # Get filter values from query string
+    status_filter = request.args.get('status', '').lower()
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+
+    # Fetch all membership registrations
+    registration_data = supabase.table("membershipregistration").select("*").execute().data
+
+    # Fetch member and membership type data
+    members = supabase.table("member").select("memberid, role").execute().data
+    individuals = supabase.table("individual").select("memberid, firstname, middlename, lastname").execute().data
+    institutions = supabase.table("institutional").select("memberid, representativefirstname, representativemiddlename, representativelastname").execute().data
+    types = supabase.table("membershiptype").select("typeid, name").execute().data
+
+    enriched = []
+    for reg in registration_data:
+        reg_status = reg.get("status", "").lower()
+        date = reg.get("startdate")
+        end = reg.get("enddate")
+
+        if not date:
+            continue
+
+        # Filter by status
+        if status_filter and status_filter != reg_status:
+            continue
+
+        # Filter by date range
+        try:
+            reg_date = datetime.strptime(date, '%Y-%m-%d').date()
+            if start_date:
+                start = datetime.strptime(start_date, '%Y-%m-%d').date()
+                if reg_date < start:
+                    continue
+            if end_date:
+                end_d = datetime.strptime(end_date, '%Y-%m-%d').date()
+                if reg_date > end_d:
+                    continue
+        except ValueError:
+            continue
+
+        # Get name
+        member_id = reg.get("memberid")
+        role = next((m['role'] for m in members if m['memberid'] == member_id), '')
+
+        if role == 'individual':
+            info = next((i for i in individuals if i['memberid'] == member_id), {})
+            name = f"{info.get('firstname', '')} {info.get('middlename', '')} {info.get('lastname', '')}".strip()
+        elif role == 'institution':
+            info = next((i for i in institutions if i['memberid'] == member_id), {})
+            name = f"{info.get('representativefirstname', '')} {info.get('representativemiddlename', '')} {info.get('representativelastname', '')}".strip()
+        else:
+            name = "Unknown"
+
+        # Get membership type name
+        type_name = next((t['name'] for t in types if t['typeid'] == reg.get("typeid")), "")
+
+        enriched.append({
+            "name": name,
+            "registration_date": date,
+            "end_date": end,
+            "status": reg.get("status"),
+            "type": type_name
+        })
+
+    # Sort by registration date (descending)
+    enriched.sort(key=lambda x: x['registration_date'], reverse=True)
+
+    return render_template("admin_membership_registration_history.html", registrations=enriched)
 
 
 # -- MEMBER DASHBOARD --

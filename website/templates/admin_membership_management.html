@@ -32,7 +32,7 @@
     <div class="card">
       <h2>Membership Types</h2>
       <div class="actions">
-        <a href="admin_edit_membership_types.html" class="blue-btn">Edit</a>
+        <a href="{{ url_for('views.admin_membership_edit') }}" class="blue-btn">View</a>
       </div>
     </div>
 
@@ -84,7 +84,7 @@
 
     <div class="card full-width">
       <h2>Member Registration History</h2>
-      <a href="admin_membership_registration_history.html" class="blue-btn">View History</a>
+      <a href="{{ url_for('views.admin_membership_registration_history') }}" class="blue-btn">View History</a>
     </div>
   </div>
 

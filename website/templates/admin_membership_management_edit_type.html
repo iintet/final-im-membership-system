@@ -26,7 +26,7 @@
   </div>
 
   <div class="main-content">
-    <a href="admin_membership_management.html" class= "back-btn emphasized"> ←
+    <a href="{{ url_for('views.admin_membership_management') }}" class="back-btn emphasized">
       <i class="fas fa-arrow-left"></i> Back to Membership Management</a>
     <h1>Edit Membership Types</h1>
     <p class="subtitle">Manage your available membership types</p>
@@ -34,11 +34,14 @@
     <div class="card">
       <h2>Current Types</h2>
       <ul class="membership-list">
-        <li>Basic <button class="red-btn">Delete</button></li>
-        <li>Platinum <button class="red-btn">Delete</button></li>
-        <li>Student <button class="red-btn">Delete</button></li>
+        {% for mtype in membership_types %}
+          <li>
+            {{ mtype.name }} – ₱{{ mtype.annualfee }}
+          </li>
+        {% else %}
+          <li>No membership types found.</li>
+        {% endfor %}
       </ul>
-      <a href="admin_add_membership_type.html" class="blue-btn">Add New Membership Type</a>
     </div>
   </div>
 </body>
