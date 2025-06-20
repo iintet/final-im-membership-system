@@ -153,10 +153,6 @@ html, body {
   color: white;
 }
 
-.badge.pending {
-  background-color: #f39c12;
-}
-
 .badge.approved {
   background-color: #27ae60;
 }
@@ -194,3 +190,62 @@ th, td {
   text-align: left;
   border-bottom: 1px solid #eee;
 }
+
+.card-box {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.card-box h3 {
+  font-size: 1.4rem;
+  color: #0f1f59;
+  margin-bottom: 1rem;
+}
+
+.status-grid {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  margin-top: 1.5rem;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 0;
+}
+
+.status-icon {
+  font-size: 1.8rem;
+}
+
+.pending-icon {
+  color: #f39c12;
+}
+
+.gray-icon {
+  color: #888;
+}
+
+.label {
+  font-weight: bold;
+  font-size: 1rem;
+  margin-bottom: 0.2rem;
+  color: #0f1f59;
+}
+
+.value {
+  font-size: 1.1rem;
+  color: #222;
+}
+
+.value.dim {
+  color: #888; 
+  font-weight: 500;
+}
+

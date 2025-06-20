@@ -37,57 +37,67 @@
       </section>
 
       <!-- Apply Section -->
-      <section class="apply-section">
-        <h2>Apply to Join a Committee</h2>
-        <form class="apply-form">
-          <label for="role">Select Role:</label>
-          <select id="role" required>
-            <option value="">-- Select role --</option>
-            <option value="head">Head</option>
-            <option value="member">Member</option>
-          </select>
+<section class="apply-section card-box">
+  <h3>Apply to Join a Committee</h3>
+  <form class="apply-form">
+    <label for="role">Select Role:</label>
+    <select id="role" required>
+      <option value="">-- Select role --</option>
+      <option value="head">Head</option>
+      <option value="member">Member</option>
+    </select>
 
-          <button type="submit">Submit Application</button>
-        </form>
-      </section>
+    <button type="submit">Submit Application</button>
+  </form>
+</section>
 
-      <!-- Status & Role -->
-      <section class="application-status">
-        <h2>My Application Status</h2>
-        <div class="status-box">
-          <p><strong>Status:</strong> <span class="badge pending">Pending Review</span></p>
-          <p class="status-spacing"><strong>Assigned Role:</strong> <span class="dim">Not Assigned</span></p>
-        </div>
-      </section>
+<section class="application-status card-box">
+  <h3>My Application Status</h3>
+  <div class="status-grid">
+    <div class="status-item">
+      <i class="fas fa-hourglass-half status-icon pending-icon"></i>
+      <div>
+        <p class="label">Status</p>
+        <p class="value dim">Pending Review</p>
+      </div>
+    </div>
+    <div class="status-item">
+      <i class="fas fa-user-tag status-icon gray-icon"></i>
+      <div>
+        <p class="label">Assigned Role</p>
+        <p class="value dim">Not Assigned</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-      <!-- Designation History -->
-      <section class="designation-history">
-        <h2>Designation History</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Committee</th>
-              <th>Role</th>
-              <th>Start Date</th>
-              <th>End Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Ethics Committee</td>
-              <td>Secretary</td>
-              <td>Jan 2022</td>
-              <td>Dec 2022</td>
-            </tr>
-            <tr>
-              <td>Education Committee</td>
-              <td>Member</td>
-              <td>Aug 2021</td>
-              <td>Aug 2022</td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
+<section class="designation-history card-box">
+  <h3>Designation History</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Committee</th>
+        <th>Role</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Ethics Committee</td>
+        <td>Secretary</td>
+        <td>Jan 2022</td>
+        <td>Dec 2022</td>
+      </tr>
+      <tr>
+        <td>Education Committee</td>
+        <td>Member</td>
+        <td>Aug 2021</td>
+        <td>Aug 2022</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
     </main>
   </div>
 </body>
