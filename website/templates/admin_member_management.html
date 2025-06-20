@@ -43,34 +43,32 @@
       <table>
         <thead>
           <tr>
-            <th>Name</th>
+            <th>Full Name</th>
             <th>Email</th>
-            <th>Membership Status</th>
+            <th>Role</th>
+            <th>Membership Type</th>
+            <th>Status</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {% if members %}
             {% for member in members %}
-              <tr>
-                <td>
-                  {% if member.role == 'individual' %}
-                    {{ member.firstname }} {{ member.middlename or '' }} {{ member.lastname }}
-                  {% else %}
-                    {{ member.representativefirstname }} {{ member.representativefirstname }}
-                  {% endif %}
-                </td>
-                <td>{{ member.email }}</td>
-                <td>{{ member.status }}</td>
-                <td>
-                  <a href="{{ url_for('views.admin_member_view', memberid=member.memberid) }}" class="view-btn">View</a>
-                  <a href="{{ url_for('views.admin_member_edit', memberid=member.memberid) }}" class="edit-btn">Edit</a>
-                </td>
-              </tr>
+            <tr>
+              <td>{{ member.fullname }}</td>
+              <td>{{ member.email }}</td>
+              <td>{{ member.role }}</td>
+              <td>{{ member.membershiptype }}</td>
+              <td>{{ member.membershipstatus }}</td>
+              <td>
+                <a href="{{ url_for('views.admin_member_view', memberid=member.memberid) }}" class="view-btn">View</a>
+                <a href="{{ url_for('views.admin_member_edit', memberid=member.memberid) }}" class="edit-btn">Edit</a>
+              </td>
+            </tr>
             {% endfor %}
           {% else %}
             <tr>
-              <td colspan="4">No members found.</td>
+              <td colspan="6">No members found.</td>
             </tr>
           {% endif %}
         </tbody>

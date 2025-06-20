@@ -283,11 +283,19 @@ def admin_member_management():
     member_data = supabase.table("member").select("*").execute().data or []
     individual_data = supabase.table("individual").select("*").execute().data or []
     institutional_data = supabase.table("institutional").select("*").execute().data or []
+    membership_data = supabase.table("membershipregistration").select("*").execute().data or []
+    membership_types = supabase.table("membershiptype").select("*").execute().data or []
 
     enriched_members = []
 
     for m in member_data:
         member = m.copy()
+
+        full_name = ""
+        role = member.get('role', '')
+        email = member.get('email', '')
+        membership_type = 'N/A'
+        membership_status = 'N/A'
 
         if member['role'] == 'individual':
             info = next((i for i in individual_data if i['memberid'] == member['memberid']), {})
@@ -298,11 +306,25 @@ def admin_member_management():
             member.update(info)
             full_name = f"{info.get('representativefirstname', '')} {info.get('representativelastname', '')}"
 
+        membership = next((m for m in membership_data if m['memberid'] == member['memberid']), None)
+        if membership:
+            typeid = membership.get('typeid')
+            type_info = next((t for t in membership_types if t['typeid'] == typeid), {})
+            membership_type = type_info.get('name', 'N/A')
+            membership_status = membership.get('status', 'N/A')
+            
         # Apply search filter
         if search and search not in full_name.lower() and search not in member.get("email", "").lower():
             continue
 
-        enriched_members.append(member)
+        enriched_members.append({
+            'fullname': full_name,
+            'email': email,
+            'role': role.title(),
+            'membershiptype': membership_type,
+            'membershipstatus': membership_status,
+            'memberid': member['memberid'],
+        })
 
     return render_template('admin_member_management.html', members=enriched_members)
 
