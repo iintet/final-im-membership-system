@@ -125,7 +125,7 @@
               <option value="">Select type</option>
               <option value="organization">Organization</option>
               <option value="school">School</option>
-              <option value="school">Not applicable</option>
+              <option value="none">Not Applicable</option>
             </select>
           </div>
           <div id="organization-fields" style="display: none;">
@@ -281,6 +281,7 @@
       } else {
         organizationFields.style.display = "none";
         schoolFields.style.display = "none";
+        schoolFields.querySelectorAll('input, select').forEach(el => el.value = '');
       }
     });
 
@@ -423,7 +424,24 @@
   <script src="{{ url_for('static', filename='register_save.js') }}" defer></script>
   <script src="{{ url_for('static', filename='register_data_validation.js') }}" defer></script>
   <script src="{{ url_for('static', filename='register_school.js') }}" defer></script>
-  
+
+  <script>
+  document.getElementById("registrationForm").addEventListener("submit", function (e) {
+    e.preventDefault(); // prevent default form submission
+
+    const affiliationType = document.getElementById("affiliation-type").value;
+
+    // Optional: you can do validation or save to server here before redirecting
+
+    if (affiliationType === "none") {
+      window.location.href = "{{ url_for('views.billingpayment') }}"; //PALITAN NG REGISTRATION PAYMENT
+    } else if (affiliationType === "organization" || affiliationType === "school") {
+      window.location.href = "{{ url_for('views.userdashboard') }}";
+    } else {
+      alert("Please select an affiliation type.");
+    }
+  });
+</script>
 
 </body>
 </html>
