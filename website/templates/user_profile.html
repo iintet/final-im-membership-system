@@ -36,87 +36,84 @@
       <section class="profile-header">
         <h1>My Profile</h1>
         <p class="subtitle">View and update your information below:</p>
-        <hr class="skyline-divider" />
       </section>
 
-      <form class="profile-form" id="profileForm">
-        <!-- Personal Information -->
+      <form id="profileForm" method="POST" onsubmit="return false;">
         <fieldset>
           <legend>Personal Information</legend>
 
           <div class="form-group">
             <label for="full-name">Full Name</label>
-            <input type="text" id="full-name" value="John A. Doe" disabled />
+            <input type="text" id="full-name" value="{{ fullname }}" disabled />
           </div>
 
           <div class="form-group">
             <label for="email">Email Address</label>
-            <input type="email" id="email" value="john@example.com" disabled />
+            <input type="email" id="email" value="{{ email }}" disabled />
           </div>
 
           <div class="form-group">
             <label for="phone">Contact Number</label>
-            <input type="tel" id="phone" value="0912 345 6789" disabled />
+            <input type="tel" id="phone" name="phone" value="{{ phone }}" disabled />
           </div>
 
           <div class="form-group">
             <label for="streetaddress">Street Address</label>
-            <input type="text" id="streetaddress" name="streetaddress" value="Street Address" disabled />
+            <input type="text" id="streetaddress" name="streetaddress" value="{{ streetaddress }}" disabled />
           </div>
 
-                    <div class="form-group">
+          <!-- Location: Show as text initially -->
+          <div class="form-group">
             <label for="region">Region</label>
-            <input type="text" id="region-text" value="Region Name" disabled />
+            <input type="text" id="region-text" value="{{ region_name }}" disabled />
             <select id="region" name="region" style="display:none;"></select>
           </div>
 
           <div class="form-group">
             <label for="province">Province</label>
-            <input type="text" id="province-text" value="Province Name" disabled />
+            <input type="text" id="province-text" value="{{ province_name }}" disabled />
             <select id="province" name="province" style="display:none;"></select>
           </div>
 
           <div class="form-group">
             <label for="city">City</label>
-            <input type="text" id="city-text" value="City Name" disabled />
+            <input type="text" id="city-text" value="{{ city_name }}" disabled />
             <select id="city" name="city" style="display:none;"></select>
           </div>
 
           <div class="form-group">
             <label for="barangay">Barangay</label>
-            <input type="text" id="barangay-text" value="Barangay" disabled />
+            <input type="text" id="barangay-text" value="{{ barangay_name }}" disabled />
             <select id="barangay" name="barangay" style="display:none;"></select>
           </div>
         </fieldset>
 
-        <!-- Emergency Contact -->
         <fieldset>
           <legend>Emergency Contact</legend>
           <div class="form-group">
-            <label for="emergency-contact">Contact Name</label>
-            <input type="text" id="emergency-contac-name" value="Fernando Poe" disabled />
+            <label for="emergency-contact-name">Contact Person</label>
+            <input type="text" id="emergency-contact-name" name="emergencycontactname" value="{{ emergency_contact_name }}" disabled />
           </div>
 
           <div class="form-group">
             <label for="emergency-contact">Contact Number</label>
-            <input type="tel" id="emergency-contact" value="0917 765 4321" disabled />
+            <input type="tel" id="emergency-contact" name="emergencycontactnumber" value="{{ emergency_contact }}" disabled />
           </div>
         </fieldset>
 
-        <!-- Change Password -->
         <fieldset>
           <legend>Change Password</legend>
           <div class="form-group">
             <label for="current-password">Current Password</label>
-            <input type="password" id="current-password" value="12345678" disabled />
+            <input type="password" id="current-password" name="current_password" disabled />
           </div>
           <div class="form-group">
             <label for="new-password">New Password</label>
-            <input type="password" id="new-password" value="" disabled />
+            <input type="password" id="new-password" name="new_password" disabled />
           </div>
           <div class="form-group">
             <label for="confirm-password">Confirm New Password</label>
-            <input type="password" id="confirm-password" value="" disabled />
+            <input type="password" id="confirm-password" disabled />
           </div>
         </fieldset>
 
