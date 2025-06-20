@@ -36,10 +36,12 @@
       <section class="profile-header">
         <h1>My Profile</h1>
         <p class="subtitle">View and update your information below:</p>
+        <hr class="skyline-divider" />
       </section>
 
-      <form id="profileForm" method="POST" onsubmit="return false;">
+      <form class="profile-form" id="profileForm" method="POST" onsubmit="return false;">
         <fieldset>
+          <!-- Personal Information -->
           <legend>Personal Information</legend>
 
           <div class="form-group">
@@ -57,12 +59,6 @@
             <input type="tel" id="phone" name="phone" value="{{ phone }}" disabled />
           </div>
 
-          <div class="form-group">
-            <label for="streetaddress">Street Address</label>
-            <input type="text" id="streetaddress" name="streetaddress" value="{{ streetaddress }}" disabled />
-          </div>
-
-          <!-- Location: Show as text initially -->
           <div class="form-group">
             <label for="region">Region</label>
             <input type="text" id="region-text" value="{{ region_name }}" disabled />
@@ -86,8 +82,14 @@
             <input type="text" id="barangay-text" value="{{ barangay_name }}" disabled />
             <select id="barangay" name="barangay" style="display:none;"></select>
           </div>
+
+          <div class="form-group">
+            <label for="streetaddress">Street Address</label>
+            <input type="text" id="streetaddress" name="streetaddress" value="{{ streetaddress }}" disabled />
+          </div>
         </fieldset>
 
+        <!-- Emergency Contact -->
         <fieldset>
           <legend>Emergency Contact</legend>
           <div class="form-group">
@@ -105,15 +107,15 @@
           <legend>Change Password</legend>
           <div class="form-group">
             <label for="current-password">Current Password</label>
-            <input type="password" id="current-password" name="current_password" disabled />
+            <input type="password" id="current-password" name="current_password" value="Enter current password" disabled />
           </div>
           <div class="form-group">
             <label for="new-password">New Password</label>
-            <input type="password" id="new-password" name="new_password" disabled />
+            <input type="password" id="new-password" name="new_password" value="Enter new password" disabled />
           </div>
           <div class="form-group">
             <label for="confirm-password">Confirm New Password</label>
-            <input type="password" id="confirm-password" disabled />
+            <input type="password" id="confirm-password" value="Confirm new password" disabled />
           </div>
         </fieldset>
 
@@ -325,3 +327,4 @@
     });
   }); // 👈 this closes DOMContentLoaded listener
 </script>
+
