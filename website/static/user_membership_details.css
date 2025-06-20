@@ -182,3 +182,31 @@ th, td {
 tbody tr:hover {
   background-color: #f1f1f1;
 }
+
+.card-box {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 2rem 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.card-box h3 {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  color: #0f1f59;
+}
+
+.benefits,
+.registration-history {
+  margin-top: 1.5rem;
+}
+
+.benefits ul {
+  list-style: disc inside;
+  padding-left: 0;       /* Remove default indentation */
+  margin-left: 0.2rem;   /* Optional tweak for alignment */
+}
+
+

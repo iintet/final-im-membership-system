@@ -38,50 +38,50 @@
         <hr class="divider" />
       </section>
 
-      <section class="membership-type">
-        <h2>Current Membership: <span class="badge gold">Gold</span></h2>
-        <button class="upgrade-btn">Renew / Upgrade</button>
-      </section>
+<section class="membership-type card-box">
+  <h3>Current Membership: <span class="badge gold">Gold</span></h3>
+  <button class="upgrade-btn">Renew / Upgrade</button>
+</section>
 
-      <section class="benefits">
-        <h3>Membership Benefits</h3>
-        <ul>
-          <li>Priority access to events</li>
-          <li>Discounts on fees and registrations</li>
-          <li>Exclusive member-only resources</li>
-          <li>Voting rights in committees</li>
-        </ul>
-      </section>
+<section class="benefits card-box">
+  <h3>Membership Benefits</h3>
+  <ul>
+    <li>Priority access to events</li>
+    <li>Discounts on fees and registrations</li>
+    <li>Exclusive member-only resources</li>
+    <li>Voting rights in committees</li>
+  </ul>
+</section>
 
-      <section class="registration-history">
-        <h3>Registration History</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Start Date</th>
-              <th>End Date</th>
-              <th>Membership Type</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% if membership_history %}
-              {% for reg in membership_history %}
-                <tr>
-                  <td>{{ reg.startdate }}</td>
-                  <td>{{ reg.enddate }}</td>
-                  <td>{{ reg.membershiptype.name }}</td>
-                  <td>{{ reg.status }}</td>
-                </tr>
-              {% endfor %}
-            {% else %}
-              <tr>
-                <td colspan="4">No registration history found.</td>
-              </tr>
-            {% endif %}
-          </tbody>
-        </table>
-      </section>
+<section class="registration-history card-box">
+  <h3>Registration History</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Membership Type</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if membership_history %}
+        {% for reg in membership_history %}
+          <tr>
+            <td>{{ reg.startdate }}</td>
+            <td>{{ reg.enddate }}</td>
+            <td>{{ reg.membershiptype.name }}</td>
+            <td>{{ reg.status }}</td>
+          </tr>
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td colspan="4">No registration history found.</td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+</section>
     </main>
   </div>
 </body>
