@@ -36,25 +36,35 @@
       </section>
 
       <section class="info-cards">
-        <div class="info-card">
-          <h3>Membership Status</h3>
-          <p class="info-main">{{ membership_status }}</p>
-          {% if validity_start and validity_end %}
-            <p class="info-sub">Validity<br>{{ validity_start }} - {{ validity_end }}</p>
-          {% else %}
-            <p class="info-sub">No active membership period</p>
-          {% endif %}
-        </div>
-        <div class="info-card">
-          <h3>Outstanding Balance</h3>
-          <p class="info-main">₱150,000</p>
-        </div>
-        <div class="info-card">
-          <h3>Next Upcoming Event</h3>
-          <p class="info-main">August 01, 2025</p>
-          <button class="join-btn">Join</button>
-        </div>
-      </section>
+  <div class="info-card">
+    <div class="card-body">
+      <h3>Membership Status</h3>
+      <p class="info-main">{{ membership_status }}</p>
+      <p class="info-sub">
+        {% if validity_start and validity_end %}
+          Validity<br>{{ validity_start }} - {{ validity_end }}
+        {% else %}
+          No active membership period
+        {% endif %}
+      </p>
+    </div>
+  </div>
+
+  <div class="info-card">
+    <div class="card-body">
+      <h3>Outstanding Balance</h3>
+      <p class="info-main">₱150,000</p>
+    </div>
+  </div>
+
+  <div class="info-card">
+    <div class="card-body">
+      <h3>Next Upcoming Event</h3>
+      <p class="info-main">August 01, 2025</p>
+      <button class="join-btn">Join</button>
+    </div>
+  </div>
+</section>
 
       <section class="quick-actions">
         <h3>Quick Actions</h3>
