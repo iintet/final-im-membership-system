@@ -14,9 +14,9 @@
     <nav>
       <a href="{{ url_for('views.admin_dashboard') }}"><i class="fas fa-home"></i> Home</a>
       <a href="#" class="active"><i class="fas fa-user"></i> Member Management</a>
-      <a href="{{ url_for('views.admin_membership_management') }}"></i> Membership Management</a>
+      <a href="{{ url_for('views.admin_member_management') }}"><i class="fas fa-user"></i> Member Management</a>
       <a href="{{ url_for('views.admin_billing_payment') }}"><i class="fas fa-money-bill-wave"></i> Billing & Payment</a>
-      <a href="{{ url_for('views.admin_event_management') }}"></i> Event Management</a>
+      <a href="{{ url_for('views.admin_event_management') }}"><i class="fas fa-calendar-alt"></i> Event Management</a>
       <a href="{{ url_for('views.admin_committee_dashboard') }}"><i class="fas fa-users-cog"></i> Committee Dashboard</a>
       <a href="{{ url_for('views.admin_staff_management') }}"><i class="fas fa-user-shield"></i> Staff Management</a>
     </nav>
@@ -26,16 +26,18 @@
   </div>
 
   <div class="main-content">
-    <a href="admin_member_management.html" class= "back-btn emphasized">
-      <i class="fas fa-arrow-left"></i> Back to Member Management</a>
+    <a href="{{ url_for('views.admin_member_management') }}" class="back-btn emphasized">
+      <i class="fas fa-arrow-left"></i> Back to Member Management
+    </a>
     <h1>Member Details</h1>
     <div class="form-section">
-      <p><strong>Name:</strong> Juan Dela Cruz</p>
-      <p><strong>Email:</strong> juan@example.com</p>
-      <p><strong>Phone:</strong> 0917-000-1234</p>
-      <p><strong>Membership Status:</strong> Active</p>
-      <p><strong>Registration Date:</strong> June 1, 2025</p>
-      <p><strong>Additional Notes:</strong> Approved by admin after verification.</p>
+      <p><strong>Name:</strong> {{ name }}</p>
+      <p><strong>Email:</strong> {{ email }}</p>
+      <p><strong>Phone:</strong> {{ phone }}</p>
+      <p><strong>Membership Type:</strong> {{ membership_type }}</p>
+      <p><strong>Membership Status:</strong> {{ status }}</p>
+      <p><strong>Registration Date:</strong> {{ registration_date }}</p>
+      <p><strong>Additional Notes:</strong> {{ additional_notes }}</p>
     </div>
   </div>
 </body>

@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, render_template, abort, request, session, redirect
+from flask import Blueprint, jsonify, render_template, abort, request, session, redirect, url_for
 from . import models
 from .supabase_client import supabase
 from datetime import datetime
@@ -42,7 +42,6 @@ def benefits():
 def contact():
     return render_template('front_page_contact.html')
 
-
 @views.route('/usereventsparticipation')
 def eventsparticipation():
     return render_template('user_events_participation.html')
@@ -51,12 +50,10 @@ def eventsparticipation():
 def committeeparticipation():
     return render_template('user_committee_participation.html')
 
-# -- ADMIN SIDE BAR
-
+# -- ADMIN SIDE BAR --
 @views.route('/admin/memberships')
 def admin_membership_management():
     return render_template('admin_membership_management.html')
-
 
 @views.route('/admin/committees')
 def admin_committee_dashboard():
@@ -209,7 +206,6 @@ def get_school_type():
         logging.error(f"Error fetching school type: {str(e)}")
         return jsonify({'error': 'Internal server error'}), 500
 
-
 # -- API FOR SCHOOL ADDRESS --
 @views.route('/api/schregions', methods=['GET'])
 def get_schregions():
@@ -273,8 +269,8 @@ def admin_dashboard():
                            total_members=total_members,
                            active_memberships=active_memberships,
                            upcoming_events=upcoming_events)
-# -- MEMBER MANAGEMENT --
 
+# -- MEMBER MANAGEMENT --
 @views.route('/admin/member-management', methods=['GET'])
 def admin_member_management():
     search = request.args.get('query', '').strip().lower()
@@ -330,13 +326,115 @@ def admin_member_management():
 
 @views.route('/admin/member/view/<memberid>')
 def admin_member_view(memberid):
-    # Query individual/institutional/member by memberid
+    member = supabase.table("member").select("*").eq("memberid", memberid).execute().data
+    if not member:
+        return "Member not found", 404
+    member = member[0]
+
+    # Fetch individual or institutional details
+    if member['role'] == 'individual':
+        detail = supabase.table("individual").select("*").eq("memberid", memberid).execute().data
+        detail = detail[0] if detail else {}
+        full_name = f"{detail.get('firstname', '')} {detail.get('middlename', '')} {detail.get('lastname', '')}"
+        phone = detail.get("phone", "")
+    else:
+        detail = supabase.table("institutional").select("*").eq("memberid", memberid).execute().data
+        detail = detail[0] if detail else {}
+        full_name = f"{detail.get('representativefirstname', '')} {detail.get('representativemiddlename', '')} {detail.get('representativelastname', '')}"
+        phone = detail.get("representativecontactnumber", "")
+
+    # Fetch membership info
+    membership = supabase.table("membershipregistration").select("*").eq("memberid", memberid).execute().data
+    membership = membership[0] if membership else {}
+
+    # Get membership type name
+    membership_type = ""
+    if membership:
+        type_data = supabase.table("membershiptype").select("name").eq("typeid", membership["typeid"]).execute().data
+        if type_data:
+            membership_type = type_data[0]["name"]
+
+    return render_template(
+        'admin_member_management_view.html',
+        name=full_name,
+        email=member['email'],
+        phone=phone,
+        status=membership.get('status', 'N/A'),
+        registration_date=membership.get('startdate', 'N/A'),
+        membership_type=membership_type,
+        additional_notes="Approved by admin after verification."  # you can customize this
+    )
     return render_template('admin_member_management_view.html', memberid=memberid)
 
-@views.route('/admin/member/edit/<memberid>')
+@views.route('/admin/member/edit/<memberid>', methods=['GET', 'POST'])
 def admin_member_edit(memberid):
-    return render_template('admin_member_management_edit.html', memberid=memberid)
+    member_data = supabase.table("member").select("*").eq("memberid", memberid).execute().data
+    if not member_data:
+        return "Member not found", 404
+    member = member_data[0]
 
+    # Role-based details
+    if member["role"] == "individual":
+        detail_data = supabase.table("individual").select("*").eq("memberid", memberid).execute().data
+        detail = detail_data[0] if detail_data else {}
+        first_name = detail.get("firstname", "")
+        last_name = detail.get("lastname", "")
+        phone = detail.get("phone", "")
+    else:
+        detail_data = supabase.table("institutional").select("*").eq("memberid", memberid).execute().data
+        detail = detail_data[0] if detail_data else {}
+        first_name = detail.get("representativefirstname", "")
+        last_name = detail.get("representativelastname", "")
+        phone = detail.get("representativecontactnumber", "")
+
+    # Membership status
+    membership_data = supabase.table("membershipregistration").select("*").eq("memberid", memberid).execute().data
+    status = membership_data[0]["status"] if membership_data else "Active"
+
+    # Handle form POST
+    if request.method == "POST":
+        email = request.form.get("email")
+        phone = request.form.get("phone")
+        fname = request.form.get("first-name")
+        lname = request.form.get("last-name")
+        new_status = request.form.get("membership-status")
+
+        # Update member email
+        supabase.table("member").update({"email": email}).eq("memberid", memberid).execute()
+
+        # Update individual/institutional record
+        if member["role"] == "individual":
+            supabase.table("individual").update({
+                "firstname": fname,
+                "lastname": lname,
+                "phone": phone
+            }).eq("memberid", memberid).execute()
+        else:
+            supabase.table("institutional").update({
+                "representativefirstname": fname,
+                "representativelastname": lname,
+                "representativecontactnumber": phone
+            }).eq("memberid", memberid).execute()
+
+        # Update membership status
+        if membership_data:
+            supabase.table("membershipregistration").update({
+                "status": new_status
+            }).eq("memberid", memberid).execute()
+
+        return redirect(url_for('views.admin_member_management'))
+
+    return render_template(
+        'admin_member_management_edit.html',
+        memberid=memberid,
+        email=member["email"],
+        phone=phone,
+        first_name=first_name,
+        last_name=last_name,
+        status=status
+    )
+
+# -- EVENT MANAGEMENT -- 
 @views.route('/admin/events')
 def admin_event_management():
     return render_template('admin_event_management.html')

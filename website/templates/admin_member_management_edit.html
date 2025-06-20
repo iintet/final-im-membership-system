@@ -28,45 +28,46 @@
 
   <!-- Main Content -->
   <div class="main-content">
-    <a href="admin_member_management.html" class="back-btn">
+    <a href="{{ url_for('views.admin_member_management') }}" class="back-btn">
       <i class="fas fa-arrow-left"></i> Back to Member Management
     </a>
 
     <h1>Edit Member Information</h1>
     <p class="subtitle">Update the information below and save changes.</p>
 
-    <form class="edit-form" action="#" method="POST">
+    <form class="edit-form" action="{{ url_for('views.admin_member_edit', memberid=memberid) }}" method="POST">
       <div class="form-group">
         <label for="first-name">First Name</label>
-        <input type="text" id="first-name" name="first-name" value="Juan" required />
+        <input type="text" id="first-name" name="first-name" value="{{ first_name }}" required />
       </div>
 
       <div class="form-group">
         <label for="last-name">Last Name</label>
-        <input type="text" id="last-name" name="last-name" value="Dela Cruz" required />
+        <input type="text" id="last-name" name="last-name" value="{{ last_name }}" required />
       </div>
 
       <div class="form-group">
         <label for="email">Email Address</label>
-        <input type="email" id="email" name="email" value="juan@example.com" required />
+        <input type="email" id="email" name="email" value="{{ email }}" required />
       </div>
 
       <div class="form-group">
         <label for="phone">Phone Number</label>
-        <input type="text" id="phone" name="phone" value="09171234567" />
+        <input type="text" id="phone" name="phone" value="{{ phone }}" />
       </div>
 
       <div class="form-group">
         <label for="membership-status">Membership Status</label>
         <select id="membership-status" name="membership-status">
-          <option value="active" selected>Active</option>
-          <option value="inactive">Inactive</option>
+          <option value="Active" {% if status == 'Active' %}selected{% endif %}>Active</option>
+          <option value="Expired" {% if status == 'Expired' %}selected{% endif %}>Expired</option>
+          <option value="Pending" {% if status == 'Pending' %}selected{% endif %}>Pending</option>
         </select>
       </div>
 
       <div class="button-group">
         <button type="submit" class="save-btn">Save Changes</button>
-        <a href="admin_member_management.html" class="cancel-btn">Cancel</a>
+        <a href="{{ url_for('views.admin_member_management') }}" class="cancel-btn">Cancel</a>
       </div>
     </form>
   </div>
