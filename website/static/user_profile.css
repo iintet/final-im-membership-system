@@ -122,6 +122,16 @@ legend {
   margin-top: 1rem;
 }
 
+.form-group input,
+.form-group select {
+  width: 100%;
+}
+
+.form-group:not(:last-child) {
+  margin-bottom: 1rem;
+}
+
+
 label {
   font-size: 0.95rem;
   margin-bottom: 0.3rem;
@@ -164,4 +174,18 @@ textarea:disabled {
 
 .form-actions button:hover {
   background-color: #1e3d8f;
+}
+
+select {
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  color: #333;
+}
+
+.nav-menu a:hover {
+  text-decoration: underline;
+  opacity: 0.85;
 }
