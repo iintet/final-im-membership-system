@@ -6,6 +6,7 @@
   <title>My Profile - MRSYS</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='user_profile.css') }}">
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body
   data-region-id="{{ region_id|default('') }}"
@@ -18,17 +19,18 @@
       <div>
         <h2 class="logo">MRSYS</h2>
         <nav class="nav-menu">
-          <a href="{{ url_for('views.userdashboard') }}">Home</a>
-          <a href="#" class="active">My Profile</a>
-          <a href="{{ url_for('views.membershipdetails') }}">Membership Details</a>
-          <a href="{{ url_for('views.billingpayment') }}">Billing & Payment</a>
-          <a href="{{ url_for('views.eventsparticipation') }}">My Events Participation</a>
-          <a href="{{ url_for('views.committeeparticipation') }}">Committee Participation</a>
+          <a href="{{ url_for('views.userdashboard') }}"><i class="fas fa-home"></i> Home</a>
+          <a href="{{ url_for('views.profile') }}"><i class="fas fa-user"></i> My Profile</a>
+          <a href="{{ url_for('views.membershipdetails') }}"><i class="fas fa-id-card"></i> Membership Details</a>
+          <a href="{{ url_for('views.billingpayment') }}"><i class="fas fa-money-bill-wave"></i> Billing & Payment</a>
+          <a href="{{ url_for('views.eventsparticipation') }}"><i class="fas fa-calendar-alt"></i> My Events Participation</a>
+          <a href="{{ url_for('views.committeeparticipation') }}"><i class="fas fa-users-cog"></i> Committee Participation</a> 
         </nav>
       </div>
       <div class="logout-section">
         <hr class="logout-divider" />
-        <a href="{{ url_for('views.home') }}" class="logout-link" onclick="return confirm('Are you sure you want to log out?')">Log Out</a>
+        <a href="{{ url_for('views.home') }}" class="logout-link">
+        <i class="fas fa-sign-out-alt"></i> Log Out</a>
       </div>
     </aside>
 
@@ -103,7 +105,7 @@
           </div>
         </fieldset>
 
-        <fieldset>
+        <fieldset>  
           <legend>Change Password</legend>
           <div class="form-group">
             <label for="current-password">Current Password</label>
