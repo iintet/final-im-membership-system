@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Upload Payment Proof - MRSYS</title>
+
+  <link rel="stylesheet" href="register.css">
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-content">
+      <h1 class="logo">MRSYS</h1>
+      <nav>
+        <ul>
+          <li><a href="{{ url_for('views.home') }}">Home</a></li>
+          <li><a href="{{ url_for('views.about') }}">About</a></li>
+          <li><a href="{{ url_for('views.benefits') }}">Benefits</a></li>
+          <li><a href="{{ url_for('views.contact') }}">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Upload Section -->
+  <main class="register-container billing-page">
+    <h2>Upload Proof of Payment</h2>
+    <form method="POST" action="{{ url_for('views.save_proof') }}" enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="proof">Upload File</label>
+        <input type="file" id="proof" name="proof" accept="image/*,application/pdf" required>
+      </div>
+      <button type="submit">Submit</button>
+    </form>
+  </main>
+
+</body>
+</html>

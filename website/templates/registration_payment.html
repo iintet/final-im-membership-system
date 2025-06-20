@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Billing - MRSYS</title>
+
+  <link rel="stylesheet" href="register.css">
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-content">
+      <h1 class="logo">MRSYS</h1>
+      <nav>
+        <ul>
+          <li><a href="{{ url_for('views.home') }}">Home</a></li>
+          <li><a href="{{ url_for('views.about') }}">About</a></li>
+          <li><a href="{{ url_for('views.benefits') }}">Benefits</a></li>
+          <li><a href="{{ url_for('views.contact') }}">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+<!-- Main Form -->
+<main class="register-container billing-page">
+  <h2>Billing</h2>
+  <form id="billingForm">
+    <div class="form-group">
+      <label for="membership-type">Membership Type</label>
+      <select id="membership-type" name="membership-type" required>
+        <option value="">Select type</option>
+        <option value="basic">Basic</option>
+        <option value="premium">Premium</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="payment-amount">Payment Amount</label>
+      <input type="text" id="payment-amount" name="payment-amount" readonly />
+    </div>
+
+    <!-- Only one Pay Now button -->
+    <button type="button" id="pay-now" style="display: none;">Pay Now</button>
+  </form>
+</main>
+
+<script>
+  $('#membership-type').on('change', function () {
+    const selected = $(this).val();
+    if (selected === 'basic') {
+      $('#payment-amount').val('₱500');
+      $('#pay-now').show();
+    } else if (selected === 'premium') {
+      $('#payment-amount').val('₱1500');
+      $('#pay-now').show();
+    } else {
+      $('#payment-amount').val('');
+      $('#pay-now').hide();
+    }
+  });
+
+  $('#pay-now').on('click', function () {
+    // Route to the upload page
+    window.location.href = "registration_upload_payment.html";
+  });
+</script>
+</body>
+</html>

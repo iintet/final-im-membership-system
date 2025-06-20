@@ -12,13 +12,13 @@
   <div class="sidebar">
     <div class="logo">MRSYS</div>
     <nav>
-      <a href="{{ url_for('views.admin_dashboard') }}">Home</a>
-      <a href="{{ url_for('views.admin_member_management') }}">Member Management</a>
-      <a href="{{ url_for('views.admin_membership_management') }}">Membership Management</a>
-      <a href="{{ url_for('views.admin_billing_payment') }}">Billing & Payment</a>
-      <a href="{{ url_for('views.admin_event_management') }}">Event Management</a>
-      <a href="#" class="active">Committee Dashboard</a>
-      <a href="{{ url_for('views.admin_staff_management') }}">Staff Management</a>
+      <a href="{{ url_for('views.admin_dashboard') }}"><i class="fas fa-home"></i> Home</a>
+      <a href="{{ url_for('views.admin_member_management') }}"><i class="fas fa-user"></i> Member Management</a>
+      <a href="{{ url_for('views.admin_membership_management') }}"><i class="fas fa-id-card"></i> Membership Management</a>
+      <a href="{{ url_for('views.admin_billing_payment') }}"><i class="fas fa-money-bill-wave"></i> Billing & Payment</a>
+      <a href="{{ url_for('views.admin_event_management') }}"><i class="fas fa-calendar-alt"></i> Event Management</a>
+      <a href="#" class="active"><i class="fas fa-users-cog"></i> Committee Dashboard</a>
+      <a href="{{ url_for('views.admin_staff_management') }}"><i class="fas fa-user-shield"></i> Staff Management</a>
     </nav>
     <div class="logout">
       <a href="{{ url_for('views.home') }}"><i class="fas fa-sign-out-alt"></i> Log Out</a>

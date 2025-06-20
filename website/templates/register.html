@@ -422,5 +422,12 @@
   <script src="{{ url_for('static', filename='register_save.js') }}" defer></script>
   <script src="{{ url_for('static', filename='register_data_validation.js') }}" defer></script>
   <script src="{{ url_for('static', filename='register_school.js') }}" defer></script>
+  
+  <script>
+    document.getElementById("registrationForm").addEventListener("submit", function (event) {
+      event.preventDefault();
+      window.location.href = "{{ url_for('views.registration_payment') }}";
+    });
+  </script>
 </body>
 </html>

@@ -44,9 +44,9 @@ body {
 }
 
 .container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
+  max-width: 100%;
+  width: 100%;
+  padding: 2rem 4rem; 
 }
 
 .hero {
@@ -378,4 +378,93 @@ hr {
   .benefits-heading {
     font-size: 2rem;
   }
+}
+
+.story-grid {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.story-card {
+  background-color: white;
+  color: #111;
+  border-radius: 8px;
+  overflow: hidden;
+  width: 300px;
+  text-align: center;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+  flex: 1 1 280px; 
+  max-width: 320px;
+}
+
+.story-card:hover {
+  transform: translateY(-5px);
+}
+
+.past-events {
+  margin-top: 4rem;
+  padding: 3rem 2rem;
+  background: linear-gradient(to bottom, #0f1f5c 0%, #1e2c6b 100%);
+  border-radius: 12px;
+  text-align: center;
+  color: white;
+}
+
+
+.past-events h2 {
+  font-size: 2.5rem;
+  color: white;
+  margin-bottom: 0.5rem;
+}
+
+.past-events .section-subtitle {
+  font-size: 1.1rem;
+  color: #dcdcdc;
+  margin-bottom: 2rem;
+}
+
+.event-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+}
+
+.event-card {
+  background-color: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+  width: 300px;
+  text-align: left;
+  transition: transform 0.3s ease;
+}
+
+.event-card:hover {
+  transform: translateY(-5px);
+}
+
+.event-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.event-content {
+  padding: 1.5rem;
+}
+
+.event-content h3 {
+  color: #0f1f5c;
+  font-size: 1.2rem;
+  margin-bottom: 0.3rem;
+}
+
+.event-content p {
+  color: #333;
+  font-size: 0.95rem;
+  line-height: 1.5;
 }
