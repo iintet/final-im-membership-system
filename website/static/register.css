@@ -151,3 +151,10 @@ button[type="submit"] {
     gap: 10px;
   }
 }
+
+select.no-dropdown {
+  pointer-events: none;
+  background-color: #eee; /* optional: to indicate it is not active */
+  color: #888;            /* optional: lighter text color */
+}
+
