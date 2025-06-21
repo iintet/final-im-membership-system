@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, render_template, abort, request, session, redirect, url_for
+from flask import Blueprint, jsonify, render_template, abort, request, session, redirect, url_for, flash
 from . import models
 from .supabase_client import supabase
 from datetime import datetime
@@ -690,18 +690,111 @@ def admin_committee_roles():
     return render_template('admin_committee_role_assignment.html')
 
 # -- STAFF MANAGEMENT --
-
 @views.route('/admin/staff')
 def admin_staff_management():
     return render_template('admin_staff_management.html')
 
-@views.route('/admin/staff/manage')
+@views.route('/admin/staff/manage', methods=['GET', 'POST'])
 def admin_staff_manage():
-    return render_template('admin_staff_manage_account.html')
+    edit_id = request.args.get('edit_id', type=int)
 
-@views.route('/admin/staff/roles')
+    if request.method == 'POST':
+        full_name = request.form.get('staff_name')
+        email = request.form.get('staff_email')
+        role = request.form.get('staff_role')
+
+        # Split full name (optional: more validation can be added)
+        names = full_name.strip().split()
+        firstname = names[0]
+        lastname = names[-1] if len(names) > 1 else ''
+        middlename = ' '.join(names[1:-1]) if len(names) > 2 else ''
+
+        try:
+            # Save to Supabase
+            supabase.table("staff").insert({
+                "firstname": firstname,
+                "middlename": middlename,
+                "lastname": lastname,
+                "email": email,
+                "role": role,
+                "username": email,  # Default username as email
+                "password": "password123",  # Replace with secure logic
+                "fullname": full_name
+            }).execute()
+        except Exception as e:
+            print("Error inserting staff:", e)
+
+        return redirect(url_for('views.admin_staff_manage'))
+
+    # For GET request, fetch all staff accounts
+    try:
+        staff_data = supabase.table("staff").select("staffid, firstname, middlename, lastname, email, role").execute().data
+    except Exception as e:
+        print("Error fetching staff:", e)
+        staff_data = []
+
+    return render_template("admin_staff_manage_account.html", staff=staff_data)
+
+@views.route('/admin/staff/update/<int:staffid>', methods=['POST'])
+def update_staff(staffid):
+    try:
+        full_name = request.form.get('staff_name')
+        email = request.form.get('staff_email')
+        role = request.form.get('staff_role')
+
+        # Split full name
+        names = full_name.strip().split()
+        firstname = names[0]
+        lastname = names[-1] if len(names) > 1 else ''
+        middlename = ' '.join(names[1:-1]) if len(names) > 2 else ''
+
+        response = supabase.table("staff").update({
+            "firstname": firstname,
+            "middlename": middlename,
+            "lastname": lastname,
+            "email": email,
+            "role": role,
+            "fullname": full_name
+        }).eq("staffid", staffid).execute()
+
+        print("Update Response:", response)
+
+    except Exception as e:
+        print("Update Error:", e)
+
+    return redirect(url_for('views.admin_staff_manage'))
+
+@views.route('/admin/staff/delete/<int:staffid>', methods=['POST'])
+def delete_staff(staffid):
+    try:
+        supabase.table("staff").delete().eq("staffid", staffid).execute()
+    except Exception as e:
+        print("Error deleting staff:", e)
+
+    return redirect(url_for('views.admin_staff_manage'))
+
+@views.route('/admin/staff/roles', methods=['GET', 'POST'])
 def admin_staff_roles():
-    return render_template('admin_staff_assign_roles.html')
+    if request.method == 'POST':
+        staffid = request.form.get('staffid')
+        new_role = request.form.get('new_role')
+
+        try:
+            update_result = supabase.table("staff").update({"role": new_role}).eq("staffid", staffid).execute()
+            flash("Role updated successfully!", "success")
+        except Exception as e:
+            print("Error updating role:", e)
+            flash("Error updating role.", "error")
+
+        return redirect(url_for('views.admin_staff_roles'))
+
+    try:
+        staff_list = supabase.table("staff").select("staffid, firstname, middlename, lastname, email, role").execute().data
+    except Exception as e:
+        print("Error fetching staff list:", e)
+        staff_list = []
+
+    return render_template("admin_staff_assign_roles.html", staff=staff_list)
 
 # -- MEMBER DASHBOARD --
 @views.route('/userdashboard', methods=['GET'])
