@@ -45,24 +45,14 @@
           </tr>
         </thead>
         <tbody>
+          {% for reg in registrations %}
           <tr>
-            <td>Juan Dela Cruz</td>
-            <td>Annual General Meeting</td>
-            <td>2025-06-10</td>
-            <td><span class="badge approved">Confirmed</span></td>
+            <td>{{ reg.member_name }}</td>
+            <td>{{ reg.event_name }}</td>
+            <td>{{ reg.registrationdate }}</td>
+            <td><span class="badge {{ reg.status | lower }}">{{ reg.status }}</span></td>
           </tr>
-          <tr>
-            <td>Maria Santos</td>
-            <td>Volunteer Orientation</td>
-            <td>2025-06-12</td>
-            <td><span class="badge pending">Pending</span></td>
-          </tr>
-          <tr>
-            <td>Michael Reyes</td>
-            <td>Annual General Meeting</td>
-            <td>2025-06-08</td>
-            <td><span class="badge cancelled">Cancelled</span></td>
-          </tr>
+          {% endfor %}
         </tbody>
       </table>
     </div>

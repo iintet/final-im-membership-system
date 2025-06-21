@@ -360,7 +360,6 @@ def admin_member_view(memberid):
         membership_type=membership_type,
         additional_notes="Approved by admin after verification."  # you can customize this
     )
-    return render_template('admin_member_management_view.html', memberid=memberid)
 
 @views.route('/admin/member/edit/<memberid>', methods=['GET', 'POST'])
 def admin_member_edit(memberid):
@@ -438,6 +437,101 @@ def admin_event_management():
 @views.route('/admin/billing')
 def admin_billing_payment():
     return render_template('admin_billing_payment.html')
+
+@views.route('/admin/events/view')
+def admin_event_view():
+    response = supabase.table("event").select("*").order("eventdate", desc=False).execute()
+    events = response.data if response.data else []
+    return render_template('admin_event_view.html', events=events)
+
+@views.route('/admin/events/manage')
+def admin_event_manage():
+    response = supabase.table("event").select("*").order("eventdate", desc=False).execute()
+    events = response.data if response.data else []
+    return render_template('admin_event_manage.html', events=events)
+
+@views.route('/admin/event/registrations')
+def admin_event_registrations():
+    try:
+        # Step 1: Get all event registrations ordered by date (latest first)
+        result = supabase.table("eventregistration").select(
+            "registrationid, registrationdate, status, memberid, eventid"
+        ).order("registrationdate", desc=True).execute()
+
+        registrations = result.data
+
+        enriched_registrations = []
+        for reg in registrations:
+            memberid = reg["memberid"]
+            # Get member base info (to know role)
+            member_result = supabase.table("member").select("role").eq("memberid", memberid).execute().data
+            if not member_result:
+                continue
+            role = member_result[0]["role"]
+
+            # Get name and contact info
+            if role == "individual":
+                detail_result = supabase.table("individual").select(
+                    "firstname, middlename, lastname"
+                ).eq("memberid", memberid).execute().data
+                if detail_result:
+                    d = detail_result[0]
+                    full_name = f"{d.get('firstname', '')} {d.get('middlename', '')} {d.get('lastname', '')}".strip()
+                else:
+                    full_name = "Unknown Individual"
+            else:
+                detail_result = supabase.table("institutional").select(
+                    "representativefirstname, representativemiddlename, representativelastname"
+                ).eq("memberid", memberid).execute().data
+                if detail_result:
+                    d = detail_result[0]
+                    full_name = f"{d.get('representativefirstname', '')} {d.get('representativemiddlename', '')} {d.get('representativelastname', '')}".strip()
+                else:
+                    full_name = "Unknown Institution"
+
+            # Get event name
+            event_result = supabase.table("event").select("name").eq("eventid", reg["eventid"]).execute().data
+            event_name = event_result[0]["name"] if event_result else "Unknown Event"
+
+            enriched_registrations.append({
+                "registrationid": reg["registrationid"],
+                "registrationdate": reg["registrationdate"],
+                "status": reg["status"],
+                "member_name": full_name,
+                "event_name": event_name
+            })
+
+        return render_template("admin_event_registrations.html", registrations=enriched_registrations)
+
+    except Exception as e:
+        print("Error loading event registrations:", e)
+        return render_template("admin_event_registrations.html", registrations=[])
+
+# @views.route('/admin/events/registrations')
+# def admin_event_registrations():
+#     # Get event registrations
+#     reg_response = supabase.table("eventregistration").select("*").execute()
+#     event_response = supabase.table("event").select("eventid", "name").execute()
+#     member_response = supabase.table("member").select("memberid", "firstname", "lastname").execute()
+
+#     # Create lookup dictionaries
+#     event_map = {e["eventid"]: e["name"] for e in event_response.data}
+#     member_map = {m["memberid"]: f"{m['firstname']} {m['lastname']}" for m in member_response.data}
+
+#     # Build combined registration data
+#     registrations = []
+#     for r in reg_response.data:
+#         registrations.append({
+#             "member_name": member_map.get(r["memberid"], "Unknown"),
+#             "event_name": event_map.get(r["eventid"], "Unknown"),
+#             "date": r.get("registrationdate", "N/A"),
+#             "status": r.get("status", "Pending").capitalize()
+#         })
+
+#     # Sort descending by date
+#     registrations.sort(key=lambda x: x["date"], reverse=True)
+
+#     return render_template("admin_event_registrations.html", registrations=registrations)
 
 # -- MEMBERSHIP MANAGEMENT --
 @views.route('/admin/memberships')
