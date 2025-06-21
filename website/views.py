@@ -22,9 +22,14 @@ def validate_required_fields(data, fields):
 def home():
     return render_template("front_page.html")
 
-@views.route('/register')
-def register():
-    return render_template('register.html')
+# -- REGISTRATION --
+@views.route('/register/payment', methods=['GET'])
+def register_payment():
+    return render_template('registration_payment.html')
+
+@views.route('/register/uploadpayment', methods=['GET'])
+def register_upload_payment():
+    return render_template('registration_upload_payment.html')
 
 @views.route('/auth/login', methods=['GET'])
 def login():
@@ -507,32 +512,6 @@ def admin_event_registrations():
         print("Error loading event registrations:", e)
         return render_template("admin_event_registrations.html", registrations=[])
 
-# @views.route('/admin/events/registrations')
-# def admin_event_registrations():
-#     # Get event registrations
-#     reg_response = supabase.table("eventregistration").select("*").execute()
-#     event_response = supabase.table("event").select("eventid", "name").execute()
-#     member_response = supabase.table("member").select("memberid", "firstname", "lastname").execute()
-
-#     # Create lookup dictionaries
-#     event_map = {e["eventid"]: e["name"] for e in event_response.data}
-#     member_map = {m["memberid"]: f"{m['firstname']} {m['lastname']}" for m in member_response.data}
-
-#     # Build combined registration data
-#     registrations = []
-#     for r in reg_response.data:
-#         registrations.append({
-#             "member_name": member_map.get(r["memberid"], "Unknown"),
-#             "event_name": event_map.get(r["eventid"], "Unknown"),
-#             "date": r.get("registrationdate", "N/A"),
-#             "status": r.get("status", "Pending").capitalize()
-#         })
-
-#     # Sort descending by date
-#     registrations.sort(key=lambda x: x["date"], reverse=True)
-
-#     return render_template("admin_event_registrations.html", registrations=registrations)
-
 # -- MEMBERSHIP MANAGEMENT --
 @views.route('/admin/memberships')
 def admin_membership_management():
@@ -614,7 +593,6 @@ def admin_membership_registration_history():
     enriched.sort(key=lambda x: x['registration_date'], reverse=True)
 
     return render_template("admin_membership_registration_history.html", registrations=enriched)
-
 
 # -- MEMBER DASHBOARD --
 @views.route('/userdashboard', methods=['GET'])
