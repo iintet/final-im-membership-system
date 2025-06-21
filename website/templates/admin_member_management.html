@@ -59,12 +59,19 @@
               <td>{{ member.fullname }}</td>
               <td>{{ member.email }}</td>
               <td>{{ member.role }}</td>
-              <td>{{ member.membershiptype }}</td>
-              <td>{{ member.membershipstatus }}</td>
+              <td>
+                <span class="badge membership {{ member.membershiptype | lower }}">
+                  {{ member.membershiptype }}
+                </span>
+              </td>
+              <td>
+                <span class="badge status {{ member.membershipstatus | lower }}">
+                  {{ member.membershipstatus }}
+                </span>
+              </td>
               <td>
                 <a href="{{ url_for('views.admin_member_view', memberid=member.memberid) }}" class="view-btn">View</a>
                 <a href="{{ url_for('views.admin_member_edit', memberid=member.memberid) }}" class="edit-btn">Edit</a>
-
               </td>
             </tr>
             {% endfor %}

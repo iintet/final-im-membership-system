@@ -32,13 +32,13 @@
     <div class="card">
       <h2>Create New Bill</h2>
       <p>Link a member and a payer to create a bill.</p>
-      <a href="admin_create_bill.html"><button class="blue-btn">Create Bill</button></a>
+      <a href="{{ url_for('views.admin_create_billing') }}"><button class="blue-btn">Create Bill</button></a>
     </div>
 
     <div class="card">
       <h2>Record Payment</h2>
       <p>Enter payment details for a member's bill.</p>
-      <a href="admin_record_payment.html"><button class="blue-btn">Record Payment</button></a>
+      <a href="{{ url_for('views.admin_payment_record') }}"><button class="blue-btn">Record Payment</button></a>
     </div>
 
     <div class="card full-width">

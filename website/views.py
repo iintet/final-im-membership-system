@@ -55,15 +55,6 @@ def eventsparticipation():
 def committeeparticipation():
     return render_template('user_committee_participation.html')
 
-# -- ADMIN SIDE BAR --
-@views.route('/admin/committees')
-def admin_committee_dashboard():
-    return render_template('admin_committee_dashboard.html')
-
-@views.route('/admin/staff')
-def admin_staff_management():
-    return render_template('admin_staff_management.html')
-
 # API endpoints to fetch locations data from Supabase
 @views.route('/api/regions', methods=['GET'])
 def get_regions():
@@ -439,15 +430,74 @@ def admin_member_edit(memberid):
 def admin_event_management():
     return render_template('admin_event_management.html')
 
-@views.route('/admin/billing')
-def admin_billing_payment():
-    return render_template('admin_billing_payment.html')
-
 @views.route('/admin/events/view')
 def admin_event_view():
-    response = supabase.table("event").select("*").order("eventdate", desc=False).execute()
-    events = response.data if response.data else []
-    return render_template('admin_event_view.html', events=events)
+    try:
+        # Get filter params from query
+        from_date_str = request.args.get('from_date')
+        to_date_str = request.args.get('to_date')
+        status_filter = request.args.get('status')
+        capacity_sort = request.args.get('capacity_sort')  # 'asc' or 'desc'
+
+        events_result = supabase.table("event").select("*").execute()
+        events = events_result.data
+
+        enriched_events = []
+        for event in events:
+            eventid = event["eventid"]
+            name = event["name"]
+            location = event["location"]
+            capacity = event["capacity"]
+
+            # Parse date
+            eventdate = datetime.strptime(event["eventdate"], "%Y-%m-%d").date()
+            today = datetime.today().date()
+            status = "Upcoming" if eventdate >= today else "Completed"
+
+            # Apply date filter
+            if from_date_str:
+                from_date = datetime.strptime(from_date_str, "%Y-%m-%d").date()
+                if eventdate < from_date:
+                    continue
+            if to_date_str:
+                to_date = datetime.strptime(to_date_str, "%Y-%m-%d").date()
+                if eventdate > to_date:
+                    continue
+
+            # Apply status filter
+            if status_filter and status_filter != "All" and status != status_filter:
+                continue
+
+            # Count registrations
+            reg_result = supabase.table("eventregistration").select("registrationid").eq("eventid", eventid).execute()
+            registered = len(reg_result.data)
+            available = max(capacity - registered, 0)
+
+            enriched_events.append({
+                "name": name,
+                "eventdate": eventdate.strftime("%B %d, %Y"),
+                "raw_date": eventdate,  # for sorting
+                "location": location,
+                "status": status,
+                "capacity": capacity,
+                "registered": registered,
+                "available": available
+            })
+
+        # Sort by capacity
+        if capacity_sort == "asc":
+            enriched_events.sort(key=lambda x: x["capacity"])
+        elif capacity_sort == "desc":
+            enriched_events.sort(key=lambda x: x["capacity"], reverse=True)
+
+        return render_template("admin_event_view.html", events=enriched_events,
+                               from_date=from_date_str, to_date=to_date_str,
+                               status_filter=status_filter or "All",
+                               capacity_sort=capacity_sort or "")
+
+    except Exception as e:
+        print("Error fetching events:", e)
+        return render_template("admin_event_view.html", events=[])
 
 @views.route('/admin/events/manage')
 def admin_event_manage():
@@ -593,6 +643,54 @@ def admin_membership_registration_history():
     enriched.sort(key=lambda x: x['registration_date'], reverse=True)
 
     return render_template("admin_membership_registration_history.html", registrations=enriched)
+
+# -- ADMIN BILLING --
+@views.route('/admin/billing')
+def admin_billing_payment():
+    return render_template('admin_billing_payment.html')
+
+@views.route('/admin/billing/create', methods=['GET', 'POST'])
+def admin_create_billing():
+    return render_template('admin_create_bill.html')
+
+@views.route('/admin/payment/record', methods=['GET'])
+def admin_payment_record():
+    return render_template('admin_record_payment.html')
+
+# -- ADMIN COMMITTEE MANAGEMENT --
+@views.route('/admin/committees')
+def admin_committee_dashboard():
+    return render_template('admin_committee_dashboard.html')
+
+@views.route('/admin/committees/view')
+def admin_committee_view():
+        return render_template('admin_committee_view.html')
+
+@views.route('/admin/committees/manage')
+def admin_committee_manage():
+    return render_template('admin_committee_manage_members.html')
+
+@views.route('/admin/committees/status')
+def admin_committee_status():
+    return render_template('admin_committee_application_status.html')
+
+@views.route('/admin/committees/roles')
+def admin_committee_roles():
+    return render_template('admin_committee_role_assignment.html')
+
+# -- STAFF MANAGEMENT --
+
+@views.route('/admin/staff')
+def admin_staff_management():
+    return render_template('admin_staff_management.html')
+
+@views.route('/admin/staff/manage')
+def admin_staff_manage():
+    return render_template('admIn_staff_manage_account.html')
+
+@views.route('/admin/staff/roles')
+def admin_staff_roles():
+    return render_template('admin_staff_assign_roles.html')
 
 # -- MEMBER DASHBOARD --
 @views.route('/userdashboard', methods=['GET'])
