@@ -32,25 +32,25 @@
     <div class="section">
       <h2>List of all committees</h2>
       <p>Browse the current list of active and inactive committees.</p>
-      <a href="admin_committee_list.html" class="blue-button">View Committees</a>
+      <a href="{{ url_for('views.admin_committee_view') }}l" class="blue-button">View Committees</a>
     </div>
 
     <div class="section">
       <h2>Manage committee members</h2>
       <p>See current committee members or add new ones.</p>
-      <a href="admin_committee_manage_members.html" class="blue-button">Manage Committees</a>
+      <a href="{{ url_for('views.admin_committee_manage') }}" class="blue-button">Manage Committees</a>
     </div>
 
     <div class="section">
       <h2>Track application status</h2>
       <p>Monitor member applications and their current statuses if pending or approved.</p>
-      <a href="admin_committee_application_status.html" class="blue-button">Track Status</a>
+      <a href="{{ url_for('views.admin_committee_status') }}" class="blue-button">Track Status</a>
     </div>
 
     <div class="section">
       <h2>Role assignments</h2>
       <p>Assign roles like head, subhead or member within committees.</p>
-      <a href="admin_committee_role_assignment.html" class="blue-button">Assign Roles</a>
+      <a href="{{ url_for('views.admin_committee_roles') }}" class="blue-button">Assign Roles</a>
     </div>
   </div>
 </body>

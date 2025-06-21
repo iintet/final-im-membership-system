@@ -55,15 +55,6 @@ def eventsparticipation():
 def committeeparticipation():
     return render_template('user_committee_participation.html')
 
-# -- ADMIN SIDE BAR --
-@views.route('/admin/committees')
-def admin_committee_dashboard():
-    return render_template('admin_committee_dashboard.html')
-
-@views.route('/admin/staff')
-def admin_staff_management():
-    return render_template('admin_staff_management.html')
-
 # API endpoints to fetch locations data from Supabase
 @views.route('/api/regions', methods=['GET'])
 def get_regions():
@@ -439,10 +430,6 @@ def admin_member_edit(memberid):
 def admin_event_management():
     return render_template('admin_event_management.html')
 
-@views.route('/admin/billing')
-def admin_billing_payment():
-    return render_template('admin_billing_payment.html')
-
 @views.route('/admin/events/view')
 def admin_event_view():
     response = supabase.table("event").select("*").order("eventdate", desc=False).execute()
@@ -593,6 +580,54 @@ def admin_membership_registration_history():
     enriched.sort(key=lambda x: x['registration_date'], reverse=True)
 
     return render_template("admin_membership_registration_history.html", registrations=enriched)
+
+# -- ADMIN BILLING --
+@views.route('/admin/billing')
+def admin_billing_payment():
+    return render_template('admin_billing_payment.html')
+
+@views.route('/admin/billing/create', methods=['GET', 'POST'])
+def admin_create_billing():
+    return render_template('admin_create_bill.html')
+
+@views.route('/admin/payment/record', methods=['GET'])
+def admin_payment_record():
+    return render_template('admin_record_payment.html')
+
+# -- ADMIN COMMITTEE MANAGEMENT --
+@views.route('/admin/committees')
+def admin_committee_dashboard():
+    return render_template('admin_committee_dashboard.html')
+
+@views.route('/admin/committees/view')
+def admin_committee_view():
+        return render_template('admin_committee_view.html')
+
+@views.route('/admin/committees/manage')
+def admin_committee_manage():
+    return render_template('admin_committee_manage_members.html')
+
+@views.route('/admin/committees/status')
+def admin_committee_status():
+    return render_template('admin_committee_application_status.html')
+
+@views.route('/admin/committees/roles')
+def admin_committee_roles():
+    return render_template('admin_committee_role_assignment.html')
+
+# -- STAFF MANAGEMENT --
+
+@views.route('/admin/staff')
+def admin_staff_management():
+    return render_template('admin_staff_management.html')
+
+@views.route('/admin/staff/manage')
+def admin_staff_manage_account():
+    return render_template('admIn_staff_manage_account.html')
+
+@views.route('/admin/staff/roles')
+def admin_staff_roles():
+    return render_template('admin_staff_assign_roles.html')
 
 # -- MEMBER DASHBOARD --
 @views.route('/userdashboard', methods=['GET'])

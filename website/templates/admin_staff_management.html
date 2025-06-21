@@ -32,14 +32,14 @@
     <div class="card">
       <h2>Manage Staff Accounts</h2>
       <p>View, add, or update registered staff account details.</p>
-      <a href="admin_staff_manage_account.html" class="blue-btn">Manage Staff Accounts</a>
+      <a href="{{ url_for('views.admin_staff_manage_account') }}" class="blue-btn">Manage Staff Accounts</a>
     </div>
 
 
     <div class="card">
       <h2>Assign Roles</h2>
       <p>Designate admin, assistant, or other roles to staff members.</p>
-      <a href="admin_staff_assign_roles.html" class="blue-btn">Manage Staff Accounts</a>
+      <a href="{{ url_for('views.admin_staff_roles') }}" class="blue-btn">Manage Staff Accounts</a>
     </div>
   </div>
 </body>
