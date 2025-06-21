@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   region.addEventListener("change", () => {
     const id = region.value;
+    province.innerHTML = '<option value="">Loading...</option>';
     fetch(`/api/schprovinces?regionid=${id}`)
       .then(res => res.json())
       .then(data => {
@@ -26,16 +27,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   province.addEventListener("change", () => {
     const id = province.value;
+    city.innerHTML = '<option value="">Loading...</option>';
     fetch(`/api/schcities?provinceid=${id}`)
       .then(res => res.json())
       .then(data => {
         city.innerHTML = '<option value="">Select city</option>' +
-          data.map(c => `<option value="${c.cityid}">${c.cityname}</option>`).join('');
+          data.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
       });
   });
 
   city.addEventListener("change", () => {
     const id = city.value;
+    name.innerHTML = '<option value="">Loading...</option>';
     fetch(`/api/schnames?cityid=${id}`)
       .then(res => res.json())
       .then(data => {
@@ -46,10 +49,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   name.addEventListener("change", () => {
     const id = name.value;
+    type.value = 'Loading...';
     fetch(`/api/schooltype?schoolid=${id}`)
       .then(res => res.json())
       .then(data => {
         type.value = data.schooltype || "Not found";
+      })
+      .catch(() => {
+        type.value = 'Error';
       });
   });
 });

@@ -146,28 +146,39 @@
               <!-- School Dropdown -->
               <div id="ind-school-dropdown" style="display: none;">
                 <div class="form-group">
-                  <label for="ind-school-select">Select School</label>
-                  <select id="ind-school-select" name="ind-school-select">
+                  <label for="ind-school-region">Region</label>
+                  <select id="ind-school-region" name="ind-school-region" required>
+                    <option value="">Select region</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="ind-school-province">Province</label>
+                  <select id="ind-school-province" name="ind-school-province" required>
+                    <option value="">Select province</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="ind-school-city">City</label>
+                  <select id="ind-school-city" name="ind-school-city" required>
+                    <option value="">Select city</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="ind-school-name">School</label>
+                  <select id="ind-school-name" name="ind-school-name" required>
                     <option value="">Select school</option>
                   </select>
                 </div>
+
                 <div class="form-group">
-                  <label for="ind-school-region">Region</label>
-                  <input type="text" id="ind-school-region" name="ind-school-region" readonly>
-                </div>
-                <div class="form-group">
-                  <label for="ind-school-province">Province</label>
-                  <input type="text" id="ind-school-province" name="ind-school-province" readonly>
-                </div>
-                <div class="form-group">
-                  <label for="ind-school-city">City</label>
-                  <input type="text" id="ind-school-city" name="ind-school-city" readonly>
-                </div>
-                <div class="form-group">
-                  <label for="ind-school-type">Type</label>
+                  <label for="ind-school-type">School Type</label>
                   <input type="text" id="ind-school-type" name="ind-school-type" readonly>
                 </div>
               </div>
+
         </div>
       </div>
 
@@ -251,36 +262,41 @@
         </div>
           </div>
 
-          <div id="ins-school-fields" style="display: none;">
+          <div id="ins-school-dropdown" style="display: none;">
             <div class="form-group">
               <label for="ins-school-region">Region</label>
-              <select id="ins-school-region" name="ins-school-region">
-                <option value="">Select school region</option>
+              <select id="ins-school-region" name="ins-school-region" required>
+                <option value="">Select region</option>
               </select>
             </div>
+
             <div class="form-group">
               <label for="ins-school-province">Province</label>
-              <select id="ins-school-province" name="ins-school-province">
-                <option value="">Select school province</option>
+              <select id="ins-school-province" name="ins-school-province" required>
+                <option value="">Select province</option>
               </select>
             </div>
+
             <div class="form-group">
-              <label for="ins-school-city">City/Municipality</label>
-              <select id="ins-school-city" name="ins-school-city">
-                <option value="">Select school city/municipality</option>
+              <label for="ins-school-city">City</label>
+              <select id="ins-school-city" name="ins-school-city" required>
+                <option value="">Select city</option>
               </select>
             </div>
+
             <div class="form-group">
-              <label for="ins-school-name">School Name</label>
-              <select id="ins-school-name" name="ins-school-name">
-                <option value="">Select school name</option>
+              <label for="ins-school-name">School</label>
+              <select id="ins-school-name" name="ins-school-name" required>
+                <option value="">Select school</option>
               </select>
             </div>
+
             <div class="form-group">
-              <label for="ins-school-type">Type</label>
+              <label for="ins-school-type">School Type</label>
               <input type="text" id="ins-school-type" name="ins-school-type" readonly>
             </div>
           </div>
+
 
       </div>
       <button type="submit">Register</button>
@@ -332,7 +348,7 @@
     document.getElementById("institutional-affiliation-type").addEventListener("change", function () {
       const affiliationType = this.value;
       const organizationFields = document.getElementById("ins-organization-fields");
-      const schoolFields = document.getElementById("ins-school-fields");
+      const schoolFields = document.getElementById("ins-school-dropdown");
 
       if (affiliationType === "organization") {
         organizationFields.style.display = "block";
@@ -418,11 +434,11 @@
       const institutionFields = document.getElementById("institution-fields");
 
       const indAffiliation = document.getElementById("individual-affiliation-type");
-      const indSchoolFields = document.getElementById("ind-school-fields");
+      const indSchoolFields = document.getElementById("ind-school-dropdown");
       const indOrgFields = document.getElementById("ind-organization-fields");
 
       const insAffiliation = document.getElementById("institutional-affiliation-type");
-      const insSchoolFields = document.getElementById("ins-school-fields");
+      const insSchoolFields = document.getElementById("ins-school-dropdown");
       const insOrgFields = document.getElementById("ins-organization-fields");
       const regionSelect = document.getElementById("region");
       const provinceSelect = document.getElementById("province");
@@ -541,9 +557,11 @@
 
   <script src="{{ url_for('static', filename='register_individual.js') }}" defer></script>
   <script src="{{ url_for('static', filename='register_institution.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='register_school_individual.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='register_school_institutional.js') }}" defer></script>
   <script src="{{ url_for('static', filename='register_save.js') }}" defer></script>
   <script src="{{ url_for('static', filename='register_data_validation.js') }}" defer></script>
-  <script src="{{ url_for('static', filename='register_school.js') }}" defer></script>
+  <!-- <script src="{{ url_for('static', filename='register_school.js') }}" defer></script> -->
 
 
 
@@ -568,7 +586,7 @@
     const roleSelect = document.getElementById("role");
     const affTypeSelect = document.getElementById("institutional-affiliation-type");
 
-    const schoolFields = document.getElementById("ins-school-fields");
+    const schoolFields = document.getElementById("ins-school-dropdown");
     const orgFields = document.getElementById("ins-organization-fields");
 
     function updateInstitutionFields() {
