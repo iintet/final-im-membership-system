@@ -120,54 +120,55 @@
             <input type="tel" name="individual-emergency-contact-number" id="emergency-contact-number-indiv">
           </div>
           <div class="form-group">
-            <label for="affiliation-type">Affiliation Type</label>
-            <select id="affiliation-type" name="affiliation-type" required>
+            <label for="individual-affiliation-type">Affiliation Type</label>
+            <select id="individual-affiliation-type" name="individual-affiliation-type" required>
               <option value="">Select type</option>
               <option value="organization">Organization</option>
               <option value="school">School</option>
               <option value="none">Not Applicable</option>
             </select>
           </div>
-          <div id="organization-fields" style="display: none;">
-            <div class="form-group">
-              <label for="organization-name">Organization Name</label>
-              <input type="text" id="organization-name" name="organization-name">
-            </div>
-            <div class="form-group">
-              <label for="organization-address">Organization Address</label>
-              <input type="text" id="organization-address" name="organization-address">
-            </div>
-          </div>
-          <div id="school-fields" style="display: none;">
-            <div class="form-group">
-              <label for="school-region">Region</label>
-              <select id="school-region" name="school-region">
-                <option value="">Select school region</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="school-province">Province</label>
-              <select id="school-province" name="school-province">
-                <option value="">Select school province</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="school-city">City/Municipality</label>
-              <select id="school-city" name="school-city">
-                <option value="">Select school city/municipality</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="school-name">School Name</label>
-              <select id="school-name" name="school-name">
-                <option value="">Select school name</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="school-type">Type</label>
-              <input type="text" id="school-type" name="school-type" readonly>
-            </div>
-          </div>
+              <!-- Organization Dropdown -->
+              <div id="organization-dropdown" style="display: none;">
+                <div class="form-group">
+                  <label for="organization-select">Select Organization</label>
+                  <select id="organization-select" name="organization-select">
+                    <option value="">Select organization</option>
+                    <!-- Options will be populated dynamically -->
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="organization-address">Organization Address</label>
+                  <input type="text" id="organization-address" name="organization-address" readonly>
+                </div>
+              </div>
+              
+              <!-- School Dropdown -->
+              <div id="school-dropdown" style="display: none;">
+                <div class="form-group">
+                  <label for="school-select">Select School</label>
+                  <select id="school-select" name="school-select">
+                    <option value="">Select school</option>
+                    <!-- Options will be populated dynamically -->
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="school-region">Region</label>
+                  <input type="text" id="school-region" name="school-region" readonly>
+                </div>
+                <div class="form-group">
+                  <label for="school-province">Province</label>
+                  <input type="text" id="school-province" name="school-province" readonly>
+                </div>
+                <div class="form-group">
+                  <label for="school-city">City</label>
+                  <input type="text" id="school-city" name="school-city" readonly>
+                </div>
+                <div class="form-group">
+                  <label for="school-type">Type</label>
+                  <input type="text" id="school-type" name="school-type" readonly>
+                </div>
+              </div>
         </div>
       </div>
 
@@ -177,13 +178,7 @@
           <label for="institution-name">Institution Name</label>
           <input type="text" id="institution-name" name="institution-name">
         </div>
-        <div class="form-group">
-          <label>Type</label>
-          <div class="radio-group">
-            <label><input type="radio" name="institution-type" value="school" required> School</label>
-            <label><input type="radio" name="institution-type" value="organization" required> Organization</label>
-          </div>
-        </div>
+        
         <div class="form-group">
           <label for="rep-last-name">Representative Last Name</label>
           <input type="text" id="rep-last-name" name="rep-last-name" required>
@@ -236,6 +231,55 @@
           <label for="emergency-contact-number">Emergency Contact Number</label>
           <input type="tel" name="institution-emergencycontactnumber" id="emergency-contact-number-inst">
         </div>
+        <div class="form-group">
+          <label for="institutional-affiliation-type">Affiliation Type</label>
+          <select id="institutional-affiliation-type" name="institutional-affiliation-type" required>
+            <option value="">Select type</option>
+            <option value="organization">Organization</option>
+            <option value="school">School</option>
+            <option value="none">Not Applicable</option>
+          </select>
+        <div id="organization-fields" style="display: none;">
+          <div class="form-group">
+            <label for="organization-name">Organization Name</label>
+            <input type="text" id="organization-name" name="organization-name">
+          </div>
+          <div class="form-group">
+            <label for="organization-address">Organization Address</label>
+            <input type="text" id="organization-address" name="organization-address">
+          </div>
+        </div>
+        </div>
+        <div id="school-fields" style="display: none;">
+            <div class="form-group">
+              <label for="school-region">Region</label>
+              <select id="school-region" name="school-region">
+                <option value="">Select school region</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="school-province">Province</label>
+              <select id="school-province" name="school-province">
+                <option value="">Select school province</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="school-city">City/Municipality</label>
+              <select id="school-city" name="school-city">
+                <option value="">Select school city/municipality</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="school-name">School Name</label>
+              <select id="school-name" name="school-name">
+                <option value="">Select school name</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="school-type">Type</label>
+              <input type="text" id="school-type" name="school-type" readonly>
+            </div>
+          </div>
 
       </div>
       <button type="submit">Register</button>
@@ -267,7 +311,24 @@
     });
 
     // Show/hide affiliation type fields
-    document.getElementById("affiliation-type").addEventListener("change", function () {
+    document.getElementById("individual-affiliation-type").addEventListener("change", function () {
+      const affiliationType = this.value;
+      const organizationFields = document.getElementById("organization-fields");
+      const schoolFields = document.getElementById("school-fields");
+
+      if (affiliationType === "organization") {
+        organizationFields.style.display = "block";
+        schoolFields.style.display = "none";
+      } else if (affiliationType === "school") {
+        schoolFields.style.display = "block";
+        organizationFields.style.display = "none";
+      } else {
+        organizationFields.style.display = "none";
+        schoolFields.style.display = "none";
+        schoolFields.querySelectorAll('input, select').forEach(el => el.value = '');
+      }
+    });
+    document.getElementById("institutional-affiliation-type").addEventListener("change", function () {
       const affiliationType = this.value;
       const organizationFields = document.getElementById("organization-fields");
       const schoolFields = document.getElementById("school-fields");
