@@ -686,7 +686,7 @@ def admin_staff_management():
 
 @views.route('/admin/staff/manage')
 def admin_staff_manage():
-    return render_template('admIn_staff_manage_account.html')
+    return render_template('admin_staff_manage_account.html')
 
 @views.route('/admin/staff/roles')
 def admin_staff_roles():
