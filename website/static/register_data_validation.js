@@ -1,113 +1,273 @@
-// register_data_validation.js
-
-// Function to update required attributes based on selected role
-function updateRequiredAttributes() {
-  const role = document.getElementById('role').value;
-  const individualFields = document.querySelectorAll('#individual-fields input, #individual-fields select');
-  const institutionFields = document.querySelectorAll('#institution-fields input, #institution-fields select');
-
-  if (role === 'individual') {
-    individualFields.forEach(el => el.setAttribute('required', ''));
-    institutionFields.forEach(el => el.removeAttribute('required'));
-  } else if (role === 'institution') {
-    institutionFields.forEach(el => el.setAttribute('required', ''));
-    individualFields.forEach(el => el.removeAttribute('required'));
-  } else {
-    individualFields.forEach(el => el.removeAttribute('required'));
-    institutionFields.forEach(el => el.removeAttribute('required'));
-  }
+// Fields to skip from being marked 'required'
+function isSkippable(el) {
+  return el.id === 'middlename';
 }
 
-// Function to validate affiliation type fields for Individual users
-function validateAffiliationFields() {
-  const affiliationType = document.getElementById('affiliation-type').value;
-
-  const organizationName = document.getElementById('organization-name');
-  const organizationAddress = document.getElementById('organization-address');
-
-  const schoolName = document.getElementById('school-name');
-  const schoolType = document.getElementById('school-type');
-  const schoolRegion = document.getElementById('school-region');
-  const schoolProvince = document.getElementById('school-province');
-  const schoolCity = document.getElementById('school-city');
-
-  let isValid = true;
-  let messages = [];
-
-  // Clear previous error highlights
-  const clearErrors = (elements) => {
-    elements.forEach(el => el.classList.remove('input-error'));
-  };
-
-  clearErrors([organizationName, organizationAddress, schoolName, schoolType, schoolRegion, schoolProvince, schoolCity]);
-
-  if (affiliationType === 'organization') {
-    if (!organizationName.value.trim()) {
-      isValid = false;
-      messages.push('Organization Name is required.');
-      organizationName.classList.add('input-error');
-    }
-    if (!organizationAddress.value.trim()) {
-      isValid = false;
-      messages.push('Organization Address is required.');
-      organizationAddress.classList.add('input-error');
-    }
-  } else if (affiliationType === 'school') {
-    if (!schoolName.value.trim()) {
-      isValid = false;
-      messages.push('School Name is required.');
-      schoolName.classList.add('input-error');
-    }
-    if (!schoolType.value) {
-      isValid = false;
-      messages.push('School Type is required.');
-      schoolType.classList.add('input-error');
-    }
-    if (!schoolRegion.value) {
-      isValid = false;
-      messages.push('School Region is required.');
-      schoolRegion.classList.add('input-error');
-    }
-    if (!schoolProvince.value) {
-      isValid = false;
-      messages.push('School Province is required.');
-      schoolProvince.classList.add('input-error');
-    }
-    if (!schoolCity.value) {
-      isValid = false;
-      messages.push('School City is required.');
-      schoolCity.classList.add('input-error');
-    }
-  }
-  return { isValid, messages };
-}
-
-// Attach event listeners
 document.addEventListener('DOMContentLoaded', () => {
-  // Initialize required state on page load
-  updateRequiredAttributes();
+  // Update required fields dynamically by role
+  function updateRequiredAttributes() {
+    const role = document.getElementById('role')?.value;
+    const individualFields = document.querySelectorAll('#individual-fields input, #individual-fields select');
+    const institutionFields = document.querySelectorAll('#institution-fields input, #institution-fields select');
 
-  // Update required attributes when role changes
-  document.getElementById('role').addEventListener('change', updateRequiredAttributes);
+    if (role === 'individual') {
+      individualFields.forEach(el => {
+        if (!isSkippable(el)) el.setAttribute('required', '');
+        else el.removeAttribute('required');
+      });
+      institutionFields.forEach(el => el.removeAttribute('required'));
+    } else if (role === 'institution') {
+      institutionFields.forEach(el => el.setAttribute('required', ''));
+      individualFields.forEach(el => el.removeAttribute('required'));
+    } else {
+      individualFields.forEach(el => el.removeAttribute('required'));
+      institutionFields.forEach(el => el.removeAttribute('required'));
+    }
+  }
 
-  // Validate affiliation fields on form submission
+  // Validate Individual > School or Organization fields
+  function validateIndividualAffiliation() {
+    const type = document.getElementById('affiliation-type')?.value;
+
+    const orgName = document.getElementById('organization-name');
+    const orgAddr = document.getElementById('organization-address');
+
+    const schName = document.getElementById('ind-school-name');
+    const schType = document.getElementById('ind-school-type');
+    const schRegion = document.getElementById('ind-school-region');
+    const schProvince = document.getElementById('ind-school-province');
+    const schCity = document.getElementById('ind-school-city');
+
+    let isValid = true;
+    let messages = [];
+
+    const clearErrors = (elements) => {
+      elements.forEach(el => el?.classList.remove('input-error'));
+    };
+
+    clearErrors([orgName, orgAddr, schName, schType, schRegion, schProvince, schCity]);
+
+    if (type === 'organization') {
+      if (!orgName?.value.trim()) {
+        messages.push("Organization Name is required.");
+        orgName?.classList.add("input-error");
+        isValid = false;
+      }
+      if (!orgAddr?.value.trim()) {
+        messages.push("Organization Address is required.");
+        orgAddr?.classList.add("input-error");
+        isValid = false;
+      }
+    } else if (type === 'school') {
+      if (!schName?.value.trim()) {
+        messages.push("School Name is required.");
+        schName?.classList.add("input-error");
+        isValid = false;
+      }
+      if (!schType?.value) {
+        messages.push("School Type is required.");
+        schType?.classList.add("input-error");
+        isValid = false;
+      }
+      if (!schRegion?.value) {
+        messages.push("School Region is required.");
+        schRegion?.classList.add("input-error");
+        isValid = false;
+      }
+      if (!schProvince?.value) {
+        messages.push("School Province is required.");
+        schProvince?.classList.add("input-error");
+        isValid = false;
+      }
+      if (!schCity?.value) {
+        messages.push("School City is required.");
+        schCity?.classList.add("input-error");
+        isValid = false;
+      }
+    }
+
+    return { isValid, messages };
+  }
+
+  // Validate Institutional school dropdowns
+  function validateInstitutionalFields() {
+    const schName = document.getElementById('ins-school-name');
+    const schType = document.getElementById('ins-school-type');
+    const schRegion = document.getElementById('ins-school-region');
+    const schProvince = document.getElementById('ins-school-province');
+    const schCity = document.getElementById('ins-school-city');
+
+    let isValid = true;
+    let messages = [];
+
+    const clearErrors = (elements) => {
+      elements.forEach(el => el?.classList.remove('input-error'));
+    };
+
+    clearErrors([schName, schType, schRegion, schProvince, schCity]);
+
+    if (!schName?.value.trim()) {
+      messages.push("Institution School Name is required.");
+      schName?.classList.add("input-error");
+      isValid = false;
+    }
+    if (!schType?.value) {
+      messages.push("Institution School Type is required.");
+      schType?.classList.add("input-error");
+      isValid = false;
+    }
+    if (!schRegion?.value) {
+      messages.push("Institution School Region is required.");
+      schRegion?.classList.add("input-error");
+      isValid = false;
+    }
+    if (!schProvince?.value) {
+      messages.push("Institution School Province is required.");
+      schProvince?.classList.add("input-error");
+      isValid = false;
+    }
+    if (!schCity?.value) {
+      messages.push("Institution School City is required.");
+      schCity?.classList.add("input-error");
+      isValid = false;
+    }
+
+    return { isValid, messages };
+  }
+
+  // 🎯 Final submit validation wrapper
+  document.addEventListener('DOMContentLoaded', () => {
+    updateRequiredAttributes();
+
+    document.getElementById('role')?.addEventListener('change', updateRequiredAttributes);
+
+    const form = document.getElementById('registrationForm');
+    if (form) {
+      form.addEventListener('submit', function (event) {
+        const role = document.getElementById('role')?.value;
+        const individual = role === 'individual';
+        const institutional = role === 'institution';
+
+        const results = [];
+
+        if (individual) results.push(validateIndividualAffiliation());
+        if (institutional) results.push(validateInstitutionalFields());
+
+        const allMessages = results.flatMap(r => r.messages);
+        const anyInvalid = results.some(r => !r.isValid);
+
+        if (anyInvalid) {
+          event.preventDefault();
+          alert("Please fix the following errors:\n" + allMessages.join("\n"));
+        }
+      });
+    }
+  });
+
+  // Utility validators
+  function isValidEmail(email) {
+    return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
+  }
+
+  function isValidPhone(phone) {
+    return /^09\d{9}$/.test(phone); // Starts with 09 and total 11 digits
+  }
+
+  // Password match and input format validation
+  function validateBasicAccountFields() {
+    const email = document.getElementById('email');
+    const password = document.getElementById('password');
+    const confirm = document.getElementById('confirmPassword');
+    const phone = document.getElementById('phone');
+    const emergencyPhone = document.getElementById('emergency-contact-number');
+
+    let isValid = true;
+    let messages = [];
+
+    const clear = el => el?.classList.remove('input-error');
+
+    clear(email);
+    clear(password);
+    clear(confirm);
+    clear(phone);
+    clear(emergencyPhone);
+
+    if (!isValidEmail(email?.value)) {
+      isValid = false;
+      messages.push('Invalid email format.');
+      email?.classList.add('input-error');
+    }
+
+    if (password?.value !== confirm?.value) {
+      isValid = false;
+      messages.push('Passwords do not match.');
+      confirm?.classList.add('input-error');
+    }
+
+    if (!isValidPhone(phone?.value)) {
+      isValid = false;
+      messages.push('Phone number must start with "09" and be 11 digits.');
+      phone?.classList.add('input-error');
+    }
+
+    if (!isValidPhone(emergencyPhone?.value)) {
+      isValid = false;
+      messages.push('Emergency contact number must start with "09" and be 11 digits.');
+      emergencyPhone?.classList.add('input-error');
+    }
+
+    return { isValid, messages };
+  }
+
   const form = document.getElementById('registrationForm');
   if (form) {
-    form.addEventListener('submit', function(event) {
-      const affiliationValidation = validateAffiliationFields();
-      if (!affiliationValidation.isValid) {
-        event.preventDefault(); // Stop form submission
-        alert('Please fix the following errors:\n' + affiliationValidation.messages.join('\n'));
+    form.addEventListener('submit', function (event) {
+      const role = document.getElementById('role')?.value;
+
+      const results = [validateBasicAccountFields()];
+
+      if (role === 'individual') results.push(validateIndividualAffiliation());
+      if (role === 'institution') results.push(validateInstitutionalFields());
+
+      const messages = results.flatMap(r => r.messages);
+      const hasErrors = results.some(r => !r.isValid);
+
+      if (hasErrors) {
+        event.preventDefault();
+        alert("Please fix the following:\n" + messages.join("\n"));
       }
     });
   }
-});
 
-// CSS for .input-error (add to your stylesheet or inside a <style> tag)
-/*
-.input-error {
-  border-color: #dc2626;  // Red-600
-  background-color: #fee2e2; // Red-100
-  transition: background-color 0.3s ease, border-color 0.3s ease;
-}
-*/
+  document.addEventListener('DOMContentLoaded', () => {
+    const email = document.getElementById('email');
+    const phone = document.getElementById('phone');
+    const emergencyPhone = document.getElementById('emergency-contact-number');
+    const password = document.getElementById('password');
+    const confirm = document.getElementById('confirmPassword');
+
+    if (email) {
+      email.addEventListener('input', () => {
+        const valid = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.value);
+        email.classList.toggle('input-error', !valid && email.value.length > 0);
+      });
+    }
+
+    const validatePhone = (input) => {
+      const valid = /^09\d{9}$/.test(input.value);
+      input.classList.toggle('input-error', !valid && input.value.length > 0);
+    };
+
+    if (phone) phone.addEventListener('input', () => validatePhone(phone));
+    if (emergencyPhone) emergencyPhone.addEventListener('input', () => validatePhone(emergencyPhone));
+
+    if (password && confirm) {
+      const checkMatch = () => {
+        const isMismatch = password.value !== confirm.value && confirm.value.length > 0;
+        confirm.classList.toggle('input-error', isMismatch);
+      };
+      password.addEventListener('input', checkMatch);
+      confirm.addEventListener('input', checkMatch);
+    }
+  });
+});

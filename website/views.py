@@ -162,20 +162,23 @@ def get_instbarangays():
 @views.route('/api/schnames', methods=['GET'])
 def get_schnames():
     city_id = request.args.get('cityid')
+    
+    if not city_id or not city_id.isdigit():
+        return jsonify({'error': 'Invalid or missing cityid'}), 400
+
     try:
-        response = supabase.table('schname').select('*').eq('cityid', city_id).execute()
-        logging.info(f"Supabase response: {response}")  # Log the response for debugging
-        
+        response = supabase.table('schname').select('*').eq('cityid', int(city_id)).execute()
         if hasattr(response, 'error') and response.error:
             return jsonify({'error': str(response.error)}), 500
-        
+
         if response.data is None or not isinstance(response.data, list):
             return jsonify({'error': 'No data found or invalid data format'}), 404
-        
+
         return jsonify(response.data), 200
     except Exception as e:
-        logging.error(f"Error fetching regions: {str(e)}")  # Log the error
+        logging.error(f"Error fetching school names: {str(e)}")
         return jsonify({'error': str(e)}), 500
+
     
 @views.route('/api/schooltype', methods=['GET'])
 def get_school_type():
