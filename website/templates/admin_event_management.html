@@ -32,19 +32,19 @@
     <div class="card">
       <h2>View Events</h2>
       <p>Access a list of all scheduled and completed events.</p>
-      <a href="admin_event_view.html" class="blue-button">View Events</a>
+      <a href="{{ url_for('views.admin_event_view') }}" class="blue-button">View Events</a>
     </div>
 
     <div class="card">
       <h2>Manage Events</h2>
       <p>Add new events, edit existing ones, or remove past ones.</p>
-      <a href="admin_event_manage.html" class="blue-button">Manage Events</a>
+      <a href="{{ url_for('views.admin_event_manage') }}" class="blue-button">Manage Events</a>
     </div>
 
     <div class="card">
       <h2>Registrations</h2>
       <p>Check which members have registered for specific events.</p>
-      <a href="admin_event_registrations.html" class="blue-button">View Registrations</a>
+      <a href="{{ url_for('views.admin_event_registrations') }}" class="blue-button">View Registrations</a>
     </div>
 
   </div>

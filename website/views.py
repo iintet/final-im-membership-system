@@ -22,9 +22,14 @@ def validate_required_fields(data, fields):
 def home():
     return render_template("front_page.html")
 
-@views.route('/register')
-def register():
-    return render_template('register.html')
+# -- REGISTRATION --
+@views.route('/register/payment', methods=['GET'])
+def register_payment():
+    return render_template('registration_payment.html')
+
+@views.route('/register/uploadpayment', methods=['GET'])
+def register_upload_payment():
+    return render_template('registration_upload_payment.html')
 
 @views.route('/auth/login', methods=['GET'])
 def login():
@@ -49,15 +54,6 @@ def eventsparticipation():
 @views.route('/usercommitteeparticipation')
 def committeeparticipation():
     return render_template('user_committee_participation.html')
-
-# -- ADMIN SIDE BAR --
-@views.route('/admin/committees')
-def admin_committee_dashboard():
-    return render_template('admin_committee_dashboard.html')
-
-@views.route('/admin/staff')
-def admin_staff_management():
-    return render_template('admin_staff_management.html')
 
 # API endpoints to fetch locations data from Supabase
 @views.route('/api/regions', methods=['GET'])
@@ -360,7 +356,6 @@ def admin_member_view(memberid):
         membership_type=membership_type,
         additional_notes="Approved by admin after verification."  # you can customize this
     )
-    return render_template('admin_member_management_view.html', memberid=memberid)
 
 @views.route('/admin/member/edit/<memberid>', methods=['GET', 'POST'])
 def admin_member_edit(memberid):
@@ -435,9 +430,74 @@ def admin_member_edit(memberid):
 def admin_event_management():
     return render_template('admin_event_management.html')
 
-@views.route('/admin/billing')
-def admin_billing_payment():
-    return render_template('admin_billing_payment.html')
+@views.route('/admin/events/view')
+def admin_event_view():
+    response = supabase.table("event").select("*").order("eventdate", desc=False).execute()
+    events = response.data if response.data else []
+    return render_template('admin_event_view.html', events=events)
+
+@views.route('/admin/events/manage')
+def admin_event_manage():
+    response = supabase.table("event").select("*").order("eventdate", desc=False).execute()
+    events = response.data if response.data else []
+    return render_template('admin_event_manage.html', events=events)
+
+@views.route('/admin/event/registrations')
+def admin_event_registrations():
+    try:
+        # Step 1: Get all event registrations ordered by date (latest first)
+        result = supabase.table("eventregistration").select(
+            "registrationid, registrationdate, status, memberid, eventid"
+        ).order("registrationdate", desc=True).execute()
+
+        registrations = result.data
+
+        enriched_registrations = []
+        for reg in registrations:
+            memberid = reg["memberid"]
+            # Get member base info (to know role)
+            member_result = supabase.table("member").select("role").eq("memberid", memberid).execute().data
+            if not member_result:
+                continue
+            role = member_result[0]["role"]
+
+            # Get name and contact info
+            if role == "individual":
+                detail_result = supabase.table("individual").select(
+                    "firstname, middlename, lastname"
+                ).eq("memberid", memberid).execute().data
+                if detail_result:
+                    d = detail_result[0]
+                    full_name = f"{d.get('firstname', '')} {d.get('middlename', '')} {d.get('lastname', '')}".strip()
+                else:
+                    full_name = "Unknown Individual"
+            else:
+                detail_result = supabase.table("institutional").select(
+                    "representativefirstname, representativemiddlename, representativelastname"
+                ).eq("memberid", memberid).execute().data
+                if detail_result:
+                    d = detail_result[0]
+                    full_name = f"{d.get('representativefirstname', '')} {d.get('representativemiddlename', '')} {d.get('representativelastname', '')}".strip()
+                else:
+                    full_name = "Unknown Institution"
+
+            # Get event name
+            event_result = supabase.table("event").select("name").eq("eventid", reg["eventid"]).execute().data
+            event_name = event_result[0]["name"] if event_result else "Unknown Event"
+
+            enriched_registrations.append({
+                "registrationid": reg["registrationid"],
+                "registrationdate": reg["registrationdate"],
+                "status": reg["status"],
+                "member_name": full_name,
+                "event_name": event_name
+            })
+
+        return render_template("admin_event_registrations.html", registrations=enriched_registrations)
+
+    except Exception as e:
+        print("Error loading event registrations:", e)
+        return render_template("admin_event_registrations.html", registrations=[])
 
 # -- MEMBERSHIP MANAGEMENT --
 @views.route('/admin/memberships')
@@ -521,6 +581,53 @@ def admin_membership_registration_history():
 
     return render_template("admin_membership_registration_history.html", registrations=enriched)
 
+# -- ADMIN BILLING --
+@views.route('/admin/billing')
+def admin_billing_payment():
+    return render_template('admin_billing_payment.html')
+
+@views.route('/admin/billing/create', methods=['GET', 'POST'])
+def admin_create_billing():
+    return render_template('admin_create_bill.html')
+
+@views.route('/admin/payment/record', methods=['GET'])
+def admin_payment_record():
+    return render_template('admin_record_payment.html')
+
+# -- ADMIN COMMITTEE MANAGEMENT --
+@views.route('/admin/committees')
+def admin_committee_dashboard():
+    return render_template('admin_committee_dashboard.html')
+
+@views.route('/admin/committees/view')
+def admin_committee_view():
+        return render_template('admin_committee_view.html')
+
+@views.route('/admin/committees/manage')
+def admin_committee_manage():
+    return render_template('admin_committee_manage_members.html')
+
+@views.route('/admin/committees/status')
+def admin_committee_status():
+    return render_template('admin_committee_application_status.html')
+
+@views.route('/admin/committees/roles')
+def admin_committee_roles():
+    return render_template('admin_committee_role_assignment.html')
+
+# -- STAFF MANAGEMENT --
+
+@views.route('/admin/staff')
+def admin_staff_management():
+    return render_template('admin_staff_management.html')
+
+@views.route('/admin/staff/manage')
+def admin_staff_manage_account():
+    return render_template('admIn_staff_manage_account.html')
+
+@views.route('/admin/staff/roles')
+def admin_staff_roles():
+    return render_template('admin_staff_assign_roles.html')
 
 # -- MEMBER DASHBOARD --
 @views.route('/userdashboard', methods=['GET'])
