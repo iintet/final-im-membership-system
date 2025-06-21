@@ -26,12 +26,36 @@
   </div>
 
   <div class="main-content">
-    <a href="{{ url_for('views.admin_member_management') }}" class="blue-button" style="margin-bottom: 20px; display: inline-block;">
+    <a href="{{ url_for('views.admin_event_management') }}" class="blue-button" style="margin-bottom: 20px; display: inline-block;">
       <i class="fas fa-arrow-left"></i> Back to Event Management
     </a>
     <h1>All Events</h1>
     <hr />
+    <form method="get" style="margin-bottom: 20px;">
+      <label for="from_date">From:</label>
+      <input type="date" name="from_date" value="{{ from_date }}">
+      
+      <label for="to_date">To:</label>
+      <input type="date" name="to_date" value="{{ to_date }}">
 
+      <label for="status">Status:</label>
+      <select name="status">
+        <option value="All" {% if status_filter == 'All' %}selected{% endif %}>All</option>
+        <option value="Upcoming" {% if status_filter == 'Upcoming' %}selected{% endif %}>Upcoming</option>
+        <option value="Completed" {% if status_filter == 'Completed' %}selected{% endif %}>Completed</option>
+      </select>
+
+      <label for="capacity_sort">Sort Capacity:</label>
+      <select name="capacity_sort">
+        <option value="">None</option>
+        <option value="asc" {% if capacity_sort == 'asc' %}selected{% endif %}>Ascending</option>
+        <option value="desc" {% if capacity_sort == 'desc' %}selected{% endif %}>Descending</option>
+      </select>
+
+      <button type="submit">Apply Filters</button>
+    </form>
+
+    <!-- Events Table -->
     <table class="event-table">
       <thead>
         <tr>
@@ -42,27 +66,18 @@
         </tr>
       </thead>
       <tbody>
+        {% for event in events %}
         <tr>
-          <td>Annual General Meeting</td>
-          <td>July 10, 2025</td>
-          <td>Grand Hall A</td>
-          <td>Upcoming</td>
+          <td>{{ event.name }}</td>
+          <td>{{ event.eventdate }}</td>
+          <td>{{ event.location }}</td>
+          <td>{{ event.status }}</td>
         </tr>
-        <tr>
-          <td>Volunteer Orientation</td>
-          <td>May 22, 2025</td>
-          <td>Room B203</td>
-          <td>Completed</td>
-        </tr>
-        <tr>
-          <td>Health & Wellness Seminar</td>
-          <td>August 5, 2025</td>
-          <td>Conference Center</td>
-          <td>Upcoming</td>
-        </tr>
+        {% endfor %}
       </tbody>
     </table>
 
+    <!-- Capacity Table -->
     <h2 id="capacity" style="margin-top: 40px;">Capacity Overview</h2>
     <table class="event-table">
       <thead>
@@ -74,18 +89,14 @@
         </tr>
       </thead>
       <tbody>
+        {% for event in events %}
         <tr>
-          <td>Annual General Meeting</td>
-          <td>200</td>
-          <td>150</td>
-          <td>50</td>
+          <td>{{ event.name }}</td>
+          <td>{{ event.capacity }}</td>
+          <td>{{ event.registered }}</td>
+          <td>{{ event.available }}</td>
         </tr>
-        <tr>
-          <td>Health & Wellness Seminar</td>
-          <td>100</td>
-          <td>75</td>
-          <td>25</td>
-        </tr>
+        {% endfor %}
       </tbody>
     </table>
   </div>
