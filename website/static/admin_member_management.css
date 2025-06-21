@@ -141,8 +141,10 @@ form button:hover {
 /* Table Styling */
 table {
   width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
 }
+
 
 table th, table td {
   text-align: left;
@@ -158,6 +160,11 @@ table th {
 table td button,
 table td a.view-btn {
   margin-right: 8px;
+}
+
+table td .view-btn,
+table td .edit-btn {
+  margin: 0 4px;
 }
 
 /* View and Edit Buttons */
@@ -203,4 +210,78 @@ table td a.view-btn {
   font-size: 1rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
+}
+
+/* Badge Base */
+.badge {
+  display: inline-block;
+  min-width: 80px;
+  text-align: center;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 20px;
+  text-transform: capitalize;
+  line-height: 1;
+  color: white;
+}
+
+/* Membership Type Badges */
+.membership.basic {
+  background-color: #C0C0C0; /* Silver */
+  color: #333;
+}
+
+.membership.premium {
+  background-color: #DAA520; /* GoldenRod */
+  color: white;
+}
+
+/* Status Badges */
+.status.active {
+  background-color: #28a745; /* Green */
+}
+
+.status.pending {
+  background-color: #ffc107; /* Yellow */
+  color: #333;
+}
+
+.status.expired {
+  background-color: #dc3545; /* Red */
+}
+
+table td span.badge {
+  margin-top: 2px;
+}
+
+table th:nth-child(1),  /* Full Name */
+table td:nth-child(1) {
+  width: 18%;
+}
+
+table th:nth-child(2),  /* Email */
+table td:nth-child(2) {
+  width: 22%;
+}
+
+table th:nth-child(3),  /* Role */
+table td:nth-child(3) {
+  width: 12%;
+}
+
+table th:nth-child(4),  /* Membership Type */
+table td:nth-child(4) {
+  width: 15%;
+}
+
+table th:nth-child(5),  /* Status */
+table td:nth-child(5) {
+  width: 13%;
+}
+
+table th:nth-child(6),  /* Actions */
+table td:nth-child(6) {
+  width: 20%;
+  text-align: center;
 }
