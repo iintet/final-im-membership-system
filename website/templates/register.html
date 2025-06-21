@@ -120,54 +120,54 @@
             <input type="tel" name="individual-emergency-contact-number" id="emergency-contact-number-indiv">
           </div>
           <div class="form-group">
-            <label for="affiliation-type">Affiliation Type</label>
-            <select id="affiliation-type" name="affiliation-type" required>
+            <label for="individual-affiliation-type">Affiliation Type</label>
+            <select id="individual-affiliation-type" name="individual-affiliation-type" required>
               <option value="">Select type</option>
               <option value="organization">Organization</option>
               <option value="school">School</option>
               <option value="none">Not Applicable</option>
             </select>
           </div>
-          <div id="organization-fields" style="display: none;">
-            <div class="form-group">
-              <label for="organization-name">Organization Name</label>
-              <input type="text" id="organization-name" name="organization-name">
-            </div>
-            <div class="form-group">
-              <label for="organization-address">Organization Address</label>
-              <input type="text" id="organization-address" name="organization-address">
-            </div>
-          </div>
-          <div id="school-fields" style="display: none;">
-            <div class="form-group">
-              <label for="school-region">Region</label>
-              <select id="school-region" name="school-region">
-                <option value="">Select school region</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="school-province">Province</label>
-              <select id="school-province" name="school-province">
-                <option value="">Select school province</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="school-city">City/Municipality</label>
-              <select id="school-city" name="school-city">
-                <option value="">Select school city/municipality</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="school-name">School Name</label>
-              <select id="school-name" name="school-name">
-                <option value="">Select school name</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="school-type">Type</label>
-              <input type="text" id="school-type" name="school-type" readonly>
-            </div>
-          </div>
+              <!-- Organization Dropdown -->
+              <div id="ind-organization-select" style="display: none;">
+                <div class="form-group">
+                  <label for="ind-organization-select">Select Organization</label>
+                  <select id="ind-organization-select" name="ind-organization-select">
+                    <option value="">Select organization</option>
+                    <!-- Options will be populated dynamically -->
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="ind-organization-address">Organization Address</label>
+                  <input type="text" id="ind-organization-address" name="ind-organization-address" readonly>
+                </div>
+              </div>
+              
+              <!-- School Dropdown -->
+              <div id="ind-school-dropdown" style="display: none;">
+                <div class="form-group">
+                  <label for="ind-school-select">Select School</label>
+                  <select id="ind-school-select" name="ind-school-select">
+                    <option value="">Select school</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="ind-school-region">Region</label>
+                  <input type="text" id="ind-school-region" name="ind-school-region" readonly>
+                </div>
+                <div class="form-group">
+                  <label for="ind-school-province">Province</label>
+                  <input type="text" id="ind-school-province" name="ind-school-province" readonly>
+                </div>
+                <div class="form-group">
+                  <label for="ind-school-city">City</label>
+                  <input type="text" id="ind-school-city" name="ind-school-city" readonly>
+                </div>
+                <div class="form-group">
+                  <label for="ind-school-type">Type</label>
+                  <input type="text" id="ind-school-type" name="ind-school-type" readonly>
+                </div>
+              </div>
         </div>
       </div>
 
@@ -177,13 +177,7 @@
           <label for="institution-name">Institution Name</label>
           <input type="text" id="institution-name" name="institution-name">
         </div>
-        <div class="form-group">
-          <label>Type</label>
-          <div class="radio-group">
-            <label><input type="radio" name="institution-type" value="school" required> School</label>
-            <label><input type="radio" name="institution-type" value="organization" required> Organization</label>
-          </div>
-        </div>
+        
         <div class="form-group">
           <label for="rep-last-name">Representative Last Name</label>
           <input type="text" id="rep-last-name" name="rep-last-name" required>
@@ -236,6 +230,57 @@
           <label for="emergency-contact-number">Emergency Contact Number</label>
           <input type="tel" name="institution-emergencycontactnumber" id="emergency-contact-number-inst">
         </div>
+        <div class="form-group">
+          <label for="institutional-affiliation-type">Affiliation Type</label>
+          <select id="institutional-affiliation-type" name="institutional-affiliation-type" required>
+            <option value="">Select type</option>
+            <option value="organization">Organization</option>
+            <option value="school">School</option>
+            <option value="none">Not Applicable</option>
+          </select>
+
+          <div id="ins-organization-fields" style="display: none;">
+            <div class="form-group">
+            <label for="ins-organization-name">Organization Name</label>
+            <input type="text" id="organization-name" name="ins-organization-name">
+          </div>
+          <div class="form-group">
+            <label for="ins-organization-address">Organization Address</label>
+            <input type="text" id="ins-organization-address" name="ins-organization-address">
+          </div>
+        </div>
+          </div>
+
+          <div id="ins-school-fields" style="display: none;">
+            <div class="form-group">
+              <label for="ins-school-region">Region</label>
+              <select id="ins-school-region" name="ins-school-region">
+                <option value="">Select school region</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="ins-school-province">Province</label>
+              <select id="ins-school-province" name="ins-school-province">
+                <option value="">Select school province</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="ins-school-city">City/Municipality</label>
+              <select id="ins-school-city" name="ins-school-city">
+                <option value="">Select school city/municipality</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="ins-school-name">School Name</label>
+              <select id="ins-school-name" name="ins-school-name">
+                <option value="">Select school name</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="ins-school-type">Type</label>
+              <input type="text" id="ins-school-type" name="ins-school-type" readonly>
+            </div>
+          </div>
 
       </div>
       <button type="submit">Register</button>
@@ -267,10 +312,27 @@
     });
 
     // Show/hide affiliation type fields
-    document.getElementById("affiliation-type").addEventListener("change", function () {
+    document.getElementById("individual-affiliation-type").addEventListener("change", function () {
       const affiliationType = this.value;
-      const organizationFields = document.getElementById("organization-fields");
-      const schoolFields = document.getElementById("school-fields");
+      const organizationFields = document.getElementById("ind-organization-select");
+      const schoolFields = document.getElementById("ind-school-dropdown");
+
+      if (affiliationType === "organization") {
+        organizationFields.style.display = "block";
+        schoolFields.style.display = "none";
+      } else if (affiliationType === "school") {
+        schoolFields.style.display = "block";
+        organizationFields.style.display = "none";
+      } else {
+        organizationFields.style.display = "none";
+        schoolFields.style.display = "none";
+        schoolFields.querySelectorAll('input, select').forEach(el => el.value = '');
+      }
+    });
+    document.getElementById("institutional-affiliation-type").addEventListener("change", function () {
+      const affiliationType = this.value;
+      const organizationFields = document.getElementById("ins-organization-fields");
+      const schoolFields = document.getElementById("ins-school-fields");
 
       if (affiliationType === "organization") {
         organizationFields.style.display = "block";
@@ -351,10 +413,17 @@
 
     // School dynamic dropdowns
     document.addEventListener('DOMContentLoaded', () => {
-      const regionSelect = document.getElementById('school-region');
-      const provinceSelect = document.getElementById('school-province');
-      const citySelect = document.getElementById('school-city');
-      const schoolSelect = document.getElementById('school-name');
+      const roleSelect = document.getElementById("role");
+      const individualFields = document.getElementById("individual-fields");
+      const institutionFields = document.getElementById("institution-fields");
+
+      const indAffiliation = document.getElementById("individual-affiliation-type");
+      const indSchoolFields = document.getElementById("ind-school-fields");
+      const indOrgFields = document.getElementById("ind-organization-fields");
+
+      const insAffiliation = document.getElementById("institutional-affiliation-type");
+      const insSchoolFields = document.getElementById("ins-school-fields");
+      const insOrgFields = document.getElementById("ins-organization-fields");
 
       fetch('/api/schregions')
           .then(res => res.json())
@@ -417,6 +486,39 @@
               });
       });
     });
+
+    // Fetch school names based on selected city
+    async function fetchSchoolNames(cityId) {
+      const response = await fetch(`/api/schnames?cityid=${cityId}`);
+      if (!response.ok) {
+        const error = await response.json();
+        console.error('Error fetching school names:', error);
+        return [];
+      }
+      return await response.json();
+    }
+
+    // Example usage when a city is selected
+    document.getElementById("ins-city-select").addEventListener("change", async function () {
+      const cityId = this.value;
+      const schoolSelect = document.getElementById("ins-school-select");
+      schoolSelect.innerHTML = '<option value="">Loading...</option>'; // Show loading state
+
+      if (cityId) {
+        const schoolNames = await fetchSchoolNames(cityId);
+        schoolSelect.innerHTML = '<option value="">Select school</option>'; // Reset options
+
+        schoolNames.forEach(school => {
+          const option = document.createElement('option');
+          option.value = school.id; // Assuming 'id' is the primary key in schname
+          option.textContent = school.name; // Assuming 'name' is the field for school name
+          schoolSelect.appendChild(option);
+        });
+      } else {
+        schoolSelect.innerHTML = '<option value="">Select school</option>'; // Reset if no city selected
+      }
+    });
+
   </script>
 
   <script src="{{ url_for('static', filename='register_individual.js') }}" defer></script>
@@ -429,7 +531,7 @@
   document.getElementById("registrationForm").addEventListener("submit", function (e) {
     e.preventDefault(); // prevent default form submission
 
-    const affiliationType = document.getElementById("affiliation-type").value;
+    const affiliationType = document.getElementById("individual-affiliation-type").value;
 
     // Optional: you can do validation or save to server here before redirecting
 
@@ -440,6 +542,50 @@
     } else {
       alert("Please select an affiliation type.");
     }
+  });
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const roleSelect = document.getElementById("role");
+    const affTypeSelect = document.getElementById("institutional-affiliation-type");
+
+    const schoolFields = document.getElementById("ins-school-fields");
+    const orgFields = document.getElementById("ins-organization-fields");
+
+    function updateInstitutionFields() {
+      const role = roleSelect.value;
+      const type = affTypeSelect.value;
+
+      if (role === "institution" && type === "school") {
+        schoolFields.style.display = "block";
+        orgFields.style.display = "none";
+      } else if (role === "institution" && type === "organization") {
+        orgFields.style.display = "block";
+        schoolFields.style.display = "none";
+      } else {
+        orgFields.style.display = "none";
+        schoolFields.style.display = "none";
+      }
+    }
+
+    roleSelect.addEventListener("change", updateInstitutionFields);
+    affTypeSelect.addEventListener("change", updateInstitutionFields);
+
+    const orgSelect = document.getElementById("ind-organization-select");
+    const orgAddress = document.getElementById("ind-organization-address");
+
+    fetch("/api/organizations")
+      .then(res => res.json())
+      .then(data => {
+        orgSelect.innerHTML = '<option value="">Select organization</option>' +
+          data.map(org => `<option value="${org.id}" data-address="${org.address}">${org.name}</option>`).join('');
+      });
+
+    // Autofill address when organization is selected
+    orgSelect.addEventListener("change", function () {
+      const selected = this.options[this.selectedIndex];
+      orgAddress.value = selected.dataset.address || "";
+    });
+
   });
 </script>
 

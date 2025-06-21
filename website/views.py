@@ -238,6 +238,17 @@ def get_schcities():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+# -- ORGANIZATION DROPDOWN
+@views.route('/api/organizations', methods=['GET'])
+def get_organizations():
+    try:
+        response = supabase.table('organization').select('*').execute()
+        if hasattr(response, 'error') and response.error:
+            return jsonify({'error': str(response.error)}), 500
+        return jsonify(response.data), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 # -- ADMIN DASHBOARD --
 @views.route('/admindashboard')
 def admin_dashboard():
@@ -432,9 +443,72 @@ def admin_event_management():
 
 @views.route('/admin/events/view')
 def admin_event_view():
-    response = supabase.table("event").select("*").order("eventdate", desc=False).execute()
-    events = response.data if response.data else []
-    return render_template('admin_event_view.html', events=events)
+    try:
+        # Get filter params from query
+        from_date_str = request.args.get('from_date')
+        to_date_str = request.args.get('to_date')
+        status_filter = request.args.get('status')
+        capacity_sort = request.args.get('capacity_sort')  # 'asc' or 'desc'
+
+        events_result = supabase.table("event").select("*").execute()
+        events = events_result.data
+
+        enriched_events = []
+        for event in events:
+            eventid = event["eventid"]
+            name = event["name"]
+            location = event["location"]
+            capacity = event["capacity"]
+
+            # Parse date
+            eventdate = datetime.strptime(event["eventdate"], "%Y-%m-%d").date()
+            today = datetime.today().date()
+            status = "Upcoming" if eventdate >= today else "Completed"
+
+            # Apply date filter
+            if from_date_str:
+                from_date = datetime.strptime(from_date_str, "%Y-%m-%d").date()
+                if eventdate < from_date:
+                    continue
+            if to_date_str:
+                to_date = datetime.strptime(to_date_str, "%Y-%m-%d").date()
+                if eventdate > to_date:
+                    continue
+
+            # Apply status filter
+            if status_filter and status_filter != "All" and status != status_filter:
+                continue
+
+            # Count registrations
+            reg_result = supabase.table("eventregistration").select("registrationid").eq("eventid", eventid).execute()
+            registered = len(reg_result.data)
+            available = max(capacity - registered, 0)
+
+            enriched_events.append({
+                "name": name,
+                "eventdate": eventdate.strftime("%B %d, %Y"),
+                "raw_date": eventdate,  # for sorting
+                "location": location,
+                "status": status,
+                "capacity": capacity,
+                "registered": registered,
+                "available": available
+            })
+
+        # Sort by capacity
+        if capacity_sort == "asc":
+            enriched_events.sort(key=lambda x: x["capacity"])
+        elif capacity_sort == "desc":
+            enriched_events.sort(key=lambda x: x["capacity"], reverse=True)
+
+        return render_template("admin_event_view.html", events=enriched_events,
+                               from_date=from_date_str, to_date=to_date_str,
+                               status_filter=status_filter or "All",
+                               capacity_sort=capacity_sort or "")
+
+    except Exception as e:
+        print("Error fetching events:", e)
+        return render_template("admin_event_view.html", events=[])
 
 @views.route('/admin/events/manage')
 def admin_event_manage():
@@ -622,8 +696,8 @@ def admin_staff_management():
     return render_template('admin_staff_management.html')
 
 @views.route('/admin/staff/manage')
-def admin_staff_manage_account():
-    return render_template('admIn_staff_manage_account.html')
+def admin_staff_manage():
+    return render_template('admin_staff_manage_account.html')
 
 @views.route('/admin/staff/roles')
 def admin_staff_roles():
