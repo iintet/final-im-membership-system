@@ -26,7 +26,7 @@
   </div>
 
   <div class="main-content">
-    <a href="admin_committee_dashboard.html" class="blue-button" style="margin-bottom: 20px; display: inline-block;">
+    <a href="{{ url_for('views.admin_committee_dashboard') }}" class="blue-button" style="margin-bottom: 20px; display: inline-block;">
       <i class="fas fa-arrow-left"></i> Back to Dashboard
     </a>
 
@@ -36,20 +36,20 @@
     <!-- Add Member Form -->
     <div class="card">
       <h2>Add New Member</h2>
-      <form class="event-form">
+      <form class="event-form" method="POST" action="{{ url_for('views.admin_committee_manage') }}">
         <div class="form-group">
           <label for="member-name">Full Name</label>
-          <input type="text" id="member-name" placeholder="Enter full name" required>
+          <input type="text" id="member-name" name="member_name" placeholder="Enter full name" required>
         </div>
 
         <div class="form-group">
           <label for="member-email">Email Address</label>
-          <input type="email" id="member-email" placeholder="Enter email" required>
+          <input type="email" id="member-email" name="member_email" placeholder="Enter email" required>
         </div>
 
         <div class="form-group">
           <label for="member-role">Role</label>
-          <input type="text" id="member-role" placeholder="e.g., Chairperson, Secretary" required>
+          <input type="text" id="member-role" name="member_role" placeholder="e.g., Chairperson, Secretary" required>
         </div>
 
         <button type="submit">Add Member</button>
@@ -63,33 +63,73 @@
         <thead>
           <tr>
             <th>Name</th>
-            <th>Email</th>
-            <th>Role</th>
+            <th>Position</th>
+            <th>Status</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
+          {% for cm in committee_members %}
           <tr>
-            <td>Juan Dela Cruz</td>
-            <td>juan@example.com</td>
-            <td>Chairperson</td>
+            <td>{{ cm.name }}</td>
+            <td>{{ cm.position }}</td>
+            <td>{{ cm.status }}</td>
             <td>
-              <button class="blue-button">Edit</button>
-              <button class="blue-button">Remove</button>
+              <!-- Show Edit button -->
+              <button type="button" onclick="toggleForm('{{ cm.committeememberid }}')" class="blue-button">Edit</button>
+
+              <!-- Delete form -->
+              <form method="POST" action="{{ url_for('views.delete_committee_manage', memberid=cm.committeememberid) }}" style="display:inline;" onsubmit="return confirm('Are you sure you want to remove this member?');">
+                <button type="submit" class="blue-button">Remove</button>
+              </form>
             </td>
           </tr>
-          <tr>
-            <td>Maria Santos</td>
-            <td>maria@example.com</td>
-            <td>Member</td>
-            <td>
-              <button class="blue-button">Edit</button>
-              <button class="blue-button">Remove</button>
+
+          <!-- Hidden Edit Form Row -->
+          <tr id="form-row-{{ cm.committeememberid }}" style="display: none;">
+            <td colspan="4">
+              <form action="{{ url_for('views.update_committee_manage', memberid=cm.committeememberid) }}" method="POST" style="background-color:#f5f5f5; padding:10px; border-radius:8px;">
+                <input type="hidden" name="committeememberid" value="{{ cm.committeememberid }}">
+
+                <label>Full Name:</label>
+                <input type="text" name="name" value="{{ cm.name }}" readonly>
+
+                <label>Position:</label>
+                <select name="position" required>
+                  <option value="Head" {% if cm.position == 'Head' %}selected{% endif %}>Head</option>
+                  <option value="Subhead" {% if cm.position == 'Subhead' %}selected{% endif %}>Subhead</option>
+                  <option value="Member" {% if cm.position == 'Member' %}selected{% endif %}>Member</option>
+                </select>
+
+                <label>Status:</label>
+                <select name="status" required>
+                  <option value="Pending" {% if cm.status == 'Pending' %}selected{% endif %}>Pending</option>
+                  <option value="Approved" {% if cm.status == 'Approved' %}selected{% endif %}>Approved</option>
+                  <option value="Rejected" {% if cm.status == 'Rejected' %}selected{% endif %}>Rejected</option>
+                </select>
+
+                <button type="submit" class="blue-btn">Update</button>
+              </form>
             </td>
           </tr>
+          {% endfor %}
         </tbody>
       </table>
     </div>
+
   </div>
+  <script>
+    function toggleForm(memberid) {
+      // Hide all other forms first
+      document.querySelectorAll('[id^="form-row-"]').forEach(row => {
+        if (row.id !== `form-row-${memberid}`) {
+          row.style.display = "none";
+        }
+      });
+
+      const formRow = document.getElementById(`form-row-${memberid}`);
+      formRow.style.display = formRow.style.display === "none" ? "table-row" : "none";
+    }
+  </script>
 </body>
 </html>
