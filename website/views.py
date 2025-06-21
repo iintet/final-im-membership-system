@@ -238,6 +238,17 @@ def get_schcities():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+# -- ORGANIZATION DROPDOWN
+@views.route('/api/organizations', methods=['GET'])
+def get_organizations():
+    try:
+        response = supabase.table('organization').select('*').execute()
+        if hasattr(response, 'error') and response.error:
+            return jsonify({'error': str(response.error)}), 500
+        return jsonify(response.data), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 # -- ADMIN DASHBOARD --
 @views.route('/admindashboard')
 def admin_dashboard():
