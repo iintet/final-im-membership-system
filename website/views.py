@@ -776,7 +776,33 @@ def delete_committee_manage(memberid):
 
 @views.route('/admin/committees/status')
 def admin_committee_status():
-    return render_template('admin_committee_application_status.html')
+    applications = supabase.table("committeemember").select("""
+        committeememberid,
+        position,
+        status,
+        committee (
+            name
+        ),
+        member:memberid (
+            individual (
+                firstname,
+                lastname
+            )
+        )
+    """).eq("status", "Pending").execute().data
+
+    return render_template("admin_committee_application_status.html", applications=applications)
+
+@views.route('/admin/committees/application/<int:memberid>/approve', methods=['POST'])
+def approve_committee_member(memberid):
+    supabase.table("committeemember").update({"status": "Approved"}).eq("committeememberid", memberid).execute()
+    return redirect(url_for('views.admin_committee_application_status'))
+
+# Route to handle rejection
+@views.route('/admin/committees/application/<int:memberid>/reject', methods=['POST'])
+def reject_committee_member(memberid):
+    supabase.table("committeemember").update({"status": "Rejected"}).eq("committeememberid", memberid).execute()
+    return redirect(url_for('views.admin_committee_application_status'))
 
 @views.route('/admin/committees/roles')
 def admin_committee_roles():
