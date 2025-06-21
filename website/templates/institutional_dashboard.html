@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Institutional Dashboard</title>
+  <link rel="stylesheet" href="institutional_dashboard.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">MRSYS</div>
+      <nav>
+        <a href="#" class="active"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="institutional_profile.html"><i class="fas fa-user"></i> My Profile</a>
+        <a href="institutional_member_management.html"><i class="fas fa-users"></i> Member Management</a>
+        <a href="institutional_membership_details.html"><i class="fas fa-id-card"></i> Membership Management</a>
+        <a href="institutional_billing_payment.html"><i class="fas fa-money-bill-wave"></i> Billing & Payment</a>
+      </nav>
+      <div class="logout">
+        <a href="{{ url_for('views.home') }}"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <h1 id="welcome-message">Welcome back!</h1>
+      <hr />
+
+      <div class="dashboard-grid">
+        <div class="card">
+          <h2>Total Registered Members</h2>
+          <p>45</p>
+        </div>
+        <div class="card">
+          <h2>Active Memberships</h2>
+          <p>20</p>
+        </div>
+        <div class="card">
+          <h2>Pending Registrations</h2>
+          <p>7</p>
+        </div>
+        <div class="card">
+          <h2>Upcoming Events</h2>
+          <p>Birthday</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="card activity">
+          <h2>Recent Activity</h2>
+          <ul>
+            <li>Dr. Jane Smith registered</li>
+            <li>Group payment received</li>
+            <li>Event registration: "Innovation Expo"</li>
+            <li>Invoice #7823 created</li>
+          </ul>
+        </div>
+        <div class="card actions">
+          <h2>Quick Actions</h2>
+          <div class="action-buttons">
+            <a href="{{ url_for('views.institution_group_invoice') }}">
+              <button class="medium-blue">Create Group Invoice</button>
+            </a>
+            <a href="{{ url_for('views.institution_register_member') }}">
+              <button class="medium-blue">Register New Member</button>
+            </a>
+            <a href="{{ url_for('views.institution_billing') }}">
+              <button class="light-blue">Download Billing Summary</button>
+            </a>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const institution = params.get("institution");
+    if (institution) {
+      document.getElementById("welcome-message").textContent = `Welcome back, ${institution}!`;
+    }
+  </script>
+</body>
+</html>

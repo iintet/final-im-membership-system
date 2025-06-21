@@ -1,0 +1,403 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Oswald', sans-serif;
+  background-color: #f4f4f4;
+  color: #001F54;
+  display: flex;
+  height: 100vh;
+}
+
+.container {
+  display: flex;
+  width: 100%;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 270px;
+  background-color: #001F54;
+  color: white;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.logo {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 40px;
+}
+
+.sidebar nav a,
+.sidebar .logout a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0;
+  color: white;
+  text-decoration: none;
+  font-weight: 400;
+  transition: 0.2s ease;
+}
+
+.sidebar nav a.active,
+.sidebar nav a:hover,
+.sidebar .logout a:hover {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.logout {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid #ccc;
+}
+
+/* Main Content */
+.main-content {
+  flex-grow: 1;
+  padding: 40px;
+  overflow-y: auto;
+}
+
+.header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.header-section h1 {
+  font-size: 2rem;
+  color: #002244;
+}
+
+.header-section input {
+  padding: 10px;
+  width: 300px;
+  max-width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+/* Table Styling */
+.table-container {
+  overflow-x: auto;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+}
+
+th, td {
+  text-align: left;
+  padding: 15px;
+  border-bottom: 1px solid #ddd;
+}
+
+thead {
+  background-color: #007BFF;
+  color: white;
+}
+
+tbody tr:hover {
+  background-color: #f1f9ff;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 20px;
+  }
+
+  .sidebar nav {
+    flex-direction: row;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .main-content {
+    padding: 20px;
+  }
+
+  .header-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .header-section input {
+    width: 100%;
+  }
+}
+
+/* Pending Registrations */
+.pending-registrations {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 25px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+}
+
+.pending-registrations h2 {
+  font-size: 1.4rem;
+  color: #002244;
+  margin-bottom: 20px;
+}
+
+.pending-registrations ul {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 20px;
+}
+
+.pending-registrations li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.pending-registrations .actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-approve {
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-reject {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-show-more {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-show-more:hover,
+.btn-approve:hover,
+.btn-reject:hover {
+  opacity: 0.9;
+}
+
+.hidden {
+  display: none;
+}
+
+.pending-list {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 0;
+}
+
+.pending-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.member-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 30px 0 10px;
+}
+
+.member-list-header h2 {
+  font-size: 1.5rem;
+  color: #002244;
+}
+
+.member-list-header select {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.member-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 30px 0 10px;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.member-list-header h2 {
+  font-size: 1.5rem;
+  color: #002244;
+}
+
+.member-list-header .controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.member-list-header select,
+.member-list-header input {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+/* Badges */
+td[data-status="active"]::after {
+  content: "Active";
+  background-color: #28a745;
+  color: white;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  margin-left: 10px;
+}
+
+td[data-status="inactive"]::after {
+  content: "Inactive";
+  background-color: #dc3545;
+  color: white;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  margin-left: 10px;
+}
+
+/* Buttons with Icons */
+.btn-approve i,
+.btn-reject i,
+.btn-show-more i {
+  margin-right: 6px;
+}
+
+/* Hover Card Effect */
+.pending-list li {
+  transition: all 0.2s ease;
+  background-color: #fafafa;
+  border-radius: 6px;
+  padding: 10px 16px;
+  margin-bottom: 8px;
+}
+
+.pending-list li:hover {
+  background-color: #eef6ff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+}
+
+/* Table Stripe Enhancement */
+tbody tr:nth-child(even) {
+  background-color: #f9fbfe;
+}
+
+tbody tr:hover {
+  background-color: #e8f0fe;
+}
+
+/* Member List Box (Updated to reduce spacing) */
+.member-list-section {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 25px;
+  margin-top: 0;          /* ⬅️ Set this to zero */
+  margin-bottom: 30px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+
+/* Header Flex Layout */
+.member-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+
+/* Consistent Title Style */
+.member-list-header h2 {
+  font-size: 1.5rem;
+  color: #002244;
+  margin-bottom: 0;     /* ⬅️ Prevent extra spacing */
+}
+
+
+/* Controls: Filter and Search */
+.member-list-header .controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Inputs and Selects */
+.member-list-header input,
+.member-list-header select {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+/* Status Badge Styling */
+.badge {
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #fff;
+  display: inline-block;
+  min-width: 70px;
+  text-align: center;
+  box-shadow: inset 0 0 1px rgba(0,0,0,0.1);
+}
+
+.badge.active {
+  background-color: #28a745;
+}
+
+.badge.inactive {
+  background-color: #dc3545;
+}
