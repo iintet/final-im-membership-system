@@ -20,7 +20,7 @@ html, body {
   left: 0;
   height: 100vh;
   overflow-y: auto;
-  width: 250px;
+  width: 270px;
   background-color: #001F54;
   color: white;
   padding: 30px 20px;
@@ -62,25 +62,26 @@ html, body {
 
 /* Main Content */
 .main-content {
-  margin-left: 250px;
+  margin-left: 270px; 
   padding: 40px 60px;
   background-color: #f4f4f4;
   min-height: 100vh;
-  width: calc(100% - 250px);
+  width: calc(100% - 270px);
   display: block;
 }
 
+
 .main-content h1 {
-  font-size: 2.5rem;
-  margin-bottom: 10px;
-  text-align: left;
+  font-size: 2.7rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: #001F54;
 }
 
 .subtitle {
-  margin-bottom: 20px;
-  font-size: 1.1rem;
-  color: #333;
-  text-align: left;
+  margin-bottom: 30px;
+  font-size: 1.2rem;
+  color: #555;
 }
 
 /* Back Button */
@@ -111,7 +112,10 @@ html, body {
 }
 
 .card.full-width {
-  width: 100%;
+  padding: 30px;
+  margin-bottom: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
 .card h2 {
@@ -121,9 +125,7 @@ html, body {
 
 /* Action Buttons */
 .actions {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
+  margin-top: 15px;
 }
 
 .blue-btn {

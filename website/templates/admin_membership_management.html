@@ -36,52 +36,6 @@
       </div>
     </div>
 
-    <div class="card">
-      <h2>Pending Membership Registrations</h2>
-      <ul class="pending-list">
-        <li>
-          <span>Michael Johnson</span>
-          <div class="actions">
-            <button class="blue-btn">Approve</button>
-            <button class="red-btn">Reject</button>
-          </div>
-        </li>
-        <li>
-          <span>Samantha Lee</span>
-          <div class="actions">
-            <button class="blue-btn">Approve</button>
-            <button class="red-btn">Reject</button>
-          </div>
-        </li>
-        <li>
-          <span>Chris Martin</span>
-          <div class="actions">
-            <button class="blue-btn">Approve</button>
-            <button class="red-btn">Reject</button>
-          </div>
-        </li>
-
-        <!-- Hidden Extra Entries -->
-        <div class="extra-pending" style="display: none;">
-          <li>
-            <span>Angela Brooks</span>
-            <div class="actions">
-              <button class="blue-btn">Approve</button>
-              <button class="red-btn">Reject</button>
-            </div>
-          </li>
-          <li>
-            <span>Victor Cheng</span>
-            <div class="actions">
-              <button class="blue-btn">Approve</button>
-              <button class="red-btn">Reject</button>
-            </div>
-          </li>
-        </div>
-      </ul>
-      <button id="toggle-more" class="blue-btn show-more-btn">Show More</button>
-    </div>
-
     <div class="card full-width">
       <h2>Member Registration History</h2>
       <a href="{{ url_for('views.admin_membership_registration_history') }}" class="blue-btn">View History</a>
