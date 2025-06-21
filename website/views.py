@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, render_template, abort, request, session, redirect, url_for, flash
 from . import models
 from .supabase_client import supabase
-from datetime import datetime
+from datetime import datetime, date
 import logging
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -706,76 +706,61 @@ def admin_committee_view():
     
 @views.route('/admin/committees/members', methods=['GET', 'POST'])
 def admin_committee_manage():
-    if request.method == 'POST':
-        committeeid = request.form.get('committeeid')
-        memberid = request.form.get('memberid')
-        position = request.form.get('position')
-        status = request.form.get('status')
-        motivation = request.form.get('motivation')
+    selected_event_id = request.args.get('event_id')
+    selected_committee_id = request.args.get('committee_filter')
 
-        try:
-            supabase.table("committeemember").insert({
-                "committeeid": committeeid,
-                "memberid": memberid,
-                "position": position,
-                "status": status,
-                "motivation": motivation,
-            }).execute()
-        except Exception as e:
-            print("Error adding committee member:", e)
+    events_data = supabase.table("event").select("eventid, name").execute().data
+    all_committees = supabase.table("committee").select("committeeid, name, eventid").execute().data
 
-        return redirect(url_for('views.admin_committee_manage'))
+    member_data = supabase.table("committeemember").select("""
+        committeememberid,
+        committeeid,
+        position,
+        status,
+        committee (
+            name
+        ),
+        member:memberid (
+            individual (
+                firstname,
+                lastname
+            )
+        )
+    """).eq("status", "Approved").execute().data
 
-    try:
-        committee_members = supabase.table("committeemember").select("*").execute().data
-        members = supabase.table("member").select("memberid, role, email").execute().data
-        individuals = supabase.table("individual").select("memberid, firstname, lastname").execute().data
-        institutions = supabase.table("institutional").select("memberid, representativelastname, representativefirstname").execute().data
-        committees = supabase.table("committee").select("committeeid, name").execute().data
-    except Exception as e:
-        print("Error fetching data:", e)
-        committee_members, members, individuals, institutions, committees = [], [], [], [], []
+    return render_template(
+        "admin_committee_manage_members.html",
+        members=member_data,  # ✅ this one
+        events=events_data,
+        all_committees=all_committees,
+        selected_event_id=selected_event_id,
+        selected_committee_id=selected_committee_id or "all"
+    )
 
-    # Build name lookup for memberid → full name
-    name_map = {}
-    for ind in individuals:
-        name_map[ind["memberid"]] = f'{ind["firstname"]} {ind["lastname"]}'
-    for inst in institutions:
-        name_map[inst["memberid"]] = f'{inst["representativefirstname"]} {inst["representativelastname"]}'
+@views.route('/admin/committee/add_member', methods=['POST'])
+def add_committee_member():
+    member_name = request.form.get("member_name")
+    member_position = request.form.get("member_position")
+    event_id = request.form.get("event_id")
+    committee_id = request.form.get("member_committee")
+    review_note = request.form.get("review_note")
+    member_id = request.form.get("member_id")
 
-    # Attach names to committee_members
-    for cm in committee_members:
-        cm["name"] = name_map.get(cm["memberid"], "Unknown")
+    if not all([member_name, member_position, event_id, committee_id, member_id]):
+        flash("Please fill in all required fields.", "error")
+        return redirect(url_for("views.admin_committee_manage"))
 
-    return render_template("admin_committee_manage_members.html",
-                           committee_members=committee_members,
-                           members=members,
-                           committees=committees)
+    supabase.table("committeemember").insert({
+        "committeeid": committee_id,
+        "memberid": member_id,
+        "position": member_position,
+        "applicationdate": date.today().isoformat(),
+        "status": "Approved",
+        "reviewnotes": review_note
+    }).execute()
 
-@views.route('/admin/committees/members/update/<int:memberid>', methods=['POST'])
-def update_committee_manage(memberid):
-    name = request.form.get('name', '').strip()
-    email = request.form.get('member_email')
-    role = request.form.get('member_role')
-
-    names = name.strip().split()
-    firstname = names[0]
-    lastname = names[-1] if len(names) > 1 else ''
-    middlename = ' '.join(names[1:-1]) if len(names) > 2 else ''
-
-    try:
-        supabase.table("committeemember").update({
-            "firstname": firstname,
-            "middlename": middlename,
-            "lastname": lastname,
-            "email": email,
-            "role": role,
-            "fullname": name
-        }).eq("committeememberid", memberid).execute()
-    except Exception as e:
-        print("Error updating member:", e)
-
-    return redirect(url_for('views.admin_committee_manage'))
+    flash("Committee member added successfully!", "success")
+    return redirect(url_for("views.admin_committee_manage"))
 
 @views.route('/admin/committee/members/delete/<int:memberid>', methods=['POST'])
 def delete_committee_manage(memberid):
@@ -1145,3 +1130,31 @@ def create_event():
         return jsonify({'message': 'Event created successfully', 'event': response.data}), 201
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+
+
+# -- TO BE DELETED -- 
+# @views.route('/admin/committees/members/update/<int:memberid>', methods=['POST'])
+# def update_committee_manage(memberid):
+#     name = request.form.get('name', '').strip()
+#     email = request.form.get('member_email')
+#     role = request.form.get('member_role')
+
+#     names = name.strip().split()
+#     firstname = names[0]
+#     lastname = names[-1] if len(names) > 1 else ''
+#     middlename = ' '.join(names[1:-1]) if len(names) > 2 else ''
+
+#     try:
+#         supabase.table("committeemember").update({
+#             "firstname": firstname,
+#             "middlename": middlename,
+#             "lastname": lastname,
+#             "email": email,
+#             "role": role,
+#             "fullname": name
+#         }).eq("committeememberid", memberid).execute()
+#     except Exception as e:
+#         print("Error updating member:", e)
+
+#     return redirect(url_for('views.admin_committee_manage'))
