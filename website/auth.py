@@ -251,4 +251,117 @@ def logout():
     session.clear()  # Clears all session keys
     return redirect('/')
 
+# @auth.route('/auth/login', methods=['POST'])
+# def login():
+#     data = request.json or {}
+#     email = data.get('email')
+#     password = data.get('password')
 
+#     if not email or not password:
+#         return jsonify({'error': 'Email and password are required'}), 400
+
+#     # 1. Try to log in as MEMBER
+#     member_response = supabase.table('member').select('*').eq('email', email).execute()
+#     if member_response.data:
+#         member = member_response.data[0]
+
+#         if not check_password_hash(member['password'], password):
+#             return jsonify({'error': 'Invalid credentials'}), 401
+
+#         memberid = member['memberid']
+#         role = member['role']
+#         status = member['status']
+
+#         # Check if member is active
+#         if status != 'active':
+#             return jsonify({'error': 'Your account is not active.'}), 403
+
+#         if role == 'institution':
+#             session['user_type'] = 'institution'
+#             session['member_id'] = memberid
+#             return jsonify({
+#                 'message': 'Login successful',
+#                 'user': {
+#                     'memberid': memberid,
+#                     'email': email,
+#                     'user_type': 'institution'
+#                 }
+#             }), 200
+
+#         elif role == 'individual':
+#             # Get individual's data
+#             individual_resp = supabase.table('individual').select('*').eq('memberid', memberid).execute()
+#             if not individual_resp.data:
+#                 return jsonify({'error': 'Individual profile not found'}), 404
+
+#             individual = individual_resp.data[0]
+#             affiliation = individual['affiliationtype']
+
+#             # Check membershipregistration status (must be 'Active', not 'Pending')
+#             registration_resp = supabase.table("membershipregistration")\
+#                 .select("status")\
+#                 .eq("memberid", memberid)\
+#                 .order("membershipregistrationid", desc=True)\
+#                 .limit(1)\
+#                 .execute()
+
+#             if not registration_resp.data or registration_resp.data[0]['status'] != 'Active':
+#                 return jsonify({'error': 'Your registration is still pending approval.'}), 403
+
+#             # If affiliated (organization or school)
+#             if affiliation in ['organization', 'school']:
+#                 institution_id = individual['organizationid'] if affiliation == 'organization' else individual['schoolid']
+
+#                 # Get institution's memberid
+#                 institution_resp = supabase.table("institutional").select("memberid").eq(
+#                     'organizationid' if affiliation == 'organization' else 'schoolid',
+#                     institution_id
+#                 ).execute()
+
+#                 if not institution_resp.data:
+#                     return jsonify({'error': 'Your institution is not recognized in the system.'}), 404
+
+#                 institution_memberid = institution_resp.data[0]['memberid']
+
+#                 # Check if the institution has a Paid Membership bill
+#                 billing_check = supabase.table("billing").select("status").eq("memberid", institution_memberid).eq("billtype", "Membership").execute().data
+#                 if not any(bill['status'] == 'Paid' for bill in billing_check):
+#                     return jsonify({'error': 'Your institution has not paid the membership fee yet.'}), 403
+
+#             else:  # If not affiliated
+#                 billing_check = supabase.table("billing").select("status").eq("memberid", memberid).eq("billtype", "Membership").execute().data
+#                 if not any(bill['status'] == 'Paid' for bill in billing_check):
+#                     return jsonify({'error': 'You have not completed your membership payment.'}), 403
+
+#             # Passed all checks, allow login
+#             session['user_type'] = 'individual'
+#             session['member_id'] = memberid
+#             return jsonify({
+#                 'message': 'Login successful',
+#                 'user': {
+#                     'memberid': memberid,
+#                     'email': email,
+#                     'user_type': 'individual'
+#                 }
+#             }), 200
+
+#     # 2. Try to log in as STAFF
+#     staff_response = supabase.table("staff").select("*").eq("email", email).execute()
+#     if staff_response.data:
+#         staff = staff_response.data[0]
+
+#         if not check_password_hash(staff['password'], password):
+#             return jsonify({'error': 'Invalid credentials'}), 401
+
+#         session['user_type'] = 'staff'
+#         session['staff_id'] = staff['staffid']
+#         return jsonify({
+#             'message': 'Login successful',
+#             'user': {
+#                 'staffid': staff['staffid'],
+#                 'email': staff['email'],
+#                 'user_type': 'staff'
+#             }
+#         }), 200
+
+#     return jsonify({'error': 'User not found'}), 404

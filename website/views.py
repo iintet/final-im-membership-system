@@ -724,7 +724,37 @@ def admin_membership_registration_history():
 # -- ADMIN BILLING --
 @views.route('/admin/billing')
 def admin_billing_payment():
-    return render_template('admin_billing_payment.html')
+    due_date = request.args.get('due_date')
+    status = request.args.get('status', 'all')
+
+    query = supabase.table("billing").select("""
+        billingid,
+        billdate,
+        duedate,
+        amount,
+        status,
+        billtype,
+        member:memberid (
+            individual (
+                firstname,
+                lastname
+            )
+        )
+    """)
+
+    if due_date:
+        query = query.gte("duedate", due_date)
+    if status and status != 'all':
+        query = query.eq("status", status)
+
+    billing_data = query.execute().data
+
+    return render_template(
+        "admin_billing_payment.html",
+        billing=billing_data,
+        due_date=due_date,
+        status=status
+    )
 
 @views.route('/admin/billing/create', methods=['GET', 'POST'])
 def admin_create_billing():

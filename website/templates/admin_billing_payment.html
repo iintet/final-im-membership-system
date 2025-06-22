@@ -43,19 +43,47 @@
 
     <div class="card full-width">
       <h2>Filter Bills</h2>
-      <div class="filter-row">
+      <form method="GET" action="{{ url_for('views.admin_billing_payment') }}" class="filter-row">
         <label for="due-date">Due Date:</label>
-        <input type="date" id="due-date" />
+        <input type="date" id="due-date" name="due_date" value="{{ due_date }}" />
 
         <label for="status">Status:</label>
-        <select id="status">
-          <option value="all">All</option>
-          <option value="paid">Paid</option>
-          <option value="unpaid">Unpaid</option>
+        <select id="status" name="status">
+          <option value="all" {% if status == 'all' %}selected{% endif %}>All</option>
+          <option value="Paid" {% if status == 'Paid' %}selected{% endif %}>Paid</option>
+          <option value="Unpaid" {% if status == 'Unpaid' %}selected{% endif %}>Unpaid</option>
         </select>
 
-        <button class="blue-btn">Apply Filter</button>
-      </div>
+        <button type="submit" class="blue-btn">Apply Filter</button>
+      </form>
+    </div>
+
+    <div class="card full-width">
+      <h2>Billing Records</h2>
+      <table class="event-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Bill Type</th>
+            <th>Bill Date</th>
+            <th>Due Date</th>
+            <th>Amount Due</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for b in billing %}
+          <tr>
+            <td>{{ b.member.individual.firstname }} {{ b.member.individual.lastname }}</td>
+            <td>{{ b.billtype }}</td>
+            <td>{{ b.billdate }}</td>
+            <td>{{ b.duedate }}</td>
+            <td>₱{{ b.amount }}</td>
+            <td>{{ b.status }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
   </div>
 </body>
