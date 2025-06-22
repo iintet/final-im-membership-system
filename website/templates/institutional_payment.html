@@ -31,30 +31,48 @@
         <h2><i class="fas fa-wallet"></i> Submit Membership Payment</h2>
         <p class="subtext">Select a membership type, view the amount, and upload your payment proof.</p>
 
-        <form id="membership-payment-form" enctype="multipart/form-data">
+        <form id="membership-payment-form" method="POST">
           <div class="form-group">
-            <label for="membership-type"><i class="fas fa-id-badge"></i> Membership Type</label>
-            <select id="membership-type" name="membership-type" required>
-              <option value="">-- Select Membership --</option>
-              <option value="basic">Basic - ₱1,000</option>
-              <option value="premium">Premium - ₱2,000</option>
+            <label for="billingid"><i class="fas fa-receipt"></i> Select Billing</label>
+            <select id="billingid" name="billingid" required>
+              <option value="">-- Choose Billing --</option>
+              {% for bill in billing %}
+                <option value="{{ bill.billingid }}">
+                  Billing #{{ bill.billingid }} - ₱{{ bill.amountdue }} (Due: {{ bill.duedate }})
+                </option>
+              {% endfor %}
             </select>
           </div>
 
           <div class="form-group">
-            <label><i class="fas fa-money-check-alt"></i> Amount</label>
-            <div class="price-display" id="price-display">₱0</div>
+            <label for="method"><i class="fas fa-credit-card"></i> Payment Method</label>
+            <select id="method" name="method" required>
+              <option value="">-- Select Method --</option>
+              <option value="GCash">GCash</option>
+              <option value="Bank Transfer">Bank Transfer</option>
+            </select>
           </div>
 
           <div class="form-group">
-            <label for="proof"><i class="fas fa-upload"></i> Upload Proof of Payment</label>
-            <input type="file" id="proof" name="proof" accept="image/*,.pdf" required />
+            <label for="paymentdate"><i class="fas fa-calendar-alt"></i> Payment Date</label>
+            <input type="date" id="paymentdate" name="paymentdate" required />
+          </div>
+
+          <div class="form-group">
+            <label for="amountpaid"><i class="fas fa-money-bill-wave"></i> Amount Paid</label>
+            <input type="number" id="amountpaid" name="amountpaid" min="1" required />
+          </div>
+
+          <div class="form-group">
+            <label for="referencenumber"><i class="fas fa-hashtag"></i> Reference Number</label>
+            <input type="text" id="referencenumber" name="referencenumber" required />
           </div>
 
           <button type="submit" class="pay-button">
             <i class="fas fa-paper-plane"></i> Submit Payment
           </button>
         </form>
+
 
         <div class="confirmation" id="confirmation-message" style="display: none;">
           <i class="fas fa-check-circle"></i>
@@ -81,6 +99,26 @@
       this.style.display = 'none';
       document.getElementById('confirmation-message').style.display = 'block';
     });
+
+    document.getElementById('membership-payment-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const form = e.target;
+      const formData = new FormData(form);
+
+      fetch('/institutional/payment', {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.message);
+        form.reset();
+        document.getElementById('confirmation-message').style.display = 'block';
+      })
+      .catch(() => alert("Error submitting payment. Please try again."));
+    });
+
   </script>
 </body>
 </html>

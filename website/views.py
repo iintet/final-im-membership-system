@@ -1662,38 +1662,35 @@ def allowed_file(filename):
 
 @views.route('/institutional/payment', methods=['GET', 'POST'])
 def institutional_payment():
-    if session.get('user_type') != 'institution':
-        return redirect(url_for('auth.login'))
+    if request.method == 'GET':
+        member_id = session.get("member_id")
+        if not member_id:
+            return "Unauthorized", 401
+        
+        billing_data = supabase.table("billing").select(
+            "billingid, memberid, billdate, duedate, totalfee, amountdue, billtype"
+        ).eq("memberid", member_id).eq("billtype", "Membership").execute().data
 
-    if request.method == 'POST':
-        membership_type = request.form.get('membership-type')
-        file = request.files.get('proof')
-        member_id = session.get('member_id')
+        return render_template("institutional_payment.html", billing=billing_data)
 
-        if not membership_type or not file or not allowed_file(file.filename):
-            flash('All fields are required and file must be an image or PDF.')
-            return redirect(request.url)
+    elif request.method == 'POST':
+        data = request.form
+        billing_id = data.get("billingid")
+        payment_method = data.get("method")
+        payment_date = data.get("paymentdate")
+        amount_paid = float(data.get("amountpaid"))
+        reference_number = data.get("referencenumber")
 
-        # Save file to local folder
-        filename = secure_filename(file.filename)
-        timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
-        unique_filename = f"{member_id}_{timestamp}_{filename}"
-        file_path = os.path.join(UPLOAD_FOLDER, unique_filename)
-        file.save(file_path)
+        payment_record = {
+            "billingid": billing_id,
+            "method": payment_method,
+            "paymentdate": payment_date,
+            "amountpaid": amount_paid,
+            "referencenumber": reference_number
+        }
 
-        # Store in Supabase
-        supabase.table("payment").insert({
-            "memberid": member_id,
-            "amount": 1000 if membership_type == "basic" else 2000,
-            "status": "Pending",
-            "proof": file_path,
-            "paymentdate": datetime.now().strftime('%Y-%m-%d')
-        }).execute()
-
-        flash('Payment submitted successfully.')
-        return redirect(url_for('views.institutional_billing_payment'))
-
-    return render_template("institutional_payment.html")
+        supabase.table("payment").insert(payment_record).execute()
+        return jsonify({"message": "Payment submitted successfully."}), 200
 
 
 # -- TO BE DELETED -- 
