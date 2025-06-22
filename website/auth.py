@@ -227,10 +227,17 @@ def register():
             supabase.table("member").delete().eq("memberid", memberid).execute()
             raise nested_error
 
+        # After all registration logic and inserts succeed:
         session['user_type'] = 'member'
         session['member_id'] = memberid
 
-        return jsonify({'message': 'Registration successful'})
+        if role == 'individual' and affiliation_type == 'not_applicable':
+            return jsonify({'redirect': '/billing'})
+        elif role == 'individual' or role == 'institution':
+            return jsonify({'redirect': '/auth/login'})
+        else:
+            return jsonify({'error': 'Unknown registration result'}), 400
+
 
     except Exception as e:
         print("Registration error:", e)
