@@ -335,7 +335,7 @@
   if (indAffType) {
     indAffType.addEventListener("change", function () {
       const affiliationType = this.value;
-      const organizationFields = document.getElementById("ind-organization-fields");
+      const organizationFields = document.getElementById("ind-organization-dropdown"); // <-- fixed
       const schoolFields = document.getElementById("ind-school-dropdown");
 
       if (affiliationType === "organization") {
@@ -376,7 +376,7 @@
         setRequiredForFields('ins-organization-fields', false);
         setRequiredForFields('ins-school-dropdown', true);
       } else {
-        if (organizationFields) organizationFields.style.display = "none";
+        if (organizationFields) organizationFields.style.display = "not_applicable";
         if (schoolFields) schoolFields.style.display = "none";
         setRequiredForFields('ins-organization-fields', false);
         setRequiredForFields('ins-school-dropdown', false);
@@ -441,7 +441,43 @@
       }
     });
   }
-</script>
+
+  document.addEventListener('DOMContentLoaded', () => {
+  const affiliationType = document.getElementById("individual-affiliation-type");
+  const orgSelect = document.getElementById("ind-organization-select");
+  const orgAddress = document.getElementById("ind-organization-address");
+
+  if (affiliationType && orgSelect) {
+    affiliationType.addEventListener("change", function () {
+      if (this.value === "organization") {
+        // Fetch organizations from your API
+        fetch('/api/organizations')
+          .then(res => res.json())
+          .then(data => {
+            if (Array.isArray(data)) {
+              orgSelect.innerHTML = '<option value="">Select organization</option>' +
+                data.map(org => `<option value="${org.id}" data-address="${org.address}">${org.name}</option>`).join('');
+            } else {
+              orgSelect.innerHTML = '<option value="">Error loading organizations</option>';
+            }
+          })
+          .catch(() => {
+            orgSelect.innerHTML = '<option value="">Error loading organizations</option>';
+          });
+      } else {
+        orgSelect.innerHTML = '<option value="">Select organization</option>';
+        if (orgAddress) orgAddress.value = '';
+      }
+    });
+
+    // Auto-fill address when organization is selected
+    orgSelect.addEventListener("change", function () {
+      const selected = orgSelect.options[orgSelect.selectedIndex];
+      if (orgAddress) orgAddress.value = selected.getAttribute('data-address') || '';
+    });
+  }
+});
+  </script>
   <script src="{{ url_for('static', filename='register_individual.js') }}" defer></script>
   <script src="{{ url_for('static', filename='register_institution.js') }}" defer></script>
   <script src="{{ url_for('static', filename='register_school_individual.js') }}" defer></script>

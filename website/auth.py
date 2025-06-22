@@ -15,6 +15,12 @@ def clean_phone(phone_str):
         raise ValueError("Invalid phone number format. Must start with 09 and be 11 digits.")
     return phone
 
+def safe_int(val, field):
+    try:
+        return int(val) if val not in (None, '', 'None') else None
+    except (ValueError, TypeError):
+        raise ValueError(f"Invalid or missing value for {field}")
+
 # -- AUTH LOGIN --
 @auth.route('/auth/login', methods=['POST'])
 def login():
@@ -117,16 +123,12 @@ def register():
         role = data['role']
         affiliation_type = data.get("individual-affiliation-type")
 
+        hashed_password = generate_password_hash(password)  # <-- Move this up here
+
         # 🔍 Duplicate email check
         existing = supabase.table("member").select("email").eq("email", email).maybe_single().execute()
         if existing and existing.get("data"):
             return jsonify({"error": "Email already registered."}), 400
-
-        def safe_int(val, field):
-            try:
-                return int(val) if val not in (None, '', 'None') else None
-            except (ValueError, TypeError):
-                raise ValueError(f"Invalid or missing value for {field}")
 
         # 🔧 Address handling
         if role == 'institution':
@@ -138,32 +140,69 @@ def register():
             emergencycontactname = data.get('emergency-contact-name-inst')
             emergencycontactnumber = clean_phone(data.get('emergency-contact-number-inst'))
 
+            # After assigning region, province, city, barangay
+            required_int_fields = {
+                "region": region,
+                "province": province,
+                "city": city,
+                "barangay": barangay
+            }
+            for field, value in required_int_fields.items():
+                if value is None:
+                    return jsonify({"error": f"{field} is required and must be selected."}), 400
+
+            member_data = {
+                "email": email,
+                "password": hashed_password,
+                "role": role,
+                "region": region,
+                "province": province,
+                "city": city,
+                "barangay": barangay,
+                "streetaddress": street,
+                "emergencycontactname": emergencycontactname,
+                "emergencycontactnumber": emergencycontactnumber
+            }
+
         elif role == 'individual':
             region = safe_int(data.get("region"), "region")
             province = safe_int(data.get("province"), "province")
             city = safe_int(data.get("city"), "city")
             barangay = safe_int(data.get("barangay"), "barangay")
             street = data.get("street")
-            emergencycontactname = data.get('emergency-contact-name-indiv')
-            emergencycontactnumber = clean_phone(data.get('individual-emergency-contact-number'))
+            emergencycontactname = data.get("individual-emergency-contact-name")
+            emergencycontactnumber = data.get("individual-emergency-contact-number")
 
+            required_inst_fields = {
+                "region": region,
+                "province": province,
+                "city": city,
+                "barangay": barangay
+            }
+            for field, value in required_inst_fields.items():
+                if value is None:
+                    return jsonify({"error": f"{field} is required and must be selected."}), 400
+
+            print("region:", region, type(region))
+            print("province:", province, type(province))
+            print("city:", city, type(city))
+            print("barangay:", barangay, type(barangay))
+
+            member_data = {
+                "email": email,
+                "password": hashed_password,
+                "role": role,
+                "region": region,
+                "province": province,
+                "city": city,
+                "barangay": barangay,
+                "streetaddress": street,
+                "emergencycontactname": emergencycontactname,
+                "emergencycontactnumber": emergencycontactnumber
+            }
+    
         else:
             return jsonify({"error": "Invalid role"}), 400
-
-        hashed_password = generate_password_hash(password)
-
-        member_data = {
-            "email": email,
-            "password": hashed_password,
-            "role": role,
-            "region": region,
-            "province": province,
-            "city": city,
-            "barangay": barangay,
-            "streetaddress": street,
-            "emergencycontactname": emergencycontactname,
-            "emergencycontactnumber": emergencycontactnumber
-        }
 
         # 🧩 Now we insert the member first
         member_response = supabase.table("member").insert(member_data).execute()
@@ -181,7 +220,6 @@ def register():
                 if affiliation_type == "organization":
                     org_name = data.get("organization-name")
                     org_address = data.get("organization-address")
-
                     if org_name:
                         org_insert = supabase.table("organization").upsert(
                             {
@@ -191,13 +229,11 @@ def register():
                             on_conflict="name",
                             returning="representation"
                         ).execute()
-
                         if org_insert.data and "id" in org_insert.data[0]:
                             organizationid = org_insert.data[0]["id"]
                         else:
                             raise Exception("Organization insert failed or ID missing")
                     else:
-                        # fallback: don't assign organizationid if name is empty
                         organizationid = None
 
                 if affiliation_type == "school" and not data.get("school-name"):
@@ -206,25 +242,28 @@ def register():
                         "cityid": int(data.get("ind-school-city")),
                         "typeid": schooltype
                     }).execute()
-                    print("schoolid:", schoolid, "type:", type(schoolid))
-                    # ^DEBUGGING
                     schoolid = school_insert.data[0]["id"]
 
 
-                individual_data = {
-                    "memberid": memberid,
-                    "lastname": data.get("last-name"),
-                    "firstname": data.get("first-name"),
-                    "middlename": data.get("middle-name"),
-                    "gender": data.get("gender"),
-                    "dateofbirth": data.get("dob"),
-                    "phone": phone,
-                    "affiliationtype": affiliation_type,
-                    "schoolid": schoolid,
-                    "organizationid": organizationid
-                }
+                # --- FIX: Always run safe_int here, after all assignments ---
+                schoolid = safe_int(schoolid, "schoolid")
+                organizationid = safe_int(organizationid, "organizationid")
 
-                supabase.table("individual").insert(individual_data).execute()
+                if affiliation_type in ("organization", "school", "none", "not_applicable"):
+                    individual_data = {
+                        "memberid": memberid,
+                        "lastname": data.get("last-name"),
+                        "firstname": data.get("first-name"),
+                        "middlename": data.get("middle-name"),
+                        "gender": data.get("gender"),
+                        "dateofbirth": data.get("dob"),
+                        "phone": phone,
+                        "affiliationtype": affiliation_type,
+                        "schoolid": schoolid,
+                        "organizationid": organizationid
+                    }
+                    print("individual_data:", individual_data)
+                    supabase.table("individual").insert(individual_data).execute()
 
             elif role == "institution":
                 inst_data = {
@@ -236,7 +275,18 @@ def register():
                     "representativecontactnumber": clean_phone(data.get("rep-contact")),
                     "type": data.get("institution-type")
                 }
+                
+                print("region:", region, type(region))
+                print("province:", province, type(province))
+                print("city:", city, type(city))
+                print("barangay:", barangay, type(barangay))
+                print("member_data:", member_data)
+                # For individual:
+                print("individual_data:", individual_data)
+                # For institution:
+                print("inst_data:", inst_data)
 
+                
                 supabase.table("institutional").insert(inst_data).execute()
 
             # ✅ Auto-create Membership Registration Record
@@ -324,7 +374,7 @@ def logout():
 #             affiliation = individual['affiliationtype']
 
 #             # Check membershipregistration status (must be 'Active', not 'Pending')
-#             registration_resp = supabase.table("membershipregistration")\
+#             registration_resp = supabase.table "membershipregistration")\
 #                 .select("status")\
 #                 .eq("memberid", memberid)\
 #                 .order("membershipregistrationid", desc=True)\
@@ -339,7 +389,7 @@ def logout():
 #                 institution_id = individual['organizationid'] if affiliation == 'organization' else individual['schoolid']
 
 #                 # Get institution's memberid
-#                 institution_resp = supabase.table("institutional").select("memberid").eq(
+#                 institution_resp = supabase.table "institutional").select("memberid").eq(
 #                     'organizationid' if affiliation == 'organization' else 'schoolid',
 #                     institution_id
 #                 ).execute()
