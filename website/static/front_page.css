@@ -2,469 +2,414 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Oswald', sans-serif;
 }
 
 body {
-  background-color: white;
-  color: #111;
-  line-height: 1.6;
+  font-family: 'Oswald', sans-serif;
+  background-color: #001F54;
+  color: #001F54;
+  overflow-x: hidden;
 }
 
-/* Header */
-.main-header {
+.topbar {
+  width: 100%;
+  background-color: #001F54;
+  color: white;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem 2rem;
-  background-color: white;
+  padding: 20px 40px;
 }
 
 .logo {
-  font-size: 1.8rem;
-  color: #0f1f5c;
+  font-size: 2rem;
   font-weight: bold;
-}
-
-.nav-links {
-  display: flex;
-  gap: 1.5rem;
 }
 
 .nav-links a {
-  color: #333;
+  margin-left: 30px;
+  color: white;
   text-decoration: none;
-  font-size: 1rem;
-  transition: color 0.2s ease;
+  font-size: 1.1rem;
+  transition: opacity 0.2s ease;
 }
 
 .nav-links a:hover {
-  color: #0f1f5c;
-  text-decoration: underline;
+  opacity: 0.8;
 }
 
-.container {
-  max-width: 100%;
-  width: 100%;
-  padding: 2rem 4rem; 
-}
-
-.hero {
-  text-align: center;
-  margin-top: 3rem;
-}
-
-.hero h1 {
-  font-size: 3.5rem;
-  color: #0f1f5c;
-}
-
-.hero p {
-  font-size: 1.2rem;
-  margin-top: 1rem;
-  margin-bottom: 2rem;
-}
-
-.buttons {
+.hero-section {
+  background-color: #001F54;
   display: flex;
   justify-content: center;
-  gap: 1rem;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding-top: 0;
 }
 
-.btn {
-  background-color: #0f1f5c;
-  color: white;
-  padding: 0.75rem 1.5rem;
-  font-size: 1.2rem;
-  text-decoration: none;
-  border-radius: 5px;
-}
-
-hr {
-  margin: 3rem 0;
-  border: none;
-  border-top: 1px solid #ccc;
-}
-
-/* Success Stories Section */
-.success-stories {
-  background: linear-gradient(to bottom, #0f1f5c 0%, #1e2c6b 100%);
-  padding: 3rem 2rem;
-  color: white;
-  text-align: center;
-  border-radius: 12px;
-}
-
-.success-stories h2 {
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.section-subtitle {
-  font-size: 1.1rem;
-  color: #dcdcdc;
-  margin-bottom: 2rem;
-}
-
-.swiper-container {
-  width: 100%;
-  padding: 2rem 0;
-}
-
-.swiper-slide {
-  display: flex;
-  justify-content: center;
-}
-
-.story-card {
+.hero-content {
   background-color: white;
-  color: #111;
-  border-radius: 8px;
-  overflow: hidden;
-  max-width: 300px;
-  text-align: center;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
-  transition: transform 0.3s ease;
-}
-
-.story-card:hover {
-  transform: translateY(-5px);
-}
-
-.story-card img {
-  width: 100%;
-  height: 220px;
-  object-fit: cover;
-}
-
-.story-content {
-  padding: 1.5rem;
-}
-
-.story-content h3 {
-  font-size: 1.3rem;
-  color: #0f1f5c;
-  margin-bottom: 0.5rem;
-}
-
-.story-content p {
-  font-size: 0.95rem;
-  margin-bottom: 1rem;
-}
-
-.more-btn {
-  text-decoration: none;
-  color: #0f1f5c;
-  font-weight: bold;
-  border: 1px solid #0f1f5c;
-  padding: 0.4rem 1rem;
-  border-radius: 4px;
-  transition: background-color 0.3s ease;
-}
-
-.more-btn:hover {
-  background-color: #0f1f5c;
-  color: white;
-}
-
-.credit-note {
-  font-size: 0.75rem;
-  color: #bbb;
-  margin-top: 2rem;
-}
-
-/* Modal */
-.modal-overlay {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.7);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-}
-
-.modal-box {
-  background: white;
-  padding: 2rem;
-  border-radius: 10px;
-  max-width: 500px;
-  width: 90%;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-  position: relative;
-  text-align: left;
-}
-
-.close-btn {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 1.5rem;
-  color: #0f1f5c;
-  cursor: pointer;
-}
-
-.modal-box h3 {
-  color: #0f1f5c;
-  margin-bottom: 1rem;
-}
-
-@media (max-width: 768px) {
-  .nav-links {
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0.5rem;
-  }
-
-  .main-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .swiper-slide {
-    flex-direction: column;
-  }
-}
-
-/* About Page Full Layout */
-.about-page {
-  padding: 3rem 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-/* Text Section */
-.about-section {
+  width: 100vw;
+  min-height: 88vh;
+  border-radius: 60px;
+  border: 15px solid #001F54;
   display: flex;
   flex-direction: column;
-  gap: 3rem;
-}
-
-.about-text h2 {
-  font-size: 2.5rem;
-  color: #0f1f5c;
-  margin-bottom: 1rem;
-  text-align: center; 
-}
-
-
-.about-text p {
-  font-size: 1.15rem;
-  line-height: 1.8;
-  color: #333;
-  margin-bottom: 1.2rem;
-  text-align: justify;
-}
-
-/* Mission and Vision Cards */
-.about-cards {
-  display: flex;
-  gap: 2rem;
-  flex-wrap: wrap;
-  justify-content: space-between;
-}
-
-.card {
-  flex: 1 1 48%;
-  padding: 2rem;
-  border-radius: 12px;
-  background-color: #0f1f5c;
-  color: white;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-}
-
-.card h3 {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-}
-
-.card p {
-  font-size: 1rem;
-  line-height: 1.6;
-  color: #e7ecf6;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .about-cards {
-    flex-direction: column;
-  }
-
-  .card {
-    flex: 1 1 100%;
-  }
-
-  .about-text h2 {
-    font-size: 2rem;
-    text-align: center;
-  }
-}
-
-/* Membership Benefits Page */
-.benefits-page {
-  margin-top: 3rem;
-  padding: 2rem;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 80px 20px 40px; /* reduced top padding */
   text-align: center;
+  position: relative;
 }
 
-.benefits-heading {
-  font-size: 2.5rem;
-  color: #0f1f5c;
-  margin-bottom: 1rem;
+.hero-title {
+  font-size: 3.6rem;
+  color: #001F54;
+  margin-top: 10px; /* less top spacing */
+  margin-bottom: 10px;
 }
 
-.intro-text {
-  font-size: 1.15rem;
-  color: #333;
-  max-width: 800px;
-  margin: 0 auto 2.5rem;
-  line-height: 1.8;
-}
 
-/* Benefit Cards */
-.benefit-cards {
+.hero-main {
   display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
-  justify-content: center;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: nowrap;       /* ❗ Prevent wrapping */
+  width: 100%;
+  max-width: 1000px;       /* ✅ Optional, shrink container width */
+  margin-top: 30px;
+  padding: 0 20px;
+  gap: 0px;                /* ❗ No space between image and buttons */
 }
 
-.benefit-card {
-  background-color: #0f1f5c;
-  color: white;
-  flex: 1 1 280px;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+.hero-image {
+  flex: 0 1 auto;         /* ❗ Don't let it grow wide */
+  margin-right: 80px;     /* ✅ Slight space between image and buttons */
+  margin-left: -35px; 
+}
+
+
+.hero-image img {
+  width: 100%;
+  max-width: 700px; /* ✅ make image bigger */
+  height: auto;
+  margin-top: 10px; 
+  object-fit: contain;
+}
+
+.hero-buttons {
+  flex: 0 1 auto;          /* ❗ Prevent it from stretching wide */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start; /* Align left toward image */
+  margin-top: 0;
+}
+
+
+
+.btn {
+  display: inline-block;
+  padding: 14px 28px;
+  font-size: 1.2rem;
+  border-radius: 6px;
+  text-decoration: none;
   text-align: center;
-  max-width: 320px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  width: 180px;
 }
 
-.benefit-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+.primary {
+  background-color: #001F54;
+  color: white;
 }
 
-.benefit-card .card-icon {
-  font-size: 2rem;
-  margin-bottom: 1rem;
+.secondary {
+  background-color: #001F54;
+  color: white;
 }
 
-.benefit-card h3 {
-  font-size: 1.4rem;
-  margin-bottom: 0.75rem;
-}
-
-.benefit-card p {
-  font-size: 1rem;
-  line-height: 1.6;
-  color: #e5eaf7;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .benefit-cards {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .benefits-heading {
-    font-size: 2rem;
-  }
-}
-
-.story-grid {
+.success-stories {
+  background-color: #001F54;
+  color: white;
+  padding: 120px 60px 80px;  /* 🔼 tighter top padding */
+  text-align: center;
+  min-height: 100vh;
   display: flex;
-  gap: 2rem;
-  justify-content: center;
-  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: flex-start; /* ⬆️ Move header higher */
+  align-items: center;
 }
+
+.section-header {
+  max-width: 100%;
+  margin-bottom: 30px;
+}
+
+.section-header h2 {
+  font-size: 3rem;             /* 🆙 Bigger */
+  margin-bottom: 10px;
+}
+
+.section-header p {
+  font-size: 1.2rem;
+  max-width: 100%;
+}
+
+.section-divider {
+  width: 100%;
+  height: 2px;
+  background-color: #ffffff;
+  opacity: 0.3;
+  margin: 20px 0 40px;
+}
+
+
+.divider-wrapper {
+  width: 100%;
+  max-width: 1400px; /* same as .carousel-container or .cards */
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+
+
+.carousel-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+  max-width: 1400px;     /* ⬅️ Fits most laptop screens */
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.cards {
+  display: flex;
+  gap: 40px;
+  flex-wrap: nowrap;
+  justify-content: center;
+  width: 100%;
+  overflow-x: auto; /* 👈 enables horizontal scroll */
+  scroll-behavior: smooth;
+}
+
 
 .story-card {
   background-color: white;
-  color: #111;
-  border-radius: 8px;
-  overflow: hidden;
-  width: 300px;
-  text-align: center;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
-  transition: transform 0.3s ease;
-  flex: 1 1 280px; 
-  max-width: 320px;
+  color: #001F54;
+  border-radius: 16px;
+  padding: 30px;
+  width: 360px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+  flex-shrink: 0;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;  /* 🔽 push content apart vertically */
+  height: 100%;                    /* let it fill full height */
 }
 
-.story-card:hover {
-  transform: translateY(-5px);
+
+.story-card img {
+  display: block;
+  margin: 0 auto 15px auto;
+  width: 100%;
+  max-width: none;        /* 🔄 remove the image size restriction */
+  height: auto;
+  border-radius: 10px;
+  object-fit: cover;      /* ✅ keeps images nicely cropped if needed */
 }
+    
+
+.story-card h3 {
+  font-size: 1.4rem;
+}
+
+.story-card p {
+  font-size: 1rem;
+}
+
+.story-image {
+  width: 200%;
+  height: auto;
+  margin: 0 auto;
+  display: block;
+  border-radius: 8px; /* optional, keeps corners smooth */
+}
+
+
+.more-btn {
+  background: none;
+  border: 2px solid #001F54;
+  color: #001F54;
+  font-weight: bold;
+  padding: 6px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 15px; /* adjust this value if you want more/less spacing */
+
+}
+
+.dots {
+  margin-top: 30px;
+}
+
+.dot {
+  height: 10px;
+  width: 10px;
+  margin: 0 6px;
+  background-color: white;
+  border-radius: 50%;
+  display: inline-block;
+  opacity: 0.4;
+}
+
+.dot.active {
+  opacity: 1;
+}
+
+.past-events .dot {
+  background-color: #001F54; /* MRSYS Blue */
+  opacity: 0.3;
+}
+
+.past-events .dot.active {
+  opacity: 1;
+}
+
 
 .past-events {
-  margin-top: 4rem;
-  padding: 3rem 2rem;
-  background: linear-gradient(to bottom, #0f1f5c 0%, #1e2c6b 100%);
-  border-radius: 12px;
-  text-align: center;
-  color: white;
-}
-
-
-.past-events h2 {
-  font-size: 2.5rem;
-  color: white;
-  margin-bottom: 0.5rem;
-}
-
-.past-events .section-subtitle {
-  font-size: 1.1rem;
-  color: #dcdcdc;
-  margin-bottom: 2rem;
-}
-
-.event-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
-  justify-content: center;
-}
-
-.event-card {
   background-color: white;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
-  width: 300px;
-  text-align: left;
-  transition: transform 0.3s ease;
+  color: #001F54;
+  padding: 120px 60px 80px;
+  text-align: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
 }
 
-.event-card:hover {
-  transform: translateY(-5px);
+.past-events .section-header h2,
+.past-events .section-header p {
+  color: #001F54;
 }
 
-.event-card img {
+.past-events .story-card img {
+  max-width: 240px; /* ✅ Bigger image */
   width: 100%;
-  height: 180px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
   object-fit: cover;
 }
 
-.event-content {
-  padding: 1.5rem;
+.past-events .story-card {
+  background-color: #001F54;
+  color: white;
+  border-radius: 16px;
+  padding: 30px;
+  width: 360px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: center;
 }
 
-.event-content h3 {
-  color: #0f1f5c;
-  font-size: 1.2rem;
-  margin-bottom: 0.3rem;
+.past-events .story-card img {
+  height: 250px;           /* fixed height for uniformity */
+  width: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+  display: block;
+  margin: 0 auto 20px auto;
 }
 
-.event-content p {
-  color: #333;
-  font-size: 0.95rem;
-  line-height: 1.5;
+.past-events .story-card h3,
+.past-events .story-card p {
+  color: white;
+}
+
+.past-events .white-outline {
+  background: none;
+  border: 2px solid white;
+  color: white;
+  padding: 8px 24px;
+  font-weight: bold;
+  font-size: 1rem;
+  border-radius: 6px;
+  margin-top: 16px;
+}
+
+
+
+
+.section-divider.past-events-divider {
+  width: 100%;
+  max-width: 1400px; /* Ensures it matches image row width */
+  height: 2px;
+  background-color: #001F54;
+  opacity: 0.3;
+  margin: 20px auto 40px;  /* Centers the divider properly */
+}
+
+
+
+.divider-wrapper {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Scoped ARROW styles – apply ONLY to past-events and success-stories */
+
+.success-stories .arrow,
+.past-events .arrow {
+  background: white;
+  border: none;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  font-size: 1.5rem;
+  color: #001F54;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: background 0.3s ease;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+}
+
+.success-stories .arrow:hover,
+.past-events .arrow:hover {
+  background: #f0f0f0;
+}
+
+.success-stories .left,
+.past-events .left-arrow {
+  left: 40px;
+}
+
+.success-stories .right,
+.past-events .right-arrow {
+  right: 40px;
+}
+
+/* Fix arrow positioning context */
+.success-stories .carousel-container,
+.past-events .carousel-container {
+  position: relative;
 }
