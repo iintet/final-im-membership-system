@@ -24,14 +24,101 @@
       <a href="{{ url_for('views.home') }}"><i class="fas fa-sign-out-alt"></i> Log Out</a>
     </div>
   </div>
+  <style>
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: flex-end;
+      margin-bottom: 1.5rem;
+    }
+
+    .filters label {
+      font-weight: bold;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .filters input,
+    .filters select {
+      padding: 0.5rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      min-width: 160px;
+      font-family: 'Oswald', sans-serif;
+    }
+
+    .filters button {
+      background-color: #007bff;
+      color: white;
+      padding: 0.6rem 1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .filters-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    @media (max-width: 768px) {
+      .filters {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .filters-group {
+        width: 100%;
+      }
+
+      .filters button {
+        width: 100%;
+      }
+    }
+  </style>
 
   <div class="main-content">
-    <a href="admin_event_management.html" class="blue-button" style="margin-bottom: 20px; display: inline-block;">
+    <a href="{{ url_for('views.admin_event_management') }}" class="blue-button" style="margin-bottom: 20px; display: inline-block;">
       <i class="fas fa-arrow-left"></i> Back to Event Management
     </a>
 
     <h1>Event Registrations</h1>
     <hr />
+
+    <form method="get" class="filters">
+      <div class="filters-group">
+        <label for="member_name">Member Name:</label>
+        <input type="text" name="member_name" id="member_name" placeholder="Search..." value="{{ selected_member_name }}">
+      </div>
+
+      <div class="filters-group">
+        <label for="event_name">Event Name:</label>
+        <select name="event_name" id="event_name">
+          <option value="">All Events</option>
+          {% for event in event_names %}
+            <option value="{{ event }}" {% if selected_event_name == event %}selected{% endif %}>{{ event }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="filters-group">
+        <label for="status">Status:</label>
+        <select name="status" id="status">
+          <option value="">All</option>
+          <option value="Confirmed" {% if selected_status == 'Confirmed' %}selected{% endif %}>Confirmed</option>
+          <option value="Pending" {% if selected_status == 'Pending' %}selected{% endif %}>Pending</option>
+          <option value="Cancelled" {% if selected_status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+        </select>
+      </div>
+
+      <div class="filters-group">
+        <label>&nbsp;</label>
+        <button type="submit">Apply Filters</button>
+      </div>
+    </form>
 
     <div class="card">
       <h2>Registered Members</h2>

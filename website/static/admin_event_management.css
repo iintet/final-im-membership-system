@@ -249,3 +249,8 @@ hr {
 .back-btn:hover {
   color: #0056b3;
 }
+
+.badge.confirmed {
+  background-color: #28a745; /* green */
+  color: #fff;
+}

@@ -281,6 +281,9 @@ def admin_dashboard():
 @views.route('/admin/member-management', methods=['GET'])
 def admin_member_management():
     search = request.args.get('query', '').strip().lower()
+    filter_role = request.args.get('role', '').strip().lower()
+    filter_membership_type = request.args.get('membershiptype', '').strip().lower()
+    filter_status = request.args.get('status', '').strip().lower()
 
     # Get all members
     member_data = supabase.table("member").select("*").execute().data or []
@@ -300,15 +303,15 @@ def admin_member_management():
         membership_type = 'N/A'
         membership_status = 'N/A'
 
-        if member['role'] == 'individual':
+        if role == 'individual':
             info = next((i for i in individual_data if i['memberid'] == member['memberid']), {})
             member.update(info)
             full_name = f"{info.get('firstname', '')} {info.get('middlename', '')} {info.get('lastname', '')}"
         else:
             info = next((i for i in institutional_data if i['memberid'] == member['memberid']), {})
             member.update(info)
-            full_name = f"{info.get('representativefirstname', '')} {info.get('representativelastname', '')}"
-
+            full_name = info.get('institutionalname', '')
+        
         membership = next((m for m in membership_data if m['memberid'] == member['memberid']), None)
         if membership:
             typeid = membership.get('typeid')
@@ -317,7 +320,13 @@ def admin_member_management():
             membership_status = membership.get('status', 'N/A')
             
         # Apply search filter
-        if search and search not in full_name.lower() and search not in member.get("email", "").lower():
+        if search and search not in full_name.lower() and search not in email.lower():
+            continue
+        if filter_role and role.lower() != filter_role:
+            continue
+        if filter_membership_type and membership_type.lower() != filter_membership_type:
+            continue
+        if filter_status and membership_status.lower() != filter_status:
             continue
 
         enriched_members.append({
@@ -586,45 +595,59 @@ def delete_event(eventid):
 @views.route('/admin/event/registrations')
 def admin_event_registrations():
     try:
-        # Step 1: Get all event registrations ordered by date (latest first)
+        # Get filter values from query string
+        member_name_filter = request.args.get('member_name', '').strip().lower()
+        event_name_filter = request.args.get('event_name', '')
+        status_filter = request.args.get('status', '')
+
+        # Get all event names for filter dropdown
+        all_events = supabase.table("event").select("name").execute().data or []
+        event_name_list = sorted({e["name"] for e in all_events if "name" in e})
+
+        # Get all event registrations ordered by date
         result = supabase.table("eventregistration").select(
             "registrationid, registrationdate, status, memberid, eventid"
         ).order("registrationdate", desc=True).execute()
-
-        registrations = result.data
+        registrations = result.data or []
 
         enriched_registrations = []
+
         for reg in registrations:
             memberid = reg["memberid"]
-            # Get member base info (to know role)
+
+            # Get member role
             member_result = supabase.table("member").select("role").eq("memberid", memberid).execute().data
             if not member_result:
                 continue
             role = member_result[0]["role"]
 
-            # Get name and contact info
+            # Get member name
             if role == "individual":
-                detail_result = supabase.table("individual").select(
+                detail = supabase.table("individual").select(
                     "firstname, middlename, lastname"
                 ).eq("memberid", memberid).execute().data
-                if detail_result:
-                    d = detail_result[0]
+                if detail:
+                    d = detail[0]
                     full_name = f"{d.get('firstname', '')} {d.get('middlename', '')} {d.get('lastname', '')}".strip()
                 else:
                     full_name = "Unknown Individual"
             else:
-                detail_result = supabase.table("institutional").select(
-                    "representativefirstname, representativemiddlename, representativelastname"
+                detail = supabase.table("institutional").select(
+                    "institutionalname"
                 ).eq("memberid", memberid).execute().data
-                if detail_result:
-                    d = detail_result[0]
-                    full_name = f"{d.get('representativefirstname', '')} {d.get('representativemiddlename', '')} {d.get('representativelastname', '')}".strip()
-                else:
-                    full_name = "Unknown Institution"
+                full_name = detail[0].get("institutionalname", "Unknown Institution") if detail else "Unknown Institution"
 
             # Get event name
             event_result = supabase.table("event").select("name").eq("eventid", reg["eventid"]).execute().data
             event_name = event_result[0]["name"] if event_result else "Unknown Event"
+
+            # Apply filters
+            if member_name_filter and member_name_filter not in full_name.lower():
+                continue
+            if event_name_filter and event_name_filter != event_name:
+                continue
+            if status_filter and status_filter.lower() != reg["status"].lower():
+                continue
 
             enriched_registrations.append({
                 "registrationid": reg["registrationid"],
@@ -634,11 +657,19 @@ def admin_event_registrations():
                 "event_name": event_name
             })
 
-        return render_template("admin_event_registrations.html", registrations=enriched_registrations)
+        return render_template(
+            "admin_event_registrations.html",
+            registrations=enriched_registrations,
+            event_names=event_name_list,
+            selected_member_name=member_name_filter,
+            selected_event_name=event_name_filter,
+            selected_status=status_filter
+        )
 
     except Exception as e:
         print("Error loading event registrations:", e)
-        return render_template("admin_event_registrations.html", registrations=[])
+        return render_template("admin_event_registrations.html", registrations=[], event_names=[])
+
 
 # -- MEMBERSHIP MANAGEMENT --
 @views.route('/admin/memberships')
@@ -653,7 +684,7 @@ def admin_membership_edit():
 @views.route('/admin/membership/history', methods=['GET'])
 def admin_membership_registration_history():
     # Get filter values from query string
-    status_filter = request.args.get('status', '').lower()
+    filter_status = request.args.get('status', '').strip().lower()
     start_date = request.args.get('start_date')
     end_date = request.args.get('end_date')
 
@@ -668,15 +699,25 @@ def admin_membership_registration_history():
 
     enriched = []
     for reg in registration_data:
-        reg_status = reg.get("status", "").lower()
+        reg_status_raw = reg.get("status", "").strip().lower()
+        # Map status for display and filtering
+        if reg_status_raw == "active":
+            display_status = "Approved"
+        elif reg_status_raw == "pending":
+            display_status = "Pending"
+        elif reg_status_raw == "rejected":
+            display_status = "Rejected"
+        else:
+            display_status = reg.get("status", "N/A")
+
+        # Apply status filter (use mapped value)
+        if filter_status and display_status.lower() != filter_status:
+            continue
+
         date = reg.get("startdate")
         end = reg.get("enddate")
 
         if not date:
-            continue
-
-        # Filter by status
-        if status_filter and status_filter != reg_status:
             continue
 
         # Filter by date range
@@ -713,14 +754,19 @@ def admin_membership_registration_history():
             "name": name,
             "registration_date": date,
             "end_date": end,
-            "status": reg.get("status"),
+            "status": display_status,
             "type": type_name
         })
-
     # Sort by registration date (descending)
     enriched.sort(key=lambda x: x['registration_date'], reverse=True)
 
-    return render_template("admin_membership_registration_history.html", registrations=enriched)
+    return render_template(
+        "admin_membership_registration_history.html",
+        registrations=enriched,
+        selected_status=request.args.get('status', ''),
+        selected_start_date=request.args.get('start_date', ''),
+        selected_end_date=request.args.get('end_date', '')
+    )
 
 # -- ADMIN BILLING --
 @views.route('/admin/billing')

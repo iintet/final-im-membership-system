@@ -285,3 +285,41 @@ table td:nth-child(6) {
   width: 20%;
   text-align: center;
 }
+
+/* Style the search form and dropdowns */
+.simple-search-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.simple-search-form input[type="text"],
+.simple-search-form select,
+.simple-search-form button {
+  padding: 10px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.simple-search-form select {
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.simple-search-form button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.simple-search-form button:hover {
+  background-color: #0056b3;
+}
+
+

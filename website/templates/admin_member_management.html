@@ -34,6 +34,31 @@
       <h2>Search Members</h2>
       <form class="simple-search-form" method="get" action="{{ url_for('views.admin_member_management') }}">
         <input type="text" name="query" placeholder="Search by name or email..." value="{{ request.args.get('query', '') }}">
+
+        <!-- Membership Status Filter -->
+        <select name="status">
+          <option value="">All Status</option>
+          <option value="Pending" {% if request.args.get('status') == 'Pending' %}selected{% endif %}>Pending</option>
+          <option value="Active" {% if request.args.get('status') == 'Active' %}selected{% endif %}>Active</option>
+          <option value="Rejected" {% if request.args.get('status') == 'Rejected' %}selected{% endif %}>Rejected</option>
+        </select>
+
+        <!-- Member Type Filter -->
+        <select name="role">
+          <option value="">All Types</option>
+          <option value="Individual" {% if request.args.get('role') == 'Individual' %}selected{% endif %}>Individual</option>
+          <option value="Institution" {% if request.args.get('role') == 'Institution' %}selected{% endif %}>Institution</option>
+        </select>
+
+        <!-- Membership Type Filter -->
+        <select name="membershiptype">
+          <option value="">All Memberships</option>
+          <option value="Premium Individual" {% if request.args.get('membershiptype') == 'Premium Individual' %}selected{% endif %}>Premium Individual</option>
+          <option value="Basic Individual" {% if request.args.get('membershiptype') == 'Basic Individual' %}selected{% endif %}>Basic Individual</option>
+          <option value="Premium Institutional" {% if request.args.get('membershiptype') == 'Premium Institutional' %}selected{% endif %}>Premium Institutional</option>
+          <option value="Basic Institutional" {% if request.args.get('membershiptype') == 'Basic Institutional' %}selected{% endif %}>Basic Institutional</option>
+        </select>
+
         <button type="submit">Search</button>
       </form>
     </div>
@@ -44,7 +69,7 @@
       <table>
         <thead>
           <tr>
-            <th>Full Name</th>
+            <th>Name</th>
             <th>Email</th>
             <th>Role</th>
             <th>Membership Type</th>
