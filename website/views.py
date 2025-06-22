@@ -732,7 +732,7 @@ def admin_billing_payment():
         billingid,
         billdate,
         duedate,
-        amount,
+        amountdue,
         status,
         billtype,
         member:memberid (
