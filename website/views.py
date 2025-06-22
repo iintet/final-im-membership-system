@@ -595,45 +595,59 @@ def delete_event(eventid):
 @views.route('/admin/event/registrations')
 def admin_event_registrations():
     try:
-        # Step 1: Get all event registrations ordered by date (latest first)
+        # Get filter values from query string
+        member_name_filter = request.args.get('member_name', '').strip().lower()
+        event_name_filter = request.args.get('event_name', '')
+        status_filter = request.args.get('status', '')
+
+        # Get all event names for filter dropdown
+        all_events = supabase.table("event").select("name").execute().data or []
+        event_name_list = sorted({e["name"] for e in all_events if "name" in e})
+
+        # Get all event registrations ordered by date
         result = supabase.table("eventregistration").select(
             "registrationid, registrationdate, status, memberid, eventid"
         ).order("registrationdate", desc=True).execute()
-
-        registrations = result.data
+        registrations = result.data or []
 
         enriched_registrations = []
+
         for reg in registrations:
             memberid = reg["memberid"]
-            # Get member base info (to know role)
+
+            # Get member role
             member_result = supabase.table("member").select("role").eq("memberid", memberid).execute().data
             if not member_result:
                 continue
             role = member_result[0]["role"]
 
-            # Get name and contact info
+            # Get member name
             if role == "individual":
-                detail_result = supabase.table("individual").select(
+                detail = supabase.table("individual").select(
                     "firstname, middlename, lastname"
                 ).eq("memberid", memberid).execute().data
-                if detail_result:
-                    d = detail_result[0]
+                if detail:
+                    d = detail[0]
                     full_name = f"{d.get('firstname', '')} {d.get('middlename', '')} {d.get('lastname', '')}".strip()
                 else:
                     full_name = "Unknown Individual"
             else:
-                detail_result = supabase.table("institutional").select(
-                    "representativefirstname, representativemiddlename, representativelastname"
+                detail = supabase.table("institutional").select(
+                    "institutionalname"
                 ).eq("memberid", memberid).execute().data
-                if detail_result:
-                    d = detail_result[0]
-                    full_name = f"{d.get('representativefirstname', '')} {d.get('representativemiddlename', '')} {d.get('representativelastname', '')}".strip()
-                else:
-                    full_name = "Unknown Institution"
+                full_name = detail[0].get("institutionalname", "Unknown Institution") if detail else "Unknown Institution"
 
             # Get event name
             event_result = supabase.table("event").select("name").eq("eventid", reg["eventid"]).execute().data
             event_name = event_result[0]["name"] if event_result else "Unknown Event"
+
+            # Apply filters
+            if member_name_filter and member_name_filter not in full_name.lower():
+                continue
+            if event_name_filter and event_name_filter != event_name:
+                continue
+            if status_filter and status_filter.lower() != reg["status"].lower():
+                continue
 
             enriched_registrations.append({
                 "registrationid": reg["registrationid"],
@@ -643,11 +657,19 @@ def admin_event_registrations():
                 "event_name": event_name
             })
 
-        return render_template("admin_event_registrations.html", registrations=enriched_registrations)
+        return render_template(
+            "admin_event_registrations.html",
+            registrations=enriched_registrations,
+            event_names=event_name_list,
+            selected_member_name=member_name_filter,
+            selected_event_name=event_name_filter,
+            selected_status=status_filter
+        )
 
     except Exception as e:
         print("Error loading event registrations:", e)
-        return render_template("admin_event_registrations.html", registrations=[])
+        return render_template("admin_event_registrations.html", registrations=[], event_names=[])
+
 
 # -- MEMBERSHIP MANAGEMENT --
 @views.route('/admin/memberships')
