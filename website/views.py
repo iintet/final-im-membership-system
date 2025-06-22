@@ -1598,12 +1598,18 @@ def update_member_status():
 
     new_status = "Active" if action == "approve" else "Rejected"
 
-    supabase.table("membershipregistration") \
-        .update({"status": new_status}) \
-        .eq("membershipregistrationid", membership_id) \
-        .execute()
+    try:
+        result = supabase.table("membershipregistration") \
+            .update({"status": new_status}) \
+            .eq("membershipregistrationid", membership_id) \
+            .execute()
+
+        print("Update Result:", result)
+    except Exception as e:
+        print("Error updating status:", e)
 
     return redirect(url_for('views.institutional_member_management'))
+
 
 @views.route('/institutional/membership/details')
 def institutional_membership_details():
