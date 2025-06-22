@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Membership Details - MRSYS</title>
+  <link rel="stylesheet" href="institutional_membership_details.css">
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+  <div class="dashboard-container">
+    <aside class="sidebar">
+      <div>
+        <h2 class="logo">MRSYS</h2>
+        <nav class="nav-menu">
+          <a href="institutional_dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+          <a href="institutional_profile.html"><i class="fas fa-user"></i> My Profile</a>
+          <a href="institutional_member_management.html"><i class="fas fa-users"></i> Member Management</a>
+          <a href="institutional_profile.html" class="active"><i class="fas fa-id-card"></i> Membership Management</a>
+          <a href="institutional_billing_payment.html"><i class="fas fa-money-bill-wave"></i> Billing & Payment</a>
+        </nav>
+      </div>
+      <div class="logout-section">
+        <hr class="logout-divider" />
+        <a href="{{ url_for('views.home') }}" class="logout-link">
+          <i class="fas fa-sign-out-alt"></i> Log Out</a>
+      </div>
+    </aside>
+
+    <main class="membership-content">
+      <section class="membership-header">
+        <h1>Membership Details</h1>
+        <p class="subtitle">Manage your membership information and history.</p>
+        <hr class="divider" />
+      </section>
+
+      <!-- Current Membership -->
+      <section class="membership-type card-box">
+        <div class="membership-header-row">
+          <h3>Current Membership: <span class="badge gold">Gold</span></h3>
+        </div>
+
+        <div class="capacity-panel">
+          <div class="capacity-item">
+            <i class="fas fa-users"></i>
+            <div>
+              <p class="label">Maximum Capacity</p>
+              <p class="value">100 Members</p>
+            </div>
+          </div>
+          <div class="capacity-item">
+            <i class="fas fa-user-check"></i>
+            <div>
+              <p class="label">Currently Registered</p>
+              <p class="value">20</p>
+            </div>
+          </div>
+          <div class="capacity-item">
+            <i class="fas fa-user-minus"></i>
+            <div>
+              <p class="label">Remaining Capacity</p>
+              <p class="value">80</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="button-wrapper">
+          <button class="upgrade-btn">Renew / Upgrade</button>
+        </div>
+      </section>
+
+      <!-- Benefits Section -->
+      <section class="benefits card-box">
+        <h3>Membership Benefits</h3>
+        <ul class="benefit-list">
+          <li><i class="fas fa-check-circle"></i> Institution plan includes payment for up to 100 members</li>
+          <li><i class="fas fa-check-circle"></i> Priority access to events</li>
+          <li><i class="fas fa-check-circle"></i> Discounts on fees and registrations</li>
+          <li><i class="fas fa-check-circle"></i> Exclusive member-only resources</li>
+          <li><i class="fas fa-check-circle"></i> Voting rights in committees</li>
+        </ul>
+      </section>
+
+      <section class="registration-history card-box">
+  <h3><i class="fas fa-history"></i> Registration History</h3>
+  {% if membership_history %}
+    <table class="history-table">
+      <thead>
+        <tr>
+          <th>Start Date</th>
+          <th>End Date</th>
+          <th>Membership Type</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for reg in membership_history %}
+        <tr>
+          <td>{{ reg.startdate }}</td>
+          <td>{{ reg.enddate }}</td>
+          <td>{{ reg.membershiptype.name }}</td>
+          <td>
+            <span class="status-badge {{ 'active' if reg.status == 'Active' else 'inactive' }}">
+              {{ reg.status }}
+            </span>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div class="no-history">
+      <i class="fas fa-info-circle"></i>
+      <p>No registration history found.</p>
+    </div>
+  {% endif %}
+</section>
+</body>
+</html>
+<!-- /* Added again after deleting */ -->

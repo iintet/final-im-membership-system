@@ -1,0 +1,429 @@
+/* Added again after deleting */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Oswald', sans-serif;
+  background-color: #f4f4f4;
+  color: #001F54;
+  display: flex;
+  height: 100vh;
+}
+
+.container {
+  display: flex;
+  width: 100%;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 270px;
+  background-color: #001F54;
+  color: white;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.logo {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 40px;
+}
+
+.sidebar nav a,
+.sidebar .logout a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0;
+  color: white;
+  text-decoration: none;
+  font-weight: 400;
+  transition: 0.2s ease;
+}
+
+.sidebar nav a.active,
+.sidebar nav a:hover,
+.sidebar .logout a:hover {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.logout {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid #ccc;
+}
+
+/* Main Content */
+.main-content {
+  flex-grow: 1;
+  padding: 40px;
+  overflow-y: auto;
+}
+
+/* Header Section */
+.billing-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.billing-header h1 {
+  font-size: 2rem;
+  color: #002244;
+}
+
+.billing-header input {
+  padding: 10px;
+  width: 300px;
+  max-width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+/* Summary Cards Grid */
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* Card Styles */
+.card {
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Payment Status Card */
+.card.status {
+  background-color: #f5faff;
+  border-left: 6px solid #007BFF;
+}
+
+.status-paid {
+  color: #1a7732;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+/* Renew/Pay Card */
+.card.renew {
+  background-color: #fffaf0;
+  border-left: 6px solid #ff9900;
+}
+
+.card.renew p {
+  margin-top: 10px;
+  font-size: 1rem;
+  color: #333;
+}
+
+.pay-btn {
+  margin-top: 1rem;
+  padding: 10px 20px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.pay-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Payment History Table */
+.table-container {
+  overflow-x: auto;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+}
+
+.table-title {
+  font-size: 1.4rem;
+  color: #002244;
+  margin-bottom: 1rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+}
+
+th, td {
+  text-align: left;
+  padding: 15px;
+  border-bottom: 1px solid #ddd;
+}
+
+thead {
+  background-color: #007BFF;
+  color: white;
+}
+
+tbody tr:hover {
+  background-color: #f1f9ff;
+}
+
+/* Badge Styles */
+.badge {
+  display: inline-block;
+  width: 80px;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 0.85rem;
+}
+
+.badge.paid {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.badge.unpaid {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 20px;
+  }
+
+  .sidebar nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .main-content {
+    padding: 20px;
+  }
+
+  .billing-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .billing-header input {
+    width: 100%;
+  }
+}
+
+/* Payment Page Styling */
+.payment-container {
+  background-color: #ffffff;
+  padding: 2rem 2.5rem;
+  border-radius: 12px;
+  max-width: 500px;
+  margin: 3rem auto;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  color: #001F54;
+}
+
+.payment-container h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: #0f1f59;
+}
+
+.payment-container p {
+  font-size: 1rem;
+  margin-bottom: 2rem;
+  color: #444;
+}
+
+.payment-container form label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.payment-container form input {
+  width: 100%;
+  padding: 0.7rem;
+  margin-bottom: 1.2rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: 'Oswald', sans-serif;
+}
+
+.payment-container .row {
+  display: flex;
+  gap: 1rem;
+}
+
+.payment-container .row div {
+  flex: 1;
+}
+
+.payment-container .pay-button {
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  width: 100%;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.payment-container .pay-button:hover {
+  background-color: #0056b3;
+}
+
+.payment-container .cancel-link {
+  display: block;
+  text-align: center;
+  margin-top: 1.5rem;
+  text-decoration: none;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.payment-container .cancel-link:hover {
+  text-decoration: underline;
+}
+
+.payment-container .confirmation {
+  display: none;
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 1.2rem;
+  color: green;
+}
+
+.payment-container .confirmation i {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+/* Enhanced Payment Container */
+.enhanced-payment-box {
+  max-width: 550px;
+  margin: 0 auto;
+  background-color: white;
+  border-radius: 12px;
+  padding: 2rem 2.5rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
+}
+
+.enhanced-payment-box h2 {
+  font-size: 1.8rem;
+  color: #001F54;
+  margin-bottom: 0.3rem;
+}
+
+.subtext {
+  font-size: 0.95rem;
+  color: #444;
+  margin-bottom: 1.5rem;
+}
+
+/* Form Structure */
+.form-group {
+  margin-bottom: 1.4rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+  color: #0f1f59;
+}
+
+select,
+input[type="file"] {
+  width: 100%;
+  padding: 0.7rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+/* Price Display */
+.price-display {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #0f1f59;
+  background-color: #eef6ff;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  margin-top: 0.2rem;
+  display: inline-block;
+}
+
+/* Payment Button */
+.pay-button {
+  display: inline-block;
+  width: 100%;
+  padding: 0.9rem;
+  background-color: #007BFF;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.pay-button:hover {
+  background-color: #0056b3;
+}
+
+.cancel-link {
+  display: block;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: #666;
+  text-align: center;
+  text-decoration: none;
+}
+
+.cancel-link:hover {
+  text-decoration: underline;
+}
+
+.confirmation {
+  margin-top: 2rem;
+  padding: 1rem;
+  background-color: #e6ffed;
+  border: 1px solid #b2dfb2;
+  color: #155724;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: bold;
+}

@@ -1,273 +1,169 @@
-// Fields to skip from being marked 'required'
-function isSkippable(el) {
-  return el.id === 'middlename';
-}
-
 document.addEventListener('DOMContentLoaded', () => {
-  // Update required fields dynamically by role
+  // Utility helpers
+  const isSkippable = (el) => el?.id === 'middle-name';
+  const isValidEmail = (val) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(val);
+  const isValidPhone = (val) => /^09\d{9}$/.test(val);
+
+  // Set required fields based on selected role
   function updateRequiredAttributes() {
     const role = document.getElementById('role')?.value;
     const individualFields = document.querySelectorAll('#individual-fields input, #individual-fields select');
     const institutionFields = document.querySelectorAll('#institution-fields input, #institution-fields select');
 
-    if (role === 'individual') {
-      individualFields.forEach(el => {
-        if (!isSkippable(el)) el.setAttribute('required', '');
-        else el.removeAttribute('required');
-      });
-      institutionFields.forEach(el => el.removeAttribute('required'));
-    } else if (role === 'institution') {
+    individualFields.forEach(el => isSkippable(el) ? el.removeAttribute('required') : el.setAttribute('required', ''));
+    institutionFields.forEach(el => el.removeAttribute('required'));
+
+    if (role === 'institution') {
       institutionFields.forEach(el => el.setAttribute('required', ''));
       individualFields.forEach(el => el.removeAttribute('required'));
-    } else {
-      individualFields.forEach(el => el.removeAttribute('required'));
-      institutionFields.forEach(el => el.removeAttribute('required'));
     }
   }
 
-  // Validate Individual > School or Organization fields
-  function validateIndividualAffiliation() {
-    const type = document.getElementById('affiliation-type')?.value;
+  // Live feedback on email, phone, confirm-password
+  function attachLiveValidation() {
+    const email = document.getElementById('email');
+    const password = document.getElementById('password');
+    const confirm = document.getElementById('confirm-password');
+    const phone = document.getElementById('phone');
+    const emergencyIndiv = document.getElementById('emergency-contact-number-indiv');
+    const emergencyInst = document.getElementById('emergency-contact-number-inst');
 
-    const orgName = document.getElementById('organization-name');
-    const orgAddr = document.getElementById('organization-address');
+    email?.addEventListener('input', () => {
+      email.classList.toggle('input-error', !isValidEmail(email.value));
+    });
 
-    const schName = document.getElementById('ind-school-name');
-    const schType = document.getElementById('ind-school-type');
-    const schRegion = document.getElementById('ind-school-region');
-    const schProvince = document.getElementById('ind-school-province');
-    const schCity = document.getElementById('ind-school-city');
-
-    let isValid = true;
-    let messages = [];
-
-    const clearErrors = (elements) => {
-      elements.forEach(el => el?.classList.remove('input-error'));
-    };
-
-    clearErrors([orgName, orgAddr, schName, schType, schRegion, schProvince, schCity]);
-
-    if (type === 'organization') {
-      if (!orgName?.value.trim()) {
-        messages.push("Organization Name is required.");
-        orgName?.classList.add("input-error");
-        isValid = false;
-      }
-      if (!orgAddr?.value.trim()) {
-        messages.push("Organization Address is required.");
-        orgAddr?.classList.add("input-error");
-        isValid = false;
-      }
-    } else if (type === 'school') {
-      if (!schName?.value.trim()) {
-        messages.push("School Name is required.");
-        schName?.classList.add("input-error");
-        isValid = false;
-      }
-      if (!schType?.value) {
-        messages.push("School Type is required.");
-        schType?.classList.add("input-error");
-        isValid = false;
-      }
-      if (!schRegion?.value) {
-        messages.push("School Region is required.");
-        schRegion?.classList.add("input-error");
-        isValid = false;
-      }
-      if (!schProvince?.value) {
-        messages.push("School Province is required.");
-        schProvince?.classList.add("input-error");
-        isValid = false;
-      }
-      if (!schCity?.value) {
-        messages.push("School City is required.");
-        schCity?.classList.add("input-error");
-        isValid = false;
-      }
-    }
-
-    return { isValid, messages };
-  }
-
-  // Validate Institutional school dropdowns
-  function validateInstitutionalFields() {
-    const schName = document.getElementById('ins-school-name');
-    const schType = document.getElementById('ins-school-type');
-    const schRegion = document.getElementById('ins-school-region');
-    const schProvince = document.getElementById('ins-school-province');
-    const schCity = document.getElementById('ins-school-city');
-
-    let isValid = true;
-    let messages = [];
-
-    const clearErrors = (elements) => {
-      elements.forEach(el => el?.classList.remove('input-error'));
-    };
-
-    clearErrors([schName, schType, schRegion, schProvince, schCity]);
-
-    if (!schName?.value.trim()) {
-      messages.push("Institution School Name is required.");
-      schName?.classList.add("input-error");
-      isValid = false;
-    }
-    if (!schType?.value) {
-      messages.push("Institution School Type is required.");
-      schType?.classList.add("input-error");
-      isValid = false;
-    }
-    if (!schRegion?.value) {
-      messages.push("Institution School Region is required.");
-      schRegion?.classList.add("input-error");
-      isValid = false;
-    }
-    if (!schProvince?.value) {
-      messages.push("Institution School Province is required.");
-      schProvince?.classList.add("input-error");
-      isValid = false;
-    }
-    if (!schCity?.value) {
-      messages.push("Institution School City is required.");
-      schCity?.classList.add("input-error");
-      isValid = false;
-    }
-
-    return { isValid, messages };
-  }
-
-  // 🎯 Final submit validation wrapper
-  document.addEventListener('DOMContentLoaded', () => {
-    updateRequiredAttributes();
-
-    document.getElementById('role')?.addEventListener('change', updateRequiredAttributes);
-
-    const form = document.getElementById('registrationForm');
-    if (form) {
-      form.addEventListener('submit', function (event) {
-        const role = document.getElementById('role')?.value;
-        const individual = role === 'individual';
-        const institutional = role === 'institution';
-
-        const results = [];
-
-        if (individual) results.push(validateIndividualAffiliation());
-        if (institutional) results.push(validateInstitutionalFields());
-
-        const allMessages = results.flatMap(r => r.messages);
-        const anyInvalid = results.some(r => !r.isValid);
-
-        if (anyInvalid) {
-          event.preventDefault();
-          alert("Please fix the following errors:\n" + allMessages.join("\n"));
-        }
+    [phone, emergencyIndiv, emergencyInst].forEach(field => {
+      field?.addEventListener('input', () => {
+        field.classList.toggle('input-error', !isValidPhone(field.value));
       });
+    });
+
+    if (password && confirm) {
+      const matchCheck = () => {
+        confirm.classList.toggle('input-error', password.value !== confirm.value);
+      };
+      password.addEventListener('input', matchCheck);
+      confirm.addEventListener('input', matchCheck);
     }
-  });
-
-  // Utility validators
-  function isValidEmail(email) {
-    return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
   }
 
-  function isValidPhone(phone) {
-    return /^09\d{9}$/.test(phone); // Starts with 09 and total 11 digits
+  function isVisible(el) {
+    return !!(el && el.offsetParent !== null);
   }
-
-  // Password match and input format validation
+  
   function validateBasicAccountFields() {
     const email = document.getElementById('email');
     const password = document.getElementById('password');
-    const confirm = document.getElementById('confirmPassword');
+    const confirm = document.getElementById('confirm-password');
     const phone = document.getElementById('phone');
-    const emergencyPhone = document.getElementById('emergency-contact-number');
+    const emergencyContactIndiv = document.getElementById('emergency-contact-number-indiv');
+    const emergencyContactInst = document.getElementById('emergency-contact-number-inst');
 
-    let isValid = true;
-    let messages = [];
+    const fields = [email, password, confirm, phone, emergencyContactIndiv, emergencyContactInst];
+    fields.forEach(f => f?.classList.remove('input-error'));
 
-    const clear = el => el?.classList.remove('input-error');
-
-    clear(email);
-    clear(password);
-    clear(confirm);
-    clear(phone);
-    clear(emergencyPhone);
-
-    if (!isValidEmail(email?.value)) {
-      isValid = false;
+    const messages = [];
+    if (email && !isValidEmail(email.value)) {
+      email.classList.add('input-error');
       messages.push('Invalid email format.');
-      email?.classList.add('input-error');
     }
 
-    if (password?.value !== confirm?.value) {
-      isValid = false;
+    if (password && confirm && password.value !== confirm.value) {
+      confirm.classList.add('input-error');
       messages.push('Passwords do not match.');
-      confirm?.classList.add('input-error');
     }
 
-    if (!isValidPhone(phone?.value)) {
-      isValid = false;
+    if (phone && !isValidPhone(phone.value)) {
+      phone.classList.add('input-error');
       messages.push('Phone number must start with "09" and be 11 digits.');
-      phone?.classList.add('input-error');
     }
 
-    if (!isValidPhone(emergencyPhone?.value)) {
-      isValid = false;
-      messages.push('Emergency contact number must start with "09" and be 11 digits.');
-      emergencyPhone?.classList.add('input-error');
+    if (emergencyContactIndiv && !isValidPhone(emergencyContactIndiv.value)) {
+      emergencyContactIndiv.classList.add('input-error');
+      messages.push('Individual emergency contact must start with "09" and be 11 digits.');
     }
 
-    return { isValid, messages };
+    if (emergencyContactInst && !isValidPhone(emergencyContactInst.value)) {
+      emergencyContactInst.classList.add('input-error');
+      messages.push('Institution emergency contact must start with "09" and be 11 digits.');
+    }
+
+    return { isValid: messages.length === 0, messages };
+  }
+
+  function validateIndividualAffiliation() {
+    const type = document.getElementById('affiliation-type')?.value;
+    const fields = {
+      organization: [
+        { id: 'organization-name', label: 'Organization Name' },
+        { id: 'organization-address', label: 'Organization Address' }
+      ],
+      school: [
+        { id: 'ind-school-name', label: 'School Name' },
+        { id: 'ind-school-type', label: 'School Type' },
+        { id: 'ind-school-region', label: 'School Region' },
+        { id: 'ind-school-province', label: 'School Province' },
+        { id: 'ind-school-city', label: 'School City' }
+      ]
+    };
+
+    const group = fields[type] || [];
+    const messages = [];
+
+    group.forEach(({ id, label }) => {
+      const el = document.getElementById(id);
+      el?.classList.remove('input-error');
+      if (!el?.value.trim()) {
+        el?.classList.add('input-error');
+        messages.push(`${label} is required.`);
+      }
+    });
+
+    return { isValid: messages.length === 0, messages };
+  }
+
+  function validateInstitutionalFields() {
+    const ids = ['ins-school-name', 'ins-school-type', 'ins-school-region', 'ins-school-province', 'ins-school-city'];
+    const messages = [];
+
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      el?.classList.remove('input-error');
+      if (!el?.value.trim()) {
+        el?.classList.add('input-error');
+        const label = el?.previousElementSibling?.textContent || id;
+        messages.push(`${label} is required.`);
+      }
+    });
+
+    return { isValid: messages.length === 0, messages };
   }
 
   const form = document.getElementById('registrationForm');
   if (form) {
-    form.addEventListener('submit', function (event) {
-      const role = document.getElementById('role')?.value;
+    updateRequiredAttributes();
+    attachLiveValidation();
 
+    document.getElementById('role')?.addEventListener('change', updateRequiredAttributes);
+
+    form.addEventListener('submit', (event) => {
+      const role = document.getElementById('role')?.value;
       const results = [validateBasicAccountFields()];
 
       if (role === 'individual') results.push(validateIndividualAffiliation());
       if (role === 'institution') results.push(validateInstitutionalFields());
 
-      const messages = results.flatMap(r => r.messages);
+      const errors = results.flatMap(r => r.messages);
       const hasErrors = results.some(r => !r.isValid);
 
       if (hasErrors) {
         event.preventDefault();
-        alert("Please fix the following:\n" + messages.join("\n"));
+        alert('Please fix the following:\n\n' + errors.join('\n'));
       }
     });
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
-    const email = document.getElementById('email');
-    const phone = document.getElementById('phone');
-    const emergencyPhone = document.getElementById('emergency-contact-number');
-    const password = document.getElementById('password');
-    const confirm = document.getElementById('confirmPassword');
+  const middle = document.getElementById('middle-name');
+    if (middle) middle.removeAttribute('required');
 
-    if (email) {
-      email.addEventListener('input', () => {
-        const valid = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.value);
-        email.classList.toggle('input-error', !valid && email.value.length > 0);
-      });
-    }
-
-    const validatePhone = (input) => {
-      const valid = /^09\d{9}$/.test(input.value);
-      input.classList.toggle('input-error', !valid && input.value.length > 0);
-    };
-
-    if (phone) phone.addEventListener('input', () => validatePhone(phone));
-    if (emergencyPhone) emergencyPhone.addEventListener('input', () => validatePhone(emergencyPhone));
-
-    if (password && confirm) {
-      const checkMatch = () => {
-        const isMismatch = password.value !== confirm.value && confirm.value.length > 0;
-        confirm.classList.toggle('input-error', isMismatch);
-      };
-      password.addEventListener('input', checkMatch);
-      confirm.addEventListener('input', checkMatch);
-    }
-  });
 });
