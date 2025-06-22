@@ -684,7 +684,8 @@ def admin_membership_edit():
 @views.route('/admin/membership/history', methods=['GET'])
 def admin_membership_registration_history():
     # Get filter values from query string
-    filter_status = request.args.get('status', '').strip().lower()
+    membership_type_filter = request.args.get('membership_type', '').strip().lower()
+    search_name = request.args.get('search_name', '').strip().lower()
     start_date = request.args.get('start_date')
     end_date = request.args.get('end_date')
 
@@ -699,24 +700,8 @@ def admin_membership_registration_history():
 
     enriched = []
     for reg in registration_data:
-        reg_status_raw = reg.get("status", "").strip().lower()
-        # Map status for display and filtering
-        if reg_status_raw == "active":
-            display_status = "Approved"
-        elif reg_status_raw == "pending":
-            display_status = "Pending"
-        elif reg_status_raw == "rejected":
-            display_status = "Rejected"
-        else:
-            display_status = reg.get("status", "N/A")
-
-        # Apply status filter (use mapped value)
-        if filter_status and display_status.lower() != filter_status:
-            continue
-
         date = reg.get("startdate")
         end = reg.get("enddate")
-
         if not date:
             continue
 
@@ -734,7 +719,6 @@ def admin_membership_registration_history():
         except ValueError:
             continue
 
-        # Get name
         member_id = reg.get("memberid")
         role = next((m['role'] for m in members if m['memberid'] == member_id), '')
 
@@ -750,23 +734,32 @@ def admin_membership_registration_history():
         # Get membership type name
         type_name = next((t['name'] for t in types if t['typeid'] == reg.get("typeid")), "")
 
+        # Apply filters
+        if membership_type_filter and type_name.lower() != membership_type_filter:
+            continue
+        if search_name and search_name not in name.lower():
+            continue
+
         enriched.append({
             "name": name,
             "registration_date": date,
             "end_date": end,
-            "status": display_status,
             "type": type_name
         })
+
     # Sort by registration date (descending)
     enriched.sort(key=lambda x: x['registration_date'], reverse=True)
 
     return render_template(
         "admin_membership_registration_history.html",
         registrations=enriched,
-        selected_status=request.args.get('status', ''),
-        selected_start_date=request.args.get('start_date', ''),
-        selected_end_date=request.args.get('end_date', '')
+        membership_types=types,
+        selected_type=request.args.get('membership_type', ''),
+        search_name=search_name,
+        selected_start_date=start_date,
+        selected_end_date=end_date
     )
+
 
 # -- ADMIN BILLING --
 @views.route('/admin/billing')
@@ -806,45 +799,23 @@ def admin_billing_payment():
 @views.route('/admin/billing/create', methods=['GET', 'POST'])
 def admin_create_billing():
     if request.method == 'POST':
-        member_name = request.form.get('member_name').strip()
+        member_id = request.form.get('member_id').strip()
+        if not member_id:
+            return "Member ID is required", 400
+        print(f"Received member_id: {member_id}")  # Debugging line
         bill_type = request.form.get('bill_type')
         bill_date = request.form.get('bill_date')
         due_date = request.form.get('due_date')
         status = request.form.get('status')
         amountdue = request.form.get('amountdue')
 
-        # Split the name for matching (basic approach)
-        name_parts = member_name.split()
-        firstname = name_parts[0]
-        lastname = name_parts[-1] if len(name_parts) > 1 else ''
+        # Ensure the selected member ID exists
+        member_check = supabase.table("member").select("memberid").eq("memberid", member_id).execute().data
+        if not member_check:
+            return "Selected member does not exist", 400
 
-        # Search for individual
-        member_query = supabase.table("member").select("""
-            memberid,
-            individual (
-                firstname,
-                lastname
-            )
-        """).execute().data
-
-        matched_member = next(
-            (
-                m for m in member_query
-                if m.get("individual") and
-                m["individual"]["firstname"].lower() == firstname.lower() and
-                m["individual"]["lastname"].lower() == lastname.lower()
-            ),
-            None
-        )
-
-        if not matched_member:
-            return "Member not found", 404
-
-        member_id = matched_member["memberid"]
-
-        # Insert into billing
+        # Insert billing record
         supabase.table("billing").insert({
-            "memberid": member_id,
             "billtype": bill_type,
             "billdate": bill_date,
             "duedate": due_date,
@@ -852,9 +823,31 @@ def admin_create_billing():
             "amountdue": amountdue
         }).execute()
 
+
+
         return redirect(url_for('views.admin_billing_payment'))
 
-    return render_template("admin_create_bill.html")
+    # GET method: fetch members for dropdowns
+    individual_query = supabase.table("individual").select("memberid, firstname, middlename, lastname").execute().data
+    institutional_query = supabase.table("institutional").select("memberid, institutionalname").execute().data
+
+    # Sort both alphabetically by name
+    individual_members = sorted(
+        individual_query,
+        key=lambda m: (m['firstname'] + m.get('middlename', '') + m['lastname']).lower()
+    )
+    institutional_members = sorted(
+        institutional_query,
+        key=lambda m: m['institutionalname'].lower()
+    )
+
+    return render_template(
+        "admin_create_bill.html",
+        individual_members=individual_members,
+        institutional_members=institutional_members
+    )
+
+
 
 @views.route('/admin/payment/record', methods=['GET'])
 def admin_payment_record():

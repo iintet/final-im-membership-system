@@ -36,8 +36,29 @@
     <div class="card full-width">
       <form method="POST" action="{{ url_for('views.admin_create_billing') }}">
         <div class="form-group">
-          <label for="member-name">Member Name</label>
-          <input type="text" id="member-name" name="member_name" placeholder="e.g., John Dela Cruz" required />
+          <label for="member-type">Member Type</label>
+          <select id="member-type" name="member_type" required>
+            <option value="">Select Member Type</option>
+            <option value="individual">Individual</option>
+            <option value="institutional">Institutional</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="member_id">Select Member</label>
+          <select name="member_id" id="member_id" required>
+            <optgroup label="Individual Members">
+              {% for m in individual_members %}
+                <option value="{{ m.memberid }}">
+                  {{ m.firstname }} {{ m.middlename }} {{ m.lastname }} ({{ m.memberid }})
+                </option>
+              {% endfor %}
+            </optgroup>
+            <optgroup label="Institutional Members">
+              {% for m in institutional_members %}
+                <option value="{{ m.memberid }}">{{ m.institutionalname }} ({{ m.memberid }})</option>
+              {% endfor %}
+            </optgroup>
+          </select>
         </div>
 
         <div class="form-group">
@@ -75,5 +96,17 @@
       </form>
     </div>
   </div>
+  <script>
+  document.getElementById('member-type').addEventListener('change', function () {
+    const type = this.value;
+    const options = document.querySelectorAll('.member-option');
+
+    options.forEach(opt => {
+      opt.style.display = opt.classList.contains(type) ? 'block' : 'none';
+    });
+
+    document.getElementById('memberid').value = ""; // Clear previous selection
+  });
+</script>
 </body>
 </html>
