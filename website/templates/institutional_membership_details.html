@@ -84,7 +84,6 @@
 
       <section class="registration-history card-box">
   <h3><i class="fas fa-history"></i> Registration History</h3>
-  {% if membership_history %}
     <table class="history-table">
       <thead>
         <tr>
@@ -95,7 +94,6 @@
         </tr>
       </thead>
       <tbody>
-        {% for reg in membership_history %}
         <tr>
           <td>{{ reg.startdate }}</td>
           <td>{{ reg.enddate }}</td>
@@ -106,15 +104,13 @@
             </span>
           </td>
         </tr>
-        {% endfor %}
       </tbody>
     </table>
-  {% else %}
     <div class="no-history">
       <i class="fas fa-info-circle"></i>
       <p>No registration history found.</p>
     </div>
-  {% endif %}
+</section>
 </section>
 </body>
 </html>
