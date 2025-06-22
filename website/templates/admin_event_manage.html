@@ -26,7 +26,7 @@
   </div>
 
   <div class="main-content">
-    <a href="admin_event_management.html" class="blue-button" style="margin-bottom: 20px; display: inline-block;">
+    <a href="{{ url_for('views.admin_event_management') }}" class="blue-button" style="margin-bottom: 20px; display: inline-block;">
       <i class="fas fa-arrow-left"></i> Back to Event Management
     </a>
 
@@ -36,33 +36,60 @@
     <!-- Add/Edit Event Form -->
     <div class="event-form">
       <h2>Add or Edit Event</h2>
-      <form>
+      <form method="POST" action="{{ url_for('views.add_event') }}">
+        {% if error %}
+          <p style="color:red">{{ error }}</p>
+        {% endif %}
+
         <div class="form-group">
           <label for="event-name">Event Name:</label>
-          <input type="text" id="event-name" placeholder="Enter event name" required />
+          <input type="text" id="event-name" name="name" value="{{ request.form.name }}" required />
         </div>
 
         <div class="form-group">
           <label for="event-date">Date:</label>
-          <input type="date" id="event-date" required />
+          <input type="date" id="event-date" name="date" value="{{ request.form.date }}" required />
         </div>
 
         <div class="form-group">
           <label for="event-location">Location:</label>
-          <input type="text" id="event-location" placeholder="Enter event location" required />
+          <input type="text" id="event-location" name="location" value="{{ request.form.location }}" required />
         </div>
 
         <div class="form-group">
           <label for="event-capacity">Max Capacity:</label>
-          <input type="number" id="event-capacity" min="1" required />
+          <input type="number" id="event-capacity" name="capacity" min="1" value="{{ request.form.capacity }}" required />
         </div>
 
         <div class="form-group">
-          <label for="event-description">Description:</label>
-          <textarea id="event-description" rows="4" placeholder="Write event details..."></textarea>
+          <label for="event-fee">Fee:</label>
+          <input type="number" id="event-fee" name="fee" min="0" value="{{ request.form.fee }}" required />
+        </div>
+
+        <div class="form-group">
+          <label for="event-staff">Staff Assigned:</label>
+          <select name="staff_id" id="event-staff" required>
+            <option value="">Select a staff</option>
+            {% for s in staff_list %}
+              <option value="{{ s.staffid }}" {% if request.form.staff_id == s.staffid|string %}selected{% endif %}>{{ s.firstname }} {{ s.lastname }}</option>
+            {% endfor %}
+          </select>
         </div>
 
         <button type="submit" class="blue-button">Save Event</button>
+      </form>
+    </div>
+
+    <!-- Filters -->
+    <div class="card">
+      <form method="GET" action="{{ url_for('views.admin_event_management') }}">
+        <label for="date-filter">Filter by Date:</label>
+        <input type="date" name="date_filter" id="date-filter" value="{{ date_filter }}" />
+
+        <label for="capacity-filter">Max Capacity at least:</label>
+        <input type="number" name="capacity_filter" id="capacity-filter" min="1" value="{{ capacity_filter }}" />
+
+        <button type="submit" class="blue-button">Apply Filters</button>
       </form>
     </div>
 
@@ -76,30 +103,27 @@
             <th>Date</th>
             <th>Location</th>
             <th>Capacity</th>
+            <th>Fee</th>
+            <th>Staff Assigned</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
+          {% for e in events %}
           <tr>
-            <td>Annual General Meeting</td>
-            <td>2025-07-10</td>
-            <td>Grand Hall A</td>
-            <td>200</td>
+            <td>{{ e.name }}</td>
+            <td>{{ e.eventdate }}</td>
+            <td>{{ e.location }}</td>
+            <td>{{ e.capacity }}</td>
+            <td>{{ e.fee }}</td>
+            <td>{{ e.staff.firstname }} {{ e.staff.lastname }}</td>
             <td>
-              <button class="blue-button">Edit</button>
-              <button class="blue-button">Delete</button>
+              <form method="POST" action="{{ url_for('views.delete_event', eventid=e.eventid) }}" onsubmit="return confirm('Delete this event?');">
+                <button type="submit" class="blue-button">Delete</button>
+              </form>
             </td>
           </tr>
-          <tr>
-            <td>Volunteer Orientation</td>
-            <td>2025-05-22</td>
-            <td>Room B203</td>
-            <td>100</td>
-            <td>
-              <button class="blue-button">Edit</button>
-              <button class="blue-button">Delete</button>
-            </td>
-          </tr>
+          {% endfor %}
         </tbody>
       </table>
     </div>
