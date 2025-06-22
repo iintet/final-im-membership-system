@@ -10,7 +10,8 @@
 <body>
 
   <!-- Header -->
-  <header class="main-header">
+
+  <header class="topbar">
     <div class="logo">MRSYS</div>
     <nav class="nav-links">
       <a href="{{ url_for('views.home') }}">Home</a>
@@ -20,36 +21,28 @@
     </nav>
   </header>
 
-  <!-- Content -->
- <main class="about-page">
-  <section class="about-section">
-    <div class="about-text">
+  <section class="about-hero">
+    <div class="about-content">
       <h2>About Us</h2>
-      <p>
-        <strong>MRSYS</strong> is a modern membership system designed to streamline and simplify how organizations manage their members.
-        Whether you're registering for events, updating your profile, or managing committee involvement, MRSYS ensures a smooth and intuitive experience.
-      </p>
-      <p>
-        Our platform offers comprehensive features for membership registration, billing and payment tracking, and event management — all in one centralized system.
-        With user-friendly navigation, secure data handling, and responsive design, we’re committed to providing a platform that supports members and administrators alike.
-      </p>
-    </div>
+      <p><strong>MRSYS</strong> is a modern membership system designed to streamline and simplify how organizations manage their members.</p>
+      <p>Whether you're registering for events, updating your profile, or managing committee involvement, MRSYS ensures a smooth and intuitive experience.</p>
+      <p>Our platform offers comprehensive features for membership registration, billing and payment tracking, and event management — all in one centralized system.</p>
+      <p>With user-friendly navigation, secure data handling, and responsive design, we support members and administrators alike.</p>
 
-    <div class="about-cards">
-      <div class="card mission-card">
-        <h3>Our Mission</h3>
-        <p>
-          To empower member-based organizations through technology, making administration easier and engagement more meaningful.
-        </p>
-      </div>
-      <div class="card vision-card">
-        <h3>Our Vision</h3>
-        <p>
-          A unified platform for organizations to efficiently manage, grow, and connect their communities.
-        </p>
+      <div class="about-core">
+        <div class="about-card">
+          <h3>Our Mission</h3>
+          <p>To empower member-based organizations through technology, making administration easier and engagement more meaningful.</p>
+        </div>
+        <div class="about-card">
+          <h3>Our Vision</h3>
+          <p>A unified platform for organizations to efficiently manage, grow, and connect their communities.</p>
+        </div>
       </div>
     </div>
   </section>
+</body>
+
 </main>
 
 

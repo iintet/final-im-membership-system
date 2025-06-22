@@ -413,3 +413,290 @@ body {
 .past-events .carousel-container {
   position: relative;
 }
+/* -------------------------------- */
+/* BENEFITS PAGE HEADER ALIGNMENT  */
+/* -------------------------------- */
+header.top.bar {
+  width: 100%;
+  background-color: #001F54;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+}
+
+header.top.bar .logo {
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+}
+
+header.top.bar .nav-links {
+  display: flex;
+  gap: 30px;
+}
+
+header.top.bar .nav-links a {
+  color: white;
+  text-decoration: none;
+  font-size: 1.1rem;
+  transition: opacity 0.2s ease;
+}
+
+header.top.bar .nav-links a:hover {
+  opacity: 0.8;
+}
+
+header.top.bar .nav-links a.active {
+  text-decoration: underline;
+  font-weight: bold;
+}
+
+/* -------------------------------- */
+/* BENEFITS HERO SECTION            */
+/* -------------------------------- */
+.benefits-hero {
+  background-color: #001F54;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* changed from center */
+  padding: 60px 20px 60px; /* reduced top padding */
+  color: white;
+  text-align: center;
+}
+
+
+.benefits-content {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.benefits-heading {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+.intro-text {
+  font-size: 1.2rem;
+  margin-bottom: 3rem;
+  color: #dbe7ff;
+  max-width: 800px;
+  margin-inline: auto;
+}
+
+/* -------------------------------- */
+/* BENEFIT CARDS STYLING           */
+/* -------------------------------- */
+.benefit-cards {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.benefit-card {
+  background-color: white;
+  color: #001F54;
+  width: 320px;
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.benefit-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+/* -------------------------------- */
+/* ICON CIRCLE                     */
+/* -------------------------------- */
+.icon-circle {
+  background-color: #001F54;
+  color: white;
+  font-size: 1.6rem;
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* -------------------------------- */
+/* CARD TEXT                       */
+/* -------------------------------- */
+.benefit-card h3 {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.benefit-card p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #333;
+}
+
+/* -------------------------------- */
+/* RESPONSIVE                      */
+/* -------------------------------- */
+@media (max-width: 768px) {
+  .benefit-cards {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .benefit-card {
+    width: 90%;
+  }
+
+  .benefits-heading {
+    font-size: 2.5rem;
+  }
+}
+
+/* ----------------- ABOUT PAGE ----------------- */
+
+.about-hero {
+  background-color: #001F54;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* ⬅ Push content to top */
+  padding: 60px 20px 40px;  /* ⬅ Less top and bottom spacing */
+  color: white;
+}
+
+.about-content {
+  max-width: 1100px;
+  width: 100%;
+  text-align: center;
+}
+
+.about-content h2 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+.about-content p {
+  font-size: 1.2rem;
+  line-height: 1.8;
+  color: #e0e6f6;
+  margin-bottom: 20px;
+}
+
+.about-description {
+  max-width: 1000px;
+  margin: 0 auto 50px;
+  font-size: 1.25rem;
+  line-height: 1.8;
+  color: #dbe7ff;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.about-description p {
+  margin-bottom: 20px;
+}
+
+
+/* MISSION & VISION CARDS */
+
+.about-core {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+  margin-top: 50px;
+}
+
+.about-card {
+  background-color: white;
+  color: #001F54;
+  padding: 2rem;
+  border-radius: 14px;
+  width: 420px;
+  text-align: left;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.about-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+.about-card h3 {
+  font-size: 1.8rem;
+  margin-bottom: 0.75rem;
+}
+
+.about-card p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #333;
+}
+
+/* ----------------- CONSISTENT NAVIGATION ----------------- */
+
+/* HEADER LAYOUT — consistent across all pages */
+.topbar {
+  width: 100%;
+  background-color: #001F54;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+}
+
+.logo {
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+}
+
+.nav-links {
+  display: flex;
+  gap: 30px;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-size: 1.1rem;
+  transition: opacity 0.2s ease;
+}
+
+.nav-links a:hover {
+  opacity: 0.8;
+}
+
+.nav-links a.active {
+  text-decoration: underline;
+  font-weight: bold;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+  .about-core {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .about-card {
+    width: 90%;
+  }
+}
