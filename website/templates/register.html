@@ -453,147 +453,39 @@
 
 
   <script>
+// filepath: c:\Users\Youjin Gumasing\OneDrive\Documents\GitHub\final-im-membership-system\website\templates\register.html
 document.getElementById("registrationForm").addEventListener("submit", function (e) {
-  e.preventDefault(); // prevent default form submission
+  e.preventDefault();
 
-  const affiliationType = document.getElementById("individual-affiliation-type").value;
+  const formData = new FormData(this);
+  const payload = Object.fromEntries(formData.entries());
 
-  // Optional: you can do validation or save to server here before redirecting
-
-  if (affiliationType === "none") {
-    window.location.href = "{{ url_for('views.billingpayment') }}"; //PALITAN NG REGISTRATION PAYMENT
-  } else if (affiliationType === "organization" || affiliationType === "school") {
-    window.location.href = "{{ url_for('views.userdashboard') }}";
-  } else {
-    alert("Please select an affiliation type.");
-  }
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-  const roleSelect = document.getElementById("role");
-  const affTypeSelect = document.getElementById("institutional-affiliation-type");
-
-  const schoolFields = document.getElementById("ins-school-dropdown");
-  const orgFields = document.getElementById("ins-organization-fields");
-
-  function updateInstitutionFields() {
-    const role = roleSelect.value;
-    const type = affTypeSelect.value;
-
-    if (role === "institution" && type === "school") {
-      schoolFields.style.display = "block";
-      orgFields.style.display = "none";
-    } else if (role === "institution" && type === "organization") {
-      orgFields.style.display = "block";
-      schoolFields.style.display = "none";
-    } else {
-      orgFields.style.display = "none";
-      schoolFields.style.display = "none";
-    }
-  }
-
-  roleSelect.addEventListener("change", updateInstitutionFields);
-  affTypeSelect.addEventListener("change", updateInstitutionFields);
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-  const indAffiliation = document.getElementById("individual-affiliation-type");
-  const orgDropdown = document.getElementById("ind-organization-dropdown");
-  const schoolDropdown = document.getElementById("ind-school-dropdown");
-
-  indAffiliation?.addEventListener("change", () => {
-    const type = indAffiliation.value;
-    orgDropdown.style.display = (type === "organization") ? "block" : "none";
-    schoolDropdown.style.display = (type === "school") ? "block" : "none";
-  });
-});
-
-
-document.addEventListener("DOMContentLoaded", () => {
-  const orgSelect = document.getElementById("ind-organization-select");
-  const orgAddress = document.getElementById("ind-organization-address");
-
-  if (!orgSelect || !orgAddress) {
-    console.error("❌ Organization select elements not found in the DOM.");
-    return;
-  }
-
-  fetch("/api/organizations")
-    .then(res => res.json())
-    .then(data => {
-      orgSelect.innerHTML = '<option value="">Select organization</option>' +
-        data.map(org => `<option value="${org.id}" data-address="${org.address}">${org.name}</option>`).join('');
-    });
-
-  orgSelect.addEventListener("change", () => {
-    const selected = orgSelect.options[orgSelect.selectedIndex];
-    orgAddress.value = selected?.dataset?.address || "";
-  });
-});
-
-
-    document.getElementById("ind-school-name").addEventListener("change", function () {
-      const schoolId = this.value;
-      const region = document.getElementById('ind-school-region');
-
-
-      const provinceInput = document.getElementById("ind-school-province");
-      const cityInput = document.getElementById("ind-school-city");
-      const typeInput = document.getElementById("ind-school-type");
-
-      if (schoolId) {
-          fetch(`/api/schooltype?schoolid=${schoolId}`)
-              .then(res => res.json())
-              .then(data => {
-                  if (data.schooltype) {
-                      typeInput.value = data.schooltype;
-                  }
-              });
-
-          // Fetch school details based on selected school
-          fetch(`/api/schname?id=${schoolId}`)
-              .then(res => res.json())
-              .then(data => {
-                  if (data) {
-                      regionInput.value = data.region; // Assuming the API returns region
-                      provinceInput.value = data.province; // Assuming the API returns province
-                      cityInput.value = data.city; // Assuming the API returns city
-                  }
-              });
+  fetch('/auth/register', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+    headers: { 'Content-Type': 'application/json' }
+  })
+  .then(response => {
+    if (!response.ok) throw new Error("Server error");
+    return response.json();
+  })
+  .then(result => {
+    if (result.success) {
+      const type = document.getElementById("individual-affiliation-type").value;
+      if (type === "none") {
+        window.location.href = "{{ url_for('views.billingpayment') }}";
       } else {
-          regionInput.value = '';
-          provinceInput.value = '';
-          cityInput.value = '';
-          typeInput.value = '';
+        window.location.href = "{{ url_for('views.userdashboard') }}";
       }
-    });
-
-    function setRequiredForFields(containerId, required) {
-  const container = document.getElementById(containerId);
-  if (!container) return;
-  container.querySelectorAll('input, select').forEach(el => {
-    if (required) {
-      el.setAttribute('required', 'required');
     } else {
-      el.removeAttribute('required');
+      alert(result.error || "Registration failed.");
     }
+  })
+  .catch(err => {
+    alert("Network error or server error.");
+    console.error(err);
   });
-}
-
-// When showing organization fields:
-setRequiredForFields('ind-organization-dropdown', true);
-setRequiredForFields('ind-school-dropdown', false);
-// When showing school fields:
-setRequiredForFields('ind-organization-dropdown', false);
-setRequiredForFields('ind-school-dropdown', true);
-// When hiding both:
-setRequiredForFields('ind-organization-dropdown', false);
-setRequiredForFields('ind-school-dropdown', false);
-
-
-
+});
 </script>
-<script src="{{ url_for('static', filename='register_school_individual.js') }}" defer></script>
-<script src="{{ url_for('static', filename='register_school_institutional.js') }}" defer></script>
 </body>
 </html>

@@ -1,10 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
   // Utility helpers
   const isSkippable = (el) => el?.id === 'middle-name';
-  const isValidEmail = (val) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(val);
-  const isValidPhone = (val) => /^09\d{9}$/.test(val);
 
-  // Set required fields based on selected role
+  // Accepts 09XXXXXXXXX or +639XXXXXXXXX, normalizes to 09XXXXXXXXX
+  function normalizePhone(val) {
+    let phone = val.replace(/[\s\-]/g, '');
+    if (phone.startsWith('+639')) phone = '0' + phone.slice(3);
+    return phone;
+  }
+  const isValidPhone = (val) => /^09\d{9}$/.test(normalizePhone(val));
+  const isValidEmail = (val) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(val);
+
   function updateRequiredAttributes() {
     const role = document.getElementById('role')?.value;
     const individualFields = document.querySelectorAll('#individual-fields input, #individual-fields select');
@@ -19,7 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Live feedback on email, phone, confirm-password
   function attachLiveValidation() {
     const email = document.getElementById('email');
     const password = document.getElementById('password');
@@ -50,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function isVisible(el) {
     return !!(el && el.offsetParent !== null);
   }
-  
+
   function validateBasicAccountFields() {
     const email = document.getElementById('email');
     const password = document.getElementById('password');
@@ -75,24 +80,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (phone && !isValidPhone(phone.value)) {
       phone.classList.add('input-error');
-      messages.push('Phone number must start with "09" and be 11 digits.');
+      messages.push('Phone number must start with "09" or "+639" and be 11 digits.');
     }
 
-    if (emergencyContactIndiv && !isValidPhone(emergencyContactIndiv.value)) {
+    // Only validate the visible emergency contact field
+    if (isVisible(emergencyContactIndiv) && !isValidPhone(emergencyContactIndiv.value)) {
       emergencyContactIndiv.classList.add('input-error');
-      messages.push('Individual emergency contact must start with "09" and be 11 digits.');
+      messages.push('Individual emergency contact must start with "09" or "+639" and be 11 digits.');
     }
-
-    if (emergencyContactInst && !isValidPhone(emergencyContactInst.value)) {
+    if (isVisible(emergencyContactInst) && !isValidPhone(emergencyContactInst.value)) {
       emergencyContactInst.classList.add('input-error');
-      messages.push('Institution emergency contact must start with "09" and be 11 digits.');
+      messages.push('Institution emergency contact must start with "09" or "+639" and be 11 digits.');
     }
 
     return { isValid: messages.length === 0, messages };
   }
 
   function validateIndividualAffiliation() {
-    const type = document.getElementById('affiliation-type')?.value;
+    const type = document.getElementById('individual-affiliation-type')?.value;
     const fields = {
       organization: [
         { id: 'organization-name', label: 'Organization Name' },
@@ -164,6 +169,5 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const middle = document.getElementById('middle-name');
-    if (middle) middle.removeAttribute('required');
-
+  if (middle) middle.removeAttribute('required');
 });

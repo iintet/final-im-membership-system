@@ -115,7 +115,7 @@ def register():
         email = data['email']
         password = data['password']
         role = data['role']
-        affiliation_type = data.get("affiliation-type")
+        affiliation_type = data.get("individual-affiliation-type")
 
         # 🔍 Duplicate email check
         existing = supabase.table("member").select("email").eq("email", email).maybe_single().execute()
@@ -124,7 +124,7 @@ def register():
 
         def safe_int(val, field):
             try:
-                return int(val)
+                return int(val) if val not in (None, '', 'None') else None
             except (ValueError, TypeError):
                 raise ValueError(f"Invalid or missing value for {field}")
 
@@ -135,8 +135,8 @@ def register():
             city = safe_int(data.get("inst-city"), "city")
             barangay = safe_int(data.get("inst-barangay"), "barangay")
             street = data.get("inst-street")
-            emergencycontactname = data.get('institution-emergency-contact-name')
-            emergencycontactnumber = clean_phone(data.get('institution-emergencycontactnumber'))
+            emergencycontactname = data.get('emergency-contact-name-inst')
+            emergencycontactnumber = clean_phone(data.get('emergency-contact-number-inst'))
 
         elif role == 'individual':
             region = safe_int(data.get("region"), "region")
@@ -144,7 +144,7 @@ def register():
             city = safe_int(data.get("city"), "city")
             barangay = safe_int(data.get("barangay"), "barangay")
             street = data.get("street")
-            emergencycontactname = data.get('individual-emergency-contact-name')
+            emergencycontactname = data.get('emergency-contact-name-indiv')
             emergencycontactnumber = clean_phone(data.get('individual-emergency-contact-number'))
 
         else:
@@ -200,8 +200,16 @@ def register():
                         # fallback: don't assign organizationid if name is empty
                         organizationid = None
 
-                if affiliation_type == "school":
-                    schoolid = int(data.get("school-name"))  # Direct ID from dropdown
+                if affiliation_type == "school" and not data.get("school-name"):
+                    school_insert = supabase.table("schname").insert({
+                        "name": data.get("ind-school-name"),
+                        "cityid": int(data.get("ind-school-city")),
+                        "typeid": schooltype
+                    }).execute()
+                    print("schoolid:", schoolid, "type:", type(schoolid))
+                    # ^DEBUGGING
+                    schoolid = school_insert.data[0]["id"]
+
 
                 individual_data = {
                     "memberid": memberid,
