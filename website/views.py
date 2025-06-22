@@ -303,15 +303,15 @@ def admin_member_management():
         membership_type = 'N/A'
         membership_status = 'N/A'
 
-        if member['role'] == 'individual':
+        if role == 'individual':
             info = next((i for i in individual_data if i['memberid'] == member['memberid']), {})
             member.update(info)
             full_name = f"{info.get('firstname', '')} {info.get('middlename', '')} {info.get('lastname', '')}"
         else:
             info = next((i for i in institutional_data if i['memberid'] == member['memberid']), {})
             member.update(info)
-            full_name = f"{info.get('representativefirstname', '')} {info.get('representativelastname', '')}"
-
+            full_name = info.get('institutionalname', '')
+        
         membership = next((m for m in membership_data if m['memberid'] == member['memberid']), None)
         if membership:
             typeid = membership.get('typeid')
@@ -662,7 +662,7 @@ def admin_membership_edit():
 @views.route('/admin/membership/history', methods=['GET'])
 def admin_membership_registration_history():
     # Get filter values from query string
-    status_filter = request.args.get('status', '').lower()
+    filter_status = request.args.get('status', '').strip().lower()
     start_date = request.args.get('start_date')
     end_date = request.args.get('end_date')
 
@@ -677,15 +677,25 @@ def admin_membership_registration_history():
 
     enriched = []
     for reg in registration_data:
-        reg_status = reg.get("status", "").lower()
+        reg_status_raw = reg.get("status", "").strip().lower()
+        # Map status for display and filtering
+        if reg_status_raw == "active":
+            display_status = "Approved"
+        elif reg_status_raw == "pending":
+            display_status = "Pending"
+        elif reg_status_raw == "rejected":
+            display_status = "Rejected"
+        else:
+            display_status = reg.get("status", "N/A")
+
+        # Apply status filter (use mapped value)
+        if filter_status and display_status.lower() != filter_status:
+            continue
+
         date = reg.get("startdate")
         end = reg.get("enddate")
 
         if not date:
-            continue
-
-        # Filter by status
-        if status_filter and status_filter != reg_status:
             continue
 
         # Filter by date range
@@ -722,14 +732,19 @@ def admin_membership_registration_history():
             "name": name,
             "registration_date": date,
             "end_date": end,
-            "status": reg.get("status"),
+            "status": display_status,
             "type": type_name
         })
-
     # Sort by registration date (descending)
     enriched.sort(key=lambda x: x['registration_date'], reverse=True)
 
-    return render_template("admin_membership_registration_history.html", registrations=enriched)
+    return render_template(
+        "admin_membership_registration_history.html",
+        registrations=enriched,
+        selected_status=request.args.get('status', ''),
+        selected_start_date=request.args.get('start_date', ''),
+        selected_end_date=request.args.get('end_date', '')
+    )
 
 # -- ADMIN BILLING --
 @views.route('/admin/billing')
