@@ -1,3 +1,4 @@
+/* Reset & Base */
 * {
   margin: 0;
   padding: 0;
@@ -10,8 +11,10 @@ body {
   height: 100vh;
   background-color: #f4f4f4;
   color: #001F54;
+  overflow: hidden;
 }
 
+/* Sidebar */
 .sidebar {
   width: 250px;
   background-color: #001F54;
@@ -24,11 +27,15 @@ body {
 
 .sidebar .logo {
   font-size: 2rem;
+  font-weight: bold;
   margin-bottom: 40px;
 }
 
-.sidebar nav a {
-  display: block;
+.sidebar nav a,
+.sidebar .logout a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   padding: 12px 0;
   color: white;
   text-decoration: none;
@@ -37,7 +44,8 @@ body {
 }
 
 .sidebar nav a.active,
-.sidebar nav a:hover {
+.sidebar nav a:hover,
+.sidebar .logout a:hover {
   font-weight: bold;
   text-decoration: underline;
 }
@@ -48,16 +56,7 @@ body {
   border-top: 1px solid #ccc;
 }
 
-.logout a {
-  display: block;
-  color: white;
-  text-decoration: none;
-  font-weight: 400;
-  text-align: left;
-  width: 100%;
-  padding: 12px 0;
-}
-
+/* Main Content */
 .main-content {
   flex-grow: 1;
   padding: 40px;
@@ -74,6 +73,7 @@ body {
   margin-bottom: 30px;
 }
 
+/* Cards */
 .card {
   background-color: white;
   border: 1px solid #ddd;
@@ -95,6 +95,7 @@ body {
   margin-bottom: 15px;
 }
 
+/* Buttons */
 .blue-btn {
   background-color: #007BFF;
   color: white;
@@ -106,6 +107,8 @@ body {
   font-weight: bold;
   transition: background-color 0.2s ease, transform 0.2s ease;
   box-shadow: 0 2px 6px rgba(0, 123, 255, 0.2);
+  text-decoration: none;
+  display: inline-block;
 }
 
 .blue-btn:hover {
@@ -113,27 +116,42 @@ body {
   transform: translateY(-1px);
 }
 
-
+/* Filter Form */
 .filter-row {
   display: flex;
-  gap: 20px;
-  align-items: center;
   flex-wrap: wrap;
-  margin-top: 10px;
+  align-items: flex-end;
+  gap: 20px;
+}
+
+
+.filter-row label {
+  font-weight: bold;
+  font-size: 1rem;
 }
 
 .filter-row input,
 .filter-row select {
-  padding: 8px;
+  padding: 8px 12px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  font-size: 1rem;
+  background-color: #fff;
+  color: #001F54;
+}
+
+.filter-row input:focus,
+.filter-row select:focus {
+  border-color: #007BFF;
+  outline: none;
+  background-color: #ffffff;
+  box-shadow: 0 0 3px rgba(0, 123, 255, 0.4);
 }
 
 form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  width: 100%;
 }
+
 
 form label {
   font-weight: bold;
@@ -165,4 +183,89 @@ form .form-group {
 
 form button[type="submit"] {
   align-self: flex-start;
+}
+
+/* Dropdown (Select) Styling */
+.event-form select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  background-color: #fff;
+  color: #333;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg fill='black' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px 16px;
+}
+
+.event-form select:focus {
+  border-color: #007BFF;
+  outline: none;
+  box-shadow: 0 0 4px rgba(0, 123, 255, 0.3);
+}
+
+/* Enhanced Billing Table Styling */
+.event-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  font-size: 0.95rem;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.event-table thead {
+  background-color: #001F54;
+  color: white;
+}
+
+.event-table th,
+.event-table td {
+  padding: 14px 20px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.event-table tbody tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+.event-table tbody tr:hover {
+  background-color: #eef4ff;
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* Rounded corners only for top header row */
+.event-table th:first-child {
+  border-top-left-radius: 10px;
+}
+.event-table th:last-child {
+  border-top-right-radius: 10px;
+}
+
+/* Status Badge Styling */
+.status-paid {
+  color: #198754;
+  font-weight: bold;
+  background-color: #e8f5e9;
+  padding: 6px 12px;
+  border-radius: 20px;
+  display: inline-block;
+  min-width: 60px;
+}
+
+.status-unpaid {
+  color: #dc3545;
+  font-weight: bold;
+  background-color: #fdecea;
+  padding: 6px 12px;
+  border-radius: 20px;
+  display: inline-block;
+  min-width: 60px;
 }

@@ -83,7 +83,9 @@
             <td>{{ b.billdate }}</td>
             <td>{{ b.duedate }}</td>
             <td>₱{{ b.amountdue }}</td>
-            <td>{{ b.status }}</td>
+            <td>
+              <span class="{{ 'status-paid' if b.status == 'Paid' else 'status-unpaid' }}">{{ b.status }}</span>
+            </td>
           </tr>
           {% endfor %}
         </tbody>

@@ -29,12 +29,20 @@
     <h1>Membership Management</h1>
     <p class="subtitle">Manage member types and registrations</p>
 
-    <div class="card">
-      <h2>Membership Types</h2>
-      <div class="actions">
-        <a href="{{ url_for('views.admin_membership_edit') }}" class="blue-btn">View</a>
-      </div>
-    </div>
+    <div class="card full-width">
+  <h2>Membership Types</h2>
+
+  <ul class="membership-list">
+    {% for mtype in membership_types %}
+      <li>
+        {{ mtype.name }} – ₱{{ mtype.annualfee }}
+      </li>
+    {% else %}
+      <li>No membership types found.</li>
+    {% endfor %}
+  </ul>
+</div>
+
 
     <div class="card full-width">
       <h2>Member Registration History</h2>
