@@ -23,7 +23,7 @@
       <h1 class="hero-title">Welcome to Our Membership System</h1>
       <div class="hero-main">
         <div class="hero-image">
-          <img src="the-greatness-begins-here-.png" alt="The Greatness Begins Here">
+          <img src="{{ url_for('static', filename='the-greatness-begins-here-.png') }}" alt="The Greatness Begins Here" />
         </div>
         <div class="hero-buttons">
           <a href="#" class="btn primary">Register Now</a>
@@ -49,21 +49,21 @@
 
     <div class="cards">
       <div class="story-card">
-        <img src="alex-ramos.png" alt="Alex Ramos" />
+        <img src="{{ url_for('static', filename='alex-ramos.png') }}" alt="Alex Ramos" />
         <h3>Alex Ramos</h3>
         <p>“MRSYS helped me connect with professional skills and sharpen my event skills.”</p>
         <button class="more-btn">MORE</button>
       </div>
 
       <div class="story-card">
-        <img src="bianca-cruz.png" alt="Bianca Cruz" />
+        <img src="{{ url_for('static', filename='bianca-cruz.png') }}" alt="Bianca Cruz" />
         <h3>Bianca Cruz</h3>
         <p>“I found a passion for leadership through MRSYS committee involvement.”</p>
         <button class="more-btn">MORE</button>
       </div>
 
       <div class="story-card">
-        <img src="john-dela-rosa.png" alt="John Dela Rosa" />
+         <img src="{{ url_for('static', filename='john-dela-rosa.png') }}" alt="John Dela Rosa" />
         <h3>John Dela Rosa</h3>
         <p>“Tracking events and payments has never been easier, thanks to MRSYS.”</p>
         <button class="more-btn">MORE</button>
@@ -95,21 +95,21 @@
 
       <div class="cards">
         <div class="story-card dark-card">
-          <img src="leadership_summit.jpg" alt="Leadership Summit 2023" />
+          <img src="{{ url_for('static', filename='leadership_summit.jpg') }}" alt="Leadership Summit 2023" />
           <h3>Leadership Summit 2023</h3>
           <p>A full-day event filled with workshops, panels, and keynote speakers to inspire future leaders.</p>
           <button class="more-btn white-outline">MORE</button>
         </div>
 
         <div class="story-card dark-card">
-          <img src="volunteer_kickoff.jpg" alt="Volunteer Kickoff 2024" />
+          <img src="{{ url_for('static', filename='volunteer_kickoff.jpg') }}" alt="Volunteer Kickoff 2024" />
           <h3>Volunteer Kickoff 2024</h3>
           <p>Welcoming volunteers and unveiling MRSYS engagement goals.</p>
           <button class="more-btn white-outline">MORE</button>
         </div>
 
         <div class="story-card dark-card">
-          <img src="awards_night.jpg" alt="Annual Awards Night 2025" />
+          <img src="{{ url_for('static', filename='awards_night.jpg') }}" alt="Annual Awards Night 2025" />
           <h3>Annual Awards Night 2025</h3>
           <p>A celebration of achievements and milestones of our outstanding members throughout the year.</p>
           <button class="more-btn white-outline">MORE</button>
