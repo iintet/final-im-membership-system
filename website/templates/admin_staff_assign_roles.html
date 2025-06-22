@@ -26,7 +26,7 @@
   </div>
 
   <div class="main-content">
-    <a href="admin_staff_management.html" class="blue-btn">← Back to Staff Dashboard</a>
+    <a href="{{ url_for('views.admin_staff_management') }}" class="blue-btn">← Back to Staff Dashboard</a>
     <h1>Assign Staff Roles</h1>
     <hr />
 
@@ -43,37 +43,26 @@
           </tr>
         </thead>
         <tbody>
+          {% for s in staff %}
           <tr>
-            <td>Jane Doe</td>
-            <td>jane@example.com</td>
-            <td>Assistant</td>
-            <td>
-              <select>
-                <option value="admin">Admin</option>
-                <option value="assistant" selected>Assistant</option>
-                <option value="moderator">Moderator</option>
-              </select>
-            </td>
-            <td>
-              <button class="blue-btn">Update</button>
-            </td>
+            <td>{{ s.firstname }} {{ s.middlename or '' }} {{ s.lastname }}</td>
+            <td>{{ s.email }}</td>
+            <td>{{ s.role }}</td>
+            <form method="POST" action="{{ url_for('views.admin_staff_roles') }}">
+              <td>
+                <input type="hidden" name="staffid" value="{{ s.staffid }}">
+                <select name="new_role">
+                  <option value="Admin" {% if s.role == 'Admin' %}selected{% endif %}>Admin</option>
+                  <option value="Coordinator" {% if s.role == 'Coordinator' %}selected{% endif %}>Coordinator</option>
+                  <option value="Staff" {% if s.role == 'Staff' %}selected{% endif %}>Staff</option>
+                </select>
+              </td>
+              <td>
+                <button type="submit" class="blue-btn">Update</button>
+              </td>
+            </form>
           </tr>
-          <tr>
-            <td>John Smith</td>
-            <td>john@example.com</td>
-            <td>Moderator</td>
-            <td>
-              <select>
-                <option value="admin">Admin</option>
-                <option value="assistant">Assistant</option>
-                <option value="moderator" selected>Moderator</option>
-              </select>
-            </td>
-            <td>
-              <button class="blue-btn">Update</button>
-            </td>
-          </tr>
-          <!-- Add more rows dynamically -->
+          {% endfor %}
         </tbody>
       </table>
     </div>

@@ -128,13 +128,11 @@
               <option value="none">Not Applicable</option>
             </select>
           </div>
-              <!-- Organization Dropdown -->
-              <div id="ind-organization-select" style="display: none;">
+              <div id="ind-organization-dropdown" style="display: none;">
                 <div class="form-group">
                   <label for="ind-organization-select">Select Organization</label>
                   <select id="ind-organization-select" name="ind-organization-select">
                     <option value="">Select organization</option>
-                    <!-- Options will be populated dynamically -->
                   </select>
                 </div>
                 <div class="form-group">
@@ -142,32 +140,45 @@
                   <input type="text" id="ind-organization-address" name="ind-organization-address" readonly>
                 </div>
               </div>
+
+
               
               <!-- School Dropdown -->
               <div id="ind-school-dropdown" style="display: none;">
                 <div class="form-group">
-                  <label for="ind-school-select">Select School</label>
-                  <select id="ind-school-select" name="ind-school-select">
+                  <label for="ind-school-region">Region</label>
+                  <select id="ind-school-region" name="ind-school-region" required>
+                    <option value="">Select region</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="ind-school-province">Province</label>
+                  <select id="ind-school-province" name="ind-school-province" required>
+                    <option value="">Select province</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="ind-school-city">City</label>
+                  <select id="ind-school-city" name="ind-school-city" required>
+                    <option value="">Select city</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="ind-school-name">School</label>
+                  <select id="ind-school-name" name="ind-school-name" required>
                     <option value="">Select school</option>
                   </select>
                 </div>
+
                 <div class="form-group">
-                  <label for="ind-school-region">Region</label>
-                  <input type="text" id="ind-school-region" name="ind-school-region" readonly>
-                </div>
-                <div class="form-group">
-                  <label for="ind-school-province">Province</label>
-                  <input type="text" id="ind-school-province" name="ind-school-province" readonly>
-                </div>
-                <div class="form-group">
-                  <label for="ind-school-city">City</label>
-                  <input type="text" id="ind-school-city" name="ind-school-city" readonly>
-                </div>
-                <div class="form-group">
-                  <label for="ind-school-type">Type</label>
+                  <label for="ind-school-type">School Type</label>
                   <input type="text" id="ind-school-type" name="ind-school-type" readonly>
                 </div>
               </div>
+
         </div>
       </div>
 
@@ -251,36 +262,41 @@
         </div>
           </div>
 
-          <div id="ins-school-fields" style="display: none;">
+          <div id="ins-school-dropdown" style="display: none;">
             <div class="form-group">
               <label for="ins-school-region">Region</label>
-              <select id="ins-school-region" name="ins-school-region">
-                <option value="">Select school region</option>
+              <select id="ins-school-region" name="ins-school-region" required>
+                <option value="">Select region</option>
               </select>
             </div>
+
             <div class="form-group">
               <label for="ins-school-province">Province</label>
-              <select id="ins-school-province" name="ins-school-province">
-                <option value="">Select school province</option>
+              <select id="ins-school-province" name="ins-school-province" required>
+                <option value="">Select province</option>
               </select>
             </div>
+
             <div class="form-group">
-              <label for="ins-school-city">City/Municipality</label>
-              <select id="ins-school-city" name="ins-school-city">
-                <option value="">Select school city/municipality</option>
+              <label for="ins-school-city">City</label>
+              <select id="ins-school-city" name="ins-school-city" required>
+                <option value="">Select city</option>
               </select>
             </div>
+
             <div class="form-group">
-              <label for="ins-school-name">School Name</label>
-              <select id="ins-school-name" name="ins-school-name">
-                <option value="">Select school name</option>
+              <label for="ins-school-name">School</label>
+              <select id="ins-school-name" name="ins-school-name" required>
+                <option value="">Select school</option>
               </select>
             </div>
+
             <div class="form-group">
-              <label for="ins-school-type">Type</label>
+              <label for="ins-school-type">School Type</label>
               <input type="text" id="ins-school-type" name="ins-school-type" readonly>
             </div>
           </div>
+
 
       </div>
       <button type="submit">Register</button>
@@ -314,7 +330,7 @@
     // Show/hide affiliation type fields
     document.getElementById("individual-affiliation-type").addEventListener("change", function () {
       const affiliationType = this.value;
-      const organizationFields = document.getElementById("ind-organization-select");
+      const organizationFields = document.getElementById("ind-organization-fields");
       const schoolFields = document.getElementById("ind-school-dropdown");
 
       if (affiliationType === "organization") {
@@ -332,7 +348,7 @@
     document.getElementById("institutional-affiliation-type").addEventListener("change", function () {
       const affiliationType = this.value;
       const organizationFields = document.getElementById("ins-organization-fields");
-      const schoolFields = document.getElementById("ins-school-fields");
+      const schoolFields = document.getElementById("ins-school-dropdown");
 
       if (affiliationType === "organization") {
         organizationFields.style.display = "block";
@@ -418,12 +434,31 @@
       const institutionFields = document.getElementById("institution-fields");
 
       const indAffiliation = document.getElementById("individual-affiliation-type");
-      const indSchoolFields = document.getElementById("ind-school-fields");
+      const indSchoolFields = document.getElementById("ind-school-dropdown");
       const indOrgFields = document.getElementById("ind-organization-fields");
 
       const insAffiliation = document.getElementById("institutional-affiliation-type");
-      const insSchoolFields = document.getElementById("ins-school-fields");
+      const insSchoolFields = document.getElementById("ins-school-dropdown");
       const insOrgFields = document.getElementById("ins-organization-fields");
+      const regionSelect = document.getElementById("region");
+      const provinceSelect = document.getElementById("province");
+      const citySelect = document.getElementById("city"); 
+      const schoolSelect = document.getElementById("ins-school-name");
+      const schoolRegionSelect = document.getElementById("ins-school-region"); 
+      const schoolProvinceSelect = document.getElementById("ins-school-province");
+    
+      const schoolCitySelect = document.getElementById("ins-school-city");
+      const schoolTypeInput = document.getElementById("ins-school-type"); 
+      const indSchoolSelect = document.getElementById("ind-school-select");
+      const indSchoolRegion = document.getElementById("ind-school-region");   
+      const indSchoolProvince = document.getElementById("ind-school-province");
+      const indSchoolCity = document.getElementById("ind-school-city");
+      const indSchoolType = document.getElementById("ind-school-type");
+      const indOrganizationSelect = document.getElementById("ind-organization-fields");
+      const indOrganizationAddress = document.getElementById("ind-organization-address");
+      const insOrganizationName = document.getElementById("ins-organization-name");
+      const insOrganizationAddress = document.getElementById("ins-organization-address"); 
+      const insOrganizationFields = document.getElementById("ins-organization-fields"); 
 
       fetch('/api/schregions')
           .then(res => res.json())
@@ -443,7 +478,7 @@
               return;
           }
 
-          fetch(`/api/schprovinces?id=${regionId}`)
+          fetch(`/api/schprovinces?regionid=${regionId}`)
               .then(res => res.json())
               .then(data => {
                   provinceSelect.innerHTML = '<option value="">Select a province</option>' +
@@ -485,47 +520,50 @@
                       data.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
               });
       });
-    });
-
-    // Fetch school names based on selected city
-    async function fetchSchoolNames(cityId) {
-      const response = await fetch(`/api/schnames?cityid=${cityId}`);
-      if (!response.ok) {
-        const error = await response.json();
-        console.error('Error fetching school names:', error);
-        return [];
+      // Fetch school names based on selected city
+      async function fetchSchoolNames(cityId) {
+        const response = await fetch(`/api/schnames?cityid=${cityId}`);
+        if (!response.ok) {
+          const error = await response.json();
+          console.error('Error fetching school names:', error);
+          return [];
+        }
+        return await response.json();
       }
-      return await response.json();
-    }
 
-    // Example usage when a city is selected
-    document.getElementById("ins-city-select").addEventListener("change", async function () {
-      const cityId = this.value;
-      const schoolSelect = document.getElementById("ins-school-select");
-      schoolSelect.innerHTML = '<option value="">Loading...</option>'; // Show loading state
+      // Example usage when a city is selected
+      document.getElementById("ins-city-select").addEventListener("change", async function () {
+        const cityId = this.value;
+        const schoolSelect = document.getElementById("ins-school-select");
+        schoolSelect.innerHTML = '<option value="">Loading...</option>'; // Show loading state
 
-      if (cityId) {
-        const schoolNames = await fetchSchoolNames(cityId);
-        schoolSelect.innerHTML = '<option value="">Select school</option>'; // Reset options
+        if (cityId) {
+          const schoolNames = await fetchSchoolNames(cityId);
+          schoolSelect.innerHTML = '<option value="">Select school</option>'; // Reset options
 
-        schoolNames.forEach(school => {
-          const option = document.createElement('option');
-          option.value = school.id; // Assuming 'id' is the primary key in schname
-          option.textContent = school.name; // Assuming 'name' is the field for school name
-          schoolSelect.appendChild(option);
-        });
-      } else {
-        schoolSelect.innerHTML = '<option value="">Select school</option>'; // Reset if no city selected
-      }
+          schoolNames.forEach(school => {
+            const option = document.createElement('option');
+            option.value = school.id; // Assuming 'id' is the primary key in schname
+            option.textContent = school.name; // Assuming 'name' is the field for school name
+            schoolSelect.appendChild(option);
+          });
+        } else {
+          schoolSelect.innerHTML = '<option value="">Select school</option>'; // Reset if no city selected
+        }
+      });
     });
 
   </script>
 
   <script src="{{ url_for('static', filename='register_individual.js') }}" defer></script>
   <script src="{{ url_for('static', filename='register_institution.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='register_school_individual.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='register_school_institutional.js') }}" defer></script>
   <script src="{{ url_for('static', filename='register_save.js') }}" defer></script>
   <script src="{{ url_for('static', filename='register_data_validation.js') }}" defer></script>
-  <script src="{{ url_for('static', filename='register_school.js') }}" defer></script>
+  <!-- <script src="{{ url_for('static', filename='register_school.js') }}" defer></script> -->
+
+
 
   <script>
   document.getElementById("registrationForm").addEventListener("submit", function (e) {
@@ -548,7 +586,7 @@
     const roleSelect = document.getElementById("role");
     const affTypeSelect = document.getElementById("institutional-affiliation-type");
 
-    const schoolFields = document.getElementById("ins-school-fields");
+    const schoolFields = document.getElementById("ins-school-dropdown");
     const orgFields = document.getElementById("ins-organization-fields");
 
     function updateInstitutionFields() {
@@ -569,9 +607,29 @@
 
     roleSelect.addEventListener("change", updateInstitutionFields);
     affTypeSelect.addEventListener("change", updateInstitutionFields);
+  });
 
+  document.addEventListener("DOMContentLoaded", () => {
+    const indAffiliation = document.getElementById("individual-affiliation-type");
+    const orgDropdown = document.getElementById("ind-organization-dropdown");
+    const schoolDropdown = document.getElementById("ind-school-dropdown");
+
+    indAffiliation?.addEventListener("change", () => {
+      const type = indAffiliation.value;
+      orgDropdown.style.display = (type === "organization") ? "block" : "none";
+      schoolDropdown.style.display = (type === "school") ? "block" : "none";
+    });
+  });
+
+
+  document.addEventListener("DOMContentLoaded", () => {
     const orgSelect = document.getElementById("ind-organization-select");
     const orgAddress = document.getElementById("ind-organization-address");
+
+    if (!orgSelect || !orgAddress) {
+      console.error("❌ Organization select elements not found in the DOM.");
+      return;
+    }
 
     fetch("/api/organizations")
       .then(res => res.json())
@@ -580,14 +638,52 @@
           data.map(org => `<option value="${org.id}" data-address="${org.address}">${org.name}</option>`).join('');
       });
 
-    // Autofill address when organization is selected
-    orgSelect.addEventListener("change", function () {
-      const selected = this.options[this.selectedIndex];
-      orgAddress.value = selected.dataset.address || "";
+    orgSelect.addEventListener("change", () => {
+      const selected = orgSelect.options[orgSelect.selectedIndex];
+      orgAddress.value = selected?.dataset?.address || "";
+    });
+  });
+
+
+    document.getElementById("ind-school-select").addEventListener("change", function () {
+      const schoolId = this.value;
+      const regionInput = document.getElementById("ind-school-region");
+      const provinceInput = document.getElementById("ind-school-province");
+      const cityInput = document.getElementById("ind-school-city");
+      const typeInput = document.getElementById("ind-school-type");
+
+      if (schoolId) {
+          fetch(`/api/schooltype?schoolid=${schoolId}`)
+              .then(res => res.json())
+              .then(data => {
+                  if (data.schooltype) {
+                      typeInput.value = data.schooltype;
+                  }
+              });
+
+          // Fetch school details based on selected school
+          fetch(`/api/schname?id=${schoolId}`)
+              .then(res => res.json())
+              .then(data => {
+                  if (data) {
+                      regionInput.value = data.region; // Assuming the API returns region
+                      provinceInput.value = data.province; // Assuming the API returns province
+                      cityInput.value = data.city; // Assuming the API returns city
+                  }
+              });
+      } else {
+          regionInput.value = '';
+          provinceInput.value = '';
+          cityInput.value = '';
+          typeInput.value = '';
+      }
     });
 
-  });
-</script>
 
+
+
+</script>
+<script src="{{ url_for('static', filename='school_individual.js') }}" defer></script>
+<script src="{{ url_for('static', filename='school_institution.js') }}" defer></script>
 </body>
 </html>

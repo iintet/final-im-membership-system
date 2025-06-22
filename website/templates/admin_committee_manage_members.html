@@ -26,7 +26,7 @@
   </div>
 
   <div class="main-content">
-    <a href="admin_committee_dashboard.html" class="blue-button" style="margin-bottom: 20px; display: inline-block;">
+    <a href="{{ url_for('views.admin_committee_dashboard') }}" class="blue-button" style="margin-bottom: 20px; display: inline-block;">
       <i class="fas fa-arrow-left"></i> Back to Dashboard
     </a>
 
@@ -35,24 +35,58 @@
 
     <!-- Add Member Form -->
     <div class="card">
-      <h2>Add New Member</h2>
-      <form class="event-form">
+      <h2>Add New Committee Member</h2>
+      <form class="event-form" method="POST" action="{{ url_for('views.add_committee_member') }}">
         <div class="form-group">
-          <label for="member-name">Full Name</label>
-          <input type="text" id="member-name" placeholder="Enter full name" required>
+          <label for="member_name">Full Name</label>
+          <input type="text" id="member_name" name="member_name" required>
         </div>
 
         <div class="form-group">
-          <label for="member-email">Email Address</label>
-          <input type="email" id="member-email" placeholder="Enter email" required>
+          <label for="member_position">Position</label>
+          <select id="member_position" name="member_position" required>
+            <option value="Head">Head</option>
+            <option value="Subhead">Subhead</option>
+            <option value="Member">Member</option>
+          </select>
         </div>
 
         <div class="form-group">
-          <label for="member-role">Role</label>
-          <input type="text" id="member-role" placeholder="e.g., Chairperson, Secretary" required>
+          <label for="event-select">Event</label>
+          <select id="event-select" name="event_id" required onchange="filterCommittees()">
+            <option value="">Select an event</option>
+            {% for e in events %}
+            <option value="{{ e.eventid }}">{{ e.name }}</option>
+            {% endfor %}
+          </select>
         </div>
 
+        <div class="form-group">
+          <label for="committee-select">Committee</label>
+          <select id="committee-select" name="member_committee" required>
+            <option value="">Select a committee</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="review_note">Review Note</label>
+          <textarea name="review_note" id="review_note" rows="3" placeholder="Enter review notes..."></textarea>
+        </div>
         <button type="submit">Add Member</button>
+      </form>
+    </div>
+    <!-- Filter by Committee -->
+    <div style="margin: 20px 0;">
+      <form method="GET" action="{{ url_for('views.admin_committee_manage') }}">
+        <label for="committee-filter">Filter by Committee:</label>
+        <select name="committee_id" id="committee-filter" onchange="this.form.submit()">
+          <option value="">All Committees</option>
+          {% for c in all_committees %}
+            <option value="{{ c.committeeid }}" {% if selected_committee_id == c.committeeid|string %}selected{% endif %}>
+              {{ c.name }}
+            </option>
+          {% endfor %}
+        </select>
       </form>
     </div>
 
@@ -63,33 +97,52 @@
         <thead>
           <tr>
             <th>Name</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Actions</th>
+            <th>Committee</th>
+            <th>Position</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
+          {% for m in members %}
           <tr>
-            <td>Juan Dela Cruz</td>
-            <td>juan@example.com</td>
-            <td>Chairperson</td>
+            <td>{{ m.member.individual.firstname }} {{ m.member.individual.lastname }}</td>
+            <td>{{ m.committee.name }}</td>
+            <td>{{ m.position }}</td>
             <td>
-              <button class="blue-button">Edit</button>
-              <button class="blue-button">Remove</button>
+              <form method="POST" action="{{ url_for('views.delete_committee_manage', memberid=m.committeememberid) }}" style="display:inline;" onsubmit="return confirm('Are you sure?');">
+                <button type="submit" class="blue-button">Remove</button>
+              </form>
             </td>
           </tr>
-          <tr>
-            <td>Maria Santos</td>
-            <td>maria@example.com</td>
-            <td>Member</td>
-            <td>
-              <button class="blue-button">Edit</button>
-              <button class="blue-button">Remove</button>
-            </td>
-          </tr>
+          {% endfor %}
         </tbody>
       </table>
     </div>
-  </div>
+  <script id="committees-data" type="application/json">
+    {{ all_committees | tojson | safe }}
+  </script>
+
+  <script>
+    const allCommittees = JSON.parse(document.getElementById('committees-data').textContent);
+    const committeeSelect = document.getElementById("committee-select");
+    const eventSelect = document.getElementById("event-select");
+
+    function filterCommittees() {
+      const selectedEventId = eventSelect.value;
+
+      committeeSelect.innerHTML = '<option value="">Select a committee</option>';
+
+      allCommittees
+        .filter(c => c.eventid == selectedEventId)
+        .forEach(c => {
+          const option = document.createElement("option");
+          option.value = c.committeeid;
+          option.textContent = c.name;
+          committeeSelect.appendChild(option);
+        });
+    }
+  </script>
+
+
 </body>
 </html>

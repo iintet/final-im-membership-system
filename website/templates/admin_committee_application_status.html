@@ -26,7 +26,7 @@
   </div>
 
   <div class="main-content">
-    <a href="{{ url_for('views.admin_dashboard') }}" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Committee Dashboard</a>
+    <a href="{{ url_for('views.admin_committee_dashboard') }}" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Committee Dashboard</a>
     <h1>Application Status</h1>
     <p class="subtitle">View and track committee applications submitted by members.</p>
 
@@ -38,27 +38,26 @@
             <th>Committee</th>
             <th>Desired Role</th>
             <th>Status</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
+          {% for app in applications %}
           <tr>
-            <td>John Reyes</td>
-            <td>Research & Development</td>
-            <td>Chairperson</td>
-            <td><span class="badge pending">Pending</span></td>
+            <td>{{ app.member.individual.firstname }} {{ app.member.individual.lastname }}</td>
+            <td>{{ app.committee.name }}</td>
+            <td>{{ app.position }}</td>
+            <td><span class="badge pending">{{ app.status }}</span></td>
+            <td>
+              <form method="POST" action="{{ url_for('views.approve_committee_member', memberid=app.committeememberid) }}" style="display:inline;">
+                <button type="submit" class="blue-button">Approve</button>
+              </form>
+              <form method="POST" action="{{ url_for('views.reject_committee_member', memberid=app.committeememberid) }}" style="display:inline;" onsubmit="return confirm('Reject this application?');">
+                <button type="submit" class="red-button">Reject</button>
+              </form>
+            </td>
           </tr>
-          <tr>
-            <td>Ella Cruz</td>
-            <td>Community Outreach</td>
-            <td>Member</td>
-            <td><span class="badge approved">Approved</span></td>
-          </tr>
-          <tr>
-            <td>Marco Santos</td>
-            <td>Finance Committee</td>
-            <td>Secretary</td>
-            <td><span class="badge rejected">Rejected</span></td>
-          </tr>
+          {% endfor %}
         </tbody>
       </table>
     </div>

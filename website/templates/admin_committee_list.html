@@ -26,7 +26,7 @@
   </div>
 
   <div class="main-content">
-    <a href="admin_committee_dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Committee Dashboard</a>
+    <a href="{{ url_for('views.admin_committee_dashboard') }}" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Committee Dashboard</a>
     <h1>List of Committees</h1>
     <p class="subtitle">Overview of all current committees and their statuses</p>
 
@@ -35,26 +35,16 @@
         <thead>
           <tr>
             <th>Committee Name</th>
-            <th>Status</th>
             <th>Total Members</th>
           </tr>
         </thead>
         <tbody>
+          {% for c in committees %}
           <tr>
-            <td>Research & Development</td>
-            <td><span class="badge active">Active</span></td>
-            <td>10</td>
+            <td>{{ c.name }}</td>
+            <td>{{ c.total_members }}</td>
           </tr>
-          <tr>
-            <td>Community Outreach</td>
-            <td><span class="badge inactive">Inactive</span></td>
-            <td>7</td>
-          </tr>
-          <tr>
-            <td>Finance Committee</td>
-            <td><span class="badge active">Active</span></td>
-            <td>5</td>
-          </tr>
+          {% endfor %}
         </tbody>
       </table>
     </div>

@@ -22,19 +22,19 @@
       <a href="#" class="active"><i class="fas fa-user-shield"></i> Staff Management</a>
     </nav>
     <div class="logout">
-      <a href="{{ url_for('views.home') }}"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+      <a href="{{ url_for('views.admin_staff_management') }}"><i class="fas fa-sign-out-alt"></i> Log Out</a>
     </div>
   </div>
 
   <div class="main-content">
-    <a href="admin_staff_management.html" class="blue-btn" style="margin-bottom: 20px;">← Back to Staff Dashboard</a>
+    <a href="{{ url_for('views.admin_staff_management') }}" class="blue-btn" style="margin-bottom: 20px;">← Back to Staff Dashboard</a>
     <h1>Manage Staff Accounts</h1>
     <hr/>
 
     <!-- Add Staff Form -->
     <div class="card">
       <h2>Add New Staff</h2>
-      <form action="#" method="POST">
+      <form action="{{ url_for('views.admin_staff_manage') }}" method="POST">
         <div class="form-group">
           <label for="staff-name">Full Name:</label>
           <input type="text" id="staff-name" name="staff_name" required />
@@ -48,9 +48,9 @@
         <div class="form-group">
           <label for="staff-role">Role:</label>
           <select id="staff-role" name="staff_role">
-            <option value="admin">Admin</option>
-            <option value="assistant">Assistant</option>
-            <option value="moderator">Moderator</option>
+            <option value="Admin">Admin</option>
+            <option value="Coordinator">Coordinator</option>
+            <option value="Staff">Moderator</option>
           </select>
         </div>
 
@@ -71,20 +71,53 @@
           </tr>
         </thead>
         <tbody>
-          <!-- Sample Static Entry -->
+          {% for s in staff %}
           <tr>
-            <td>Jane Doe</td>
-            <td>jane@example.com</td>
-            <td>Admin</td>
+            <td>{{ s.firstname }} {{ s.lastname }}</td>
+            <td>{{ s.email }}</td>
+            <td>{{ s.role }}</td>
             <td>
-              <button class="blue-btn">Edit</button>
-              <button class="red-btn">Delete</button>
+              <button type="button" onclick="toggleForm('{{ s.staffid }}')" class="blue-btn">Edit</button>
+              <form method="POST" action="{{ url_for('views.delete_staff', staffid=s.staffid) }}" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this staff?');">
+                <button type="submit" class="red-btn">Delete</button>
+              </form>
             </td>
           </tr>
-          <!-- Dynamic rows to be generated via JS or server -->
+          <tr id="form-row-{{ s.staffid }}" style="display: none;">
+            <td colspan="4">
+              <form action="{{ url_for('views.update_staff', staffid=s.staffid) }}" method="POST" style="background-color:#f5f5f5; padding:10px; border-radius:8px;">
+                <input type="hidden" name="staffid" value="{{ s.staffid }}">
+                <label>Full Name:</label>
+                <input type="text" name="staff_name" value="{{ s.firstname }} {{ s.lastname }}" required>
+                <label>Email:</label>
+                <input type="email" name="staff_email" value="{{ s.email }}" required>
+                <label>Role:</label>
+                <select name="staff_role">
+                  <option value="Admin" {% if s.role == 'Admin' %}selected{% endif %}>Admin</option>
+                  <option value="Coordinator" {% if s.role == 'Coordinator' %}selected{% endif %}>Assistant</option>
+                  <option value="Staff" {% if s.role == 'Staff' %}selected{% endif %}>Moderator</option>
+                </select>
+                <button type="submit" class="blue-btn">Update</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
         </tbody>
       </table>
     </div>
   </div>
+  <script>
+    function toggleForm(staffid) {
+      // Hide all other forms first
+      document.querySelectorAll('[id^="form-row-"]').forEach(row => {
+        if (row.id !== `form-row-${staffid}`) {
+          row.style.display = "none";
+        }
+      });
+
+      const formRow = document.getElementById(`form-row-${staffid}`);
+      formRow.style.display = formRow.style.display === "none" ? "table-row" : "none";
+    }
+  </script>
 </body>
 </html>

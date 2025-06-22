@@ -1,7 +1,7 @@
-from flask import Blueprint, jsonify, render_template, abort, request, session, redirect, url_for
+from flask import Blueprint, jsonify, render_template, abort, request, session, redirect, url_for, flash
 from . import models
 from .supabase_client import supabase
-from datetime import datetime
+from datetime import datetime, date
 import logging
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -162,20 +162,23 @@ def get_instbarangays():
 @views.route('/api/schnames', methods=['GET'])
 def get_schnames():
     city_id = request.args.get('cityid')
+    
+    if not city_id or not city_id.isdigit():
+        return jsonify({'error': 'Invalid or missing cityid'}), 400
+
     try:
-        response = supabase.table('schname').select('*').eq('cityid', city_id).execute()
-        logging.info(f"Supabase response: {response}")  # Log the response for debugging
-        
+        response = supabase.table('schname').select('*').eq('cityid', int(city_id)).execute()
         if hasattr(response, 'error') and response.error:
             return jsonify({'error': str(response.error)}), 500
-        
+
         if response.data is None or not isinstance(response.data, list):
             return jsonify({'error': 'No data found or invalid data format'}), 404
-        
+
         return jsonify(response.data), 200
     except Exception as e:
-        logging.error(f"Error fetching regions: {str(e)}")  # Log the error
+        logging.error(f"Error fetching school names: {str(e)}")
         return jsonify({'error': str(e)}), 500
+
     
 @views.route('/api/schooltype', methods=['GET'])
 def get_school_type():
@@ -675,33 +678,242 @@ def admin_committee_dashboard():
 
 @views.route('/admin/committees/view')
 def admin_committee_view():
-        return render_template('admin_committee_view.html')
+    try:
+        # Fetch all committees
+        committees_result = supabase.table("committee").select("committeeid, name").execute()
+        committees = committees_result.data
 
-@views.route('/admin/committees/manage')
+        enriched_committees = []
+
+        for committee in committees:
+            committee_id = committee["committeeid"]
+            name = committee["name"]
+
+            # Count the number of members for this committee
+            members_result = supabase.table("committeemember") \
+                                     .select("memberid") \
+                                     .eq("committeeid", committee_id) \
+                                     .execute()
+            total_members = len(members_result.data)
+
+            enriched_committees.append({
+                "name": name,
+                "total_members": total_members
+            })
+
+        return render_template("admin_committee_list.html", committees=enriched_committees)
+
+    except Exception as e:
+        print("Error fetching committee data:", e)
+        return render_template("admin_committee_list.html", committees=[])
+    
+@views.route('/admin/committees/members', methods=['GET', 'POST'])
 def admin_committee_manage():
-    return render_template('admin_committee_manage_members.html')
+    selected_event_id = request.args.get('event_id')
+    selected_committee_id = request.args.get('committee_filter')
+
+    events_data = supabase.table("event").select("eventid, name").execute().data
+    all_committees = supabase.table("committee").select("committeeid, name, eventid").execute().data
+
+    member_data = supabase.table("committeemember").select("""
+        committeememberid,
+        committeeid,
+        position,
+        status,
+        committee (
+            name
+        ),
+        member:memberid (
+            individual (
+                firstname,
+                lastname
+            )
+        )
+    """).eq("status", "Approved").execute().data
+
+    return render_template(
+        "admin_committee_manage_members.html",
+        members=member_data,  # ✅ this one
+        events=events_data,
+        all_committees=all_committees,
+        selected_event_id=selected_event_id,
+        selected_committee_id=selected_committee_id or "all"
+    )
+
+@views.route('/admin/committee/add_member', methods=['POST'])
+def add_committee_member():
+    member_name = request.form.get("member_name")
+    member_position = request.form.get("member_position")
+    event_id = request.form.get("event_id")
+    committee_id = request.form.get("member_committee")
+    review_note = request.form.get("review_note")
+    member_id = request.form.get("member_id")
+
+    if not all([member_name, member_position, event_id, committee_id, member_id]):
+        flash("Please fill in all required fields.", "error")
+        return redirect(url_for("views.admin_committee_manage"))
+
+    supabase.table("committeemember").insert({
+        "committeeid": committee_id,
+        "memberid": member_id,
+        "position": member_position,
+        "applicationdate": date.today().isoformat(),
+        "status": "Approved",
+        "reviewnotes": review_note
+    }).execute()
+
+    flash("Committee member added successfully!", "success")
+    return redirect(url_for("views.admin_committee_manage"))
+
+@views.route('/admin/committee/members/delete/<int:memberid>', methods=['POST'])
+def delete_committee_manage(memberid):
+    try:
+        supabase.table("committeemember").delete().eq("committeememberid", memberid).execute()
+    except Exception as e:
+        print("Error deleting member:", e)
+
+    return redirect(url_for('views.admin_committee_manage'))
 
 @views.route('/admin/committees/status')
 def admin_committee_status():
-    return render_template('admin_committee_application_status.html')
+    applications = supabase.table("committeemember").select("""
+        committeememberid,
+        position,
+        status,
+        committee (
+            name
+        ),
+        member:memberid (
+            individual (
+                firstname,
+                lastname
+            )
+        )
+    """).eq("status", "Pending").execute().data
+
+    return render_template("admin_committee_application_status.html", applications=applications)
+
+@views.route('/admin/committees/application/<int:memberid>/approve', methods=['POST'])
+def approve_committee_member(memberid):
+    supabase.table("committeemember").update({"status": "Approved"}).eq("committeememberid", memberid).execute()
+    return redirect(url_for('views.admin_committee_application_status'))
+
+# Route to handle rejection
+@views.route('/admin/committees/application/<int:memberid>/reject', methods=['POST'])
+def reject_committee_member(memberid):
+    supabase.table("committeemember").update({"status": "Rejected"}).eq("committeememberid", memberid).execute()
+    return redirect(url_for('views.admin_committee_application_status'))
 
 @views.route('/admin/committees/roles')
 def admin_committee_roles():
     return render_template('admin_committee_role_assignment.html')
 
 # -- STAFF MANAGEMENT --
-
 @views.route('/admin/staff')
 def admin_staff_management():
     return render_template('admin_staff_management.html')
 
-@views.route('/admin/staff/manage')
+@views.route('/admin/staff/manage', methods=['GET', 'POST'])
 def admin_staff_manage():
-    return render_template('admin_staff_manage_account.html')
+    edit_id = request.args.get('edit_id', type=int)
 
-@views.route('/admin/staff/roles')
+    if request.method == 'POST':
+        full_name = request.form.get('staff_name')
+        email = request.form.get('staff_email')
+        role = request.form.get('staff_role')
+
+        # Split full name (optional: more validation can be added)
+        names = full_name.strip().split()
+        firstname = names[0]
+        lastname = names[-1] if len(names) > 1 else ''
+        middlename = ' '.join(names[1:-1]) if len(names) > 2 else ''
+
+        try:
+            # Save to Supabase
+            supabase.table("staff").insert({
+                "firstname": firstname,
+                "middlename": middlename,
+                "lastname": lastname,
+                "email": email,
+                "role": role,
+                "username": email,  # Default username as email
+                "password": "password123",  # Replace with secure logic
+                "fullname": full_name
+            }).execute()
+        except Exception as e:
+            print("Error inserting staff:", e)
+
+        return redirect(url_for('views.admin_staff_manage'))
+
+    # For GET request, fetch all staff accounts
+    try:
+        staff_data = supabase.table("staff").select("staffid, firstname, middlename, lastname, email, role").execute().data
+    except Exception as e:
+        print("Error fetching staff:", e)
+        staff_data = []
+
+    return render_template("admin_staff_manage_account.html", staff=staff_data)
+
+@views.route('/admin/staff/update/<int:staffid>', methods=['POST'])
+def update_staff(staffid):
+    try:
+        full_name = request.form.get('staff_name')
+        email = request.form.get('staff_email')
+        role = request.form.get('staff_role')
+
+        # Split full name
+        names = full_name.strip().split()
+        firstname = names[0]
+        lastname = names[-1] if len(names) > 1 else ''
+        middlename = ' '.join(names[1:-1]) if len(names) > 2 else ''
+
+        response = supabase.table("staff").update({
+            "firstname": firstname,
+            "middlename": middlename,
+            "lastname": lastname,
+            "email": email,
+            "role": role,
+            "fullname": full_name
+        }).eq("staffid", staffid).execute()
+
+        print("Update Response:", response)
+
+    except Exception as e:
+        print("Update Error:", e)
+
+    return redirect(url_for('views.admin_staff_manage'))
+
+@views.route('/admin/staff/delete/<int:staffid>', methods=['POST'])
+def delete_staff(staffid):
+    try:
+        supabase.table("staff").delete().eq("staffid", staffid).execute()
+    except Exception as e:
+        print("Error deleting staff:", e)
+
+    return redirect(url_for('views.admin_staff_manage'))
+
+@views.route('/admin/staff/roles', methods=['GET', 'POST'])
 def admin_staff_roles():
-    return render_template('admin_staff_assign_roles.html')
+    if request.method == 'POST':
+        staffid = request.form.get('staffid')
+        new_role = request.form.get('new_role')
+
+        try:
+            update_result = supabase.table("staff").update({"role": new_role}).eq("staffid", staffid).execute()
+            flash("Role updated successfully!", "success")
+        except Exception as e:
+            print("Error updating role:", e)
+            flash("Error updating role.", "error")
+
+        return redirect(url_for('views.admin_staff_roles'))
+
+    try:
+        staff_list = supabase.table("staff").select("staffid, firstname, middlename, lastname, email, role").execute().data
+    except Exception as e:
+        print("Error fetching staff list:", e)
+        staff_list = []
+
+    return render_template("admin_staff_assign_roles.html", staff=staff_list)
 
 # -- MEMBER DASHBOARD --
 @views.route('/userdashboard', methods=['GET'])
@@ -947,3 +1159,31 @@ def create_event():
         return jsonify({'message': 'Event created successfully', 'event': response.data}), 201
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+
+
+# -- TO BE DELETED -- 
+# @views.route('/admin/committees/members/update/<int:memberid>', methods=['POST'])
+# def update_committee_manage(memberid):
+#     name = request.form.get('name', '').strip()
+#     email = request.form.get('member_email')
+#     role = request.form.get('member_role')
+
+#     names = name.strip().split()
+#     firstname = names[0]
+#     lastname = names[-1] if len(names) > 1 else ''
+#     middlename = ' '.join(names[1:-1]) if len(names) > 2 else ''
+
+#     try:
+#         supabase.table("committeemember").update({
+#             "firstname": firstname,
+#             "middlename": middlename,
+#             "lastname": lastname,
+#             "email": email,
+#             "role": role,
+#             "fullname": name
+#         }).eq("committeememberid", memberid).execute()
+#     except Exception as e:
+#         print("Error updating member:", e)
+
+#     return redirect(url_for('views.admin_committee_manage'))
