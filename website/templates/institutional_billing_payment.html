@@ -36,7 +36,9 @@
         <!-- Payment Status Box -->
         <div class="card status">
           <h2><i class="fas fa-circle-info"></i> Payment Status</h2>
-          <p class="status-paid">Active • Paid until 2025-12-31</p>
+          <p class="{{ 'status-paid' if status == 'Active' else 'status-unpaid' }}">
+            {{ status }}{% if end_date != 'N/A' %} • Paid until {{ end_date }}{% endif %}
+          </p>
         </div>
 
         <!-- Pay / Renew Box -->
@@ -61,27 +63,19 @@
             </tr>
           </thead>
           <tbody id="billingTable">
-            <tr>
-              <td>INV-1001</td>
-              <td>₱50,000</td>
-              <td><span class="badge paid">Paid</span></td>
-              <td>2024-11-01</td>
-              <td>2024-12-01</td>
-            </tr>
-            <tr>
-              <td>INV-1002</td>
-              <td>₱70,000</td>
-              <td><span class="badge unpaid">Unpaid</span></td>
-              <td>2025-02-15</td>
-              <td>2025-03-15</td>
-            </tr>
-            <tr>
-              <td>INV-1003</td>
-              <td>₱130,000</td>
-              <td><span class="badge paid">Paid</span></td>
-              <td>2025-04-20</td>
-              <td>2025-05-20</td>
-            </tr>
+            {% for bill in billings %}
+              <tr>
+                <td>{{ bill.billingid }}</td>
+                <td>₱{{ "{:,.2f}".format(bill.amountdue or 0) }}</td>
+                <td>
+                  <span class="badge {{ 'paid' if bill.status == 'Paid' else 'unpaid' }}">{{ bill.status }}</span>
+                </td>
+                <td>{{ bill.billdate }}</td>
+                <td>{{ bill.duedate }}</td>
+              </tr>
+            {% else %}
+              <tr><td colspan="5">No billing records found.</td></tr>
+            {% endfor %}
           </tbody>
         </table>
       </div>
@@ -89,26 +83,23 @@
   </div>
 
   <script>
-  const billingSearch = document.getElementById("billingSearch");
-  const rows = document.querySelectorAll("#billingTable tr");
+    const billingSearch = document.getElementById("billingSearch");
+    const rows = document.querySelectorAll("#billingTable tr");
 
-  billingSearch.addEventListener("input", () => {
-    const val = billingSearch.value.toLowerCase();
-    rows.forEach(row => {
-      row.style.display = row.textContent.toLowerCase().includes(val) ? "" : "none";
+    billingSearch.addEventListener("input", () => {
+      const val = billingSearch.value.toLowerCase();
+      rows.forEach(row => {
+        row.style.display = row.textContent.toLowerCase().includes(val) ? "" : "none";
+      });
     });
-  });
 
-  // Redirect to payment form
-  const payButton = document.querySelector(".pay-btn");
-  if (payButton) {
-    payButton.addEventListener("click", () => {
-      window.location.href = "institutional_payment.html";
-    });
-  }
-</script>
-
+    // Redirect to institutional payment form
+    const payButton = document.querySelector(".pay-btn");
+    if (payButton) {
+      payButton.addEventListener("click", () => {
+        window.location.href = "{{ url_for('views.institutional_payment') }}";
+      });
+    }
+  </script>
 </body>
 </html>
-
-<!-- /* Added again after deleting */ -->

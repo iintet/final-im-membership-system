@@ -1,8 +1,9 @@
 from flask import Blueprint, jsonify, render_template, abort, request, session, redirect, url_for, flash
 from . import models
+from werkzeug.utils import secure_filename
 from .supabase_client import supabase
 from datetime import datetime, date
-import logging
+import logging, os
 from werkzeug.security import check_password_hash, generate_password_hash
 
 views = Blueprint('views', __name__)
@@ -1311,39 +1312,63 @@ def institutional_dashboard():
 
     member_id = session.get('member_id')
 
-    # Get organizationid and schoolid from institutional table
-    inst_resp = supabase.table('institutional').select('organizationid', 'schoolid').eq('memberid', member_id).maybe_single().execute()
+    # 🔹 Get organizationid and schoolid of the logged-in institution
+    inst_resp = supabase.table('institutional') \
+        .select('organizationid, schoolid') \
+        .eq('memberid', member_id) \
+        .maybe_single() \
+        .execute()
+
     if not inst_resp or not inst_resp.data:
         return "Institutional record not found", 404
 
     org_id = inst_resp.data.get('organizationid')
     school_id = inst_resp.data.get('schoolid')
 
-    # 1. Total Registered Members under this institution
+    # 🔹 Get individual member IDs under this institution
+    individual_ids = []
     individual_query = supabase.table('individual').select('memberid')
+
     if org_id:
         individual_query = individual_query.eq('organizationid', org_id)
     if school_id:
         individual_query = individual_query.eq('schoolid', school_id)
 
-    total_individuals_resp = individual_query.execute()
-    total_registered = len(total_individuals_resp.data) if total_individuals_resp.data else 0
+    individual_resp = individual_query.execute()
+    if individual_resp.data:
+        individual_ids = [row['memberid'] for row in individual_resp.data]
 
-    # 2. Active Memberships from institutionmembershipcapacity table
-    capacity_resp = supabase.table('institutionmembershipcapacity').select('currentlyregistered').eq('institutionid', member_id).execute()
+    # 1️⃣ Total Registered Members
+    total_registered = len(individual_ids)
+
+    # 2️⃣ Active Memberships (from institutionmembershipcapacity)
+    capacity_resp = supabase.table('institutionmembershipcapacity') \
+        .select('currentlyregistered') \
+        .eq('institutionid', member_id) \
+        .execute()
+
     active_memberships = sum(row['currentlyregistered'] for row in capacity_resp.data) if capacity_resp.data else 0
 
-    # 3. Pending Registrations (from membershipregistration with status='Pending')
-    pending_resp = supabase.table('membershipregistration').select('membershipregistrationid').eq('memberid', member_id).eq('status', 'Pending').execute()
-    pending_count = len(pending_resp.data) if pending_resp.data else 0
+    # 3️⃣ Pending Membership Registrations of individuals
+    pending_count = 0
+    if individual_ids:
+        pending_resp = supabase.table('membershipregistration') \
+            .select('membershipregistrationid') \
+            .in_('memberid', individual_ids) \
+            .eq('status', 'Pending') \
+            .execute()
+        pending_count = len(pending_resp.data) if pending_resp.data else 0
 
-    # 4. Upcoming Events (from event table, eventdate > today)
-    from datetime import datetime
+    # 4️⃣ Upcoming Events (from today onward)
     today = datetime.today().strftime('%Y-%m-%d')
-
-    event_resp = supabase.table('event').select('name', 'eventdate').gt('eventdate', today).order('eventdate').execute()
+    event_resp = supabase.table('event') \
+        .select('name, eventdate') \
+        .gt('eventdate', today) \
+        .order('eventdate') \
+        .execute()
     upcoming_events = event_resp.data if event_resp and event_resp.data else []
 
+    # 🔚 Render Template
     return render_template(
         'institutional_dashboard.html',
         total_registered=total_registered,
@@ -1543,11 +1568,86 @@ def update_member_status():
 
 @views.route('/institutional/membership/details')
 def institutional_membership_details():
-    return render_template('institutional_membership_details.html')
+    if session.get('user_type') != 'institution':
+        return redirect(url_for('auth.login'))
 
-@views.route('/institutional/billing/payment')
+    member_id = session.get('member_id')
+
+    # 🔸 Get capacity + typeid
+    capacity_resp = supabase.table("institutionmembershipcapacity") \
+        .select("maximumcapacity, currentlyregistered, membershiptypeid, membershiptype(name, benefits)") \
+        .eq("institutionid", member_id) \
+        .maybe_single() \
+        .execute()
+
+    capacity_data = capacity_resp.data if capacity_resp.data else {}
+
+    # 🔸 Get membership registration history
+    reg_history_resp = supabase.table("membershipregistration") \
+        .select("startdate, enddate, status, typeid, membershiptype(name)") \
+        .eq("memberid", member_id) \
+        .order("startdate", desc=True) \
+        .execute()
+
+    return render_template(
+        'institutional_membership_details.html',
+        capacity=capacity_data,
+        reg_history=reg_history_resp.data or []
+    )
+
+@views.route('/institutional/billing')
 def institutional_billing_payment():
-    return render_template('institutional_billing_payment.html')
+    if session.get('user_type') != 'institution':
+        return redirect(url_for('auth.login'))
+
+    member_id = session.get('member_id')
+
+    # Get billing records of the institutional member
+    billing_resp = supabase.table('billing').select('*').eq('memberid', member_id).order('billdate', desc=True).execute()
+    billings = billing_resp.data if billing_resp and billing_resp.data else []
+
+    return render_template('institutional_billing_payment.html', billings=billings)
+
+UPLOAD_FOLDER = 'static/uploads'  # Make sure this exists
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'pdf'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@views.route('/institutional/payment', methods=['GET', 'POST'])
+def institutional_payment():
+    if session.get('user_type') != 'institution':
+        return redirect(url_for('auth.login'))
+
+    if request.method == 'POST':
+        membership_type = request.form.get('membership-type')
+        file = request.files.get('proof')
+        member_id = session.get('member_id')
+
+        if not membership_type or not file or not allowed_file(file.filename):
+            flash('All fields are required and file must be an image or PDF.')
+            return redirect(request.url)
+
+        # Save file to local folder
+        filename = secure_filename(file.filename)
+        timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+        unique_filename = f"{member_id}_{timestamp}_{filename}"
+        file_path = os.path.join(UPLOAD_FOLDER, unique_filename)
+        file.save(file_path)
+
+        # Store in Supabase
+        supabase.table("payment").insert({
+            "memberid": member_id,
+            "amount": 1000 if membership_type == "basic" else 2000,
+            "status": "Pending",
+            "proof": file_path,
+            "paymentdate": datetime.now().strftime('%Y-%m-%d')
+        }).execute()
+
+        flash('Payment submitted successfully.')
+        return redirect(url_for('views.institutional_billing_payment'))
+
+    return render_template("institutional_payment.html")
 
 
 # -- TO BE DELETED -- 
