@@ -1156,7 +1156,7 @@ def membershipdetails():
 
 @views.route('/userprofile', methods=['GET', 'POST'])
 def profile():
-    if session.get('user_type') != 'member':
+    if session.get('user_type') != 'individual':
         return redirect('/')
 
     member_id = session.get('member_id')
@@ -1274,7 +1274,7 @@ def update_profile(data, member_id):
 
 @views.route('/userbillingpayment')
 def billingpayment():
-    if session.get('user_type') != 'member':
+    if session.get('user_type') != 'individual':
         return redirect('/')
     return render_template('user_billing_payment.html')
 
