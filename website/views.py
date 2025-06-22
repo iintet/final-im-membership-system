@@ -734,7 +734,7 @@ def admin_create_billing():
         bill_date = request.form.get('bill_date')
         due_date = request.form.get('due_date')
         status = request.form.get('status')
-        amount = request.form.get('amount')
+        amountdue = request.form.get('amountdue')
 
         # Split the name for matching (basic approach)
         name_parts = member_name.split()
@@ -772,7 +772,7 @@ def admin_create_billing():
             "billdate": bill_date,
             "duedate": due_date,
             "status": status,
-            "amount": float(amount)
+            "amountdue": amountdue
         }).execute()
 
         return redirect(url_for('views.admin_billing_payment'))
