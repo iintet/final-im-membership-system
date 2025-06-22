@@ -43,26 +43,26 @@
       </section>
 
       <!-- Institution Info Box -->
-<section class="institution-box">
-  <div class="institution-box-header">
-    <i class="fas fa-school"></i>
-    <h2>My Institution Information</h2>
-  </div>
-  <div class="institution-details-grid">
-    <div class="institution-info-item">
-      <label>Institution Name:</label>
-      <p>{{ institution_name }}</p>
-    </div>
-    <div class="institution-info-item">
-      <label>Institution Address:</label>
-      <p>{{ institution_code }}</p>
-    </div>
-    <div class="institution-info-item">
-      <label>Type:</label>
-      <p>{{ institution_type }}</p>
-    </div>
-  </div>
-</section>
+      <section class="institution-box">
+        <div class="institution-box-header">
+          <i class="fas fa-school"></i>
+          <h2>My Institution Information</h2>
+        </div>
+        <div class="institution-details-grid">
+          <div class="institution-info-item">
+            <label>Institution Name:</label>
+            <span>{{ institution_name }}</span>
+          </div>
+          <div class="institution-info-item">
+            <label>Institution Address:</label>
+            <span>{{ streetaddress }}, {{ barangay_name }}, {{ city_name }}, {{ province_name }}, {{ region_name }}</span>
+          </div>
+          <div class="institution-info-item">
+            <label>Type:</label>
+            <span>{{ institution_type|capitalize }}</span>
+          </div>
+        </div>
+      </section>
 
 
       <form class="profile-form" id="profileForm" method="POST" onsubmit="return false;">

@@ -18,7 +18,7 @@
           <a href="{{ url_for('views.institutional_profile') }}"><i class="fas fa-user"></i> My Profile</a>
           <a href="{{ url_for('views.institutional_member_management') }}" class="active"><i class="fas fa-users"></i> Member Management</a>
           <a href="{{ url_for('views.institutional_membership_details') }}"><i class="fas fa-id-card"></i> Membership Management</a>
-          <a href="{{ url_for('views.institutional_billing_payment') }}"><i class="fas fa-money-bill-wave"></i> Billing & Payment</a>
+          <a href="{{ url_for('views.institutional_billing_payment') }}" class="active"><i class="fas fa-money-bill-wave"></i> Billing & Payment</a>
       </nav>
       <div class="logout">
         <a href="{{ url_for('views.home') }}"><i class="fas fa-sign-out-alt"></i> Log Out</a>
@@ -32,80 +32,30 @@
       </div>
 
       <!-- Pending Registrations -->
-      <div class="pending-registrations">
-        <h2><i class="fas fa-user-clock"></i> Pending Membership Registrations</h2>
-        <ul class="pending-list">
-          <li>
-            <span>Michael Johnson</span>
-            <div class="actions">
-              <button class="btn-approve"><i class="fas fa-check-circle"></i> Approve</button>
-              <button class="btn-reject"><i class="fas fa-times-circle"></i> Reject</button>
-            </div>
-          </li>
-          <li>
-            <span>Samantha Lee</span>
-            <div class="actions">
-              <button class="btn-approve"><i class="fas fa-check-circle"></i> Approve</button>
-              <button class="btn-reject"><i class="fas fa-times-circle"></i> Reject</button>
-            </div>
-          </li>
-          <li>
-            <span>Chris Martin</span>
-            <div class="actions">
-              <button class="btn-approve"><i class="fas fa-check-circle"></i> Approve</button>
-              <button class="btn-reject"><i class="fas fa-times-circle"></i> Reject</button>
-            </div>
-          </li>
-          <li>
-            <span>Alyssa Villanueva</span>
-            <div class="actions">
-              <button class="btn-approve"><i class="fas fa-check-circle"></i> Approve</button>
-              <button class="btn-reject"><i class="fas fa-times-circle"></i> Reject</button>
-            </div>
-          </li>
-        </ul>
-
-        <!-- Extra pending hidden by default -->
-        <div class="extra-pending" style="display: none;">
-          <ul class="pending-list">
-            <li>
-              <span>Leo Fernandez</span>
-              <div class="actions">
-                <button class="btn-approve"><i class="fas fa-check-circle"></i> Approve</button>
-                <button class="btn-reject"><i class="fas fa-times-circle"></i> Reject</button>
-              </div>
-            </li>
-            <li>
-              <span>Andrea Lopez</span>
-              <div class="actions">
-                <button class="btn-approve"><i class="fas fa-check-circle"></i> Approve</button>
-                <button class="btn-reject"><i class="fas fa-times-circle"></i> Reject</button>
-              </div>
-            </li>
-            <li>
-              <span>Harold Tan</span>
-              <div class="actions">
-                <button class="btn-approve"><i class="fas fa-check-circle"></i> Approve</button>
-                <button class="btn-reject"><i class="fas fa-times-circle"></i> Reject</button>
-              </div>
-            </li>
-          </ul>
-        </div>
-
-        <button id="toggle-more" class="btn-show-more"><i class="fas fa-chevron-down"></i> Show More</button>
+<div class="pending-registrations">
+  <h2><i class="fas fa-user-clock"></i> Pending Membership Registrations</h2>
+  <ul class="pending-list">
+  {% for member in pending_members %}
+    <li>
+      <span>{{ member.fullname }}</span>
+      <div class="actions">
+        <form method="POST" action="{{ url_for('views.update_member_status') }}">
+          <input type="hidden" name="membershipregistrationid" value="{{ member.membershipregistrationid }}">
+          <button class="btn-approve" name="action" value="approve"><i class="fas fa-check-circle"></i> Approve</button>
+          <button class="btn-reject" name="action" value="reject"><i class="fas fa-times-circle"></i> Reject</button>
+        </form>
       </div>
+    </li>
+  {% endfor %}
+</ul>
+</div>
 
-      <!-- Member List -->
-      <div class="member-list-section">
+<!-- Member List -->
+<div class="member-list-section">
   <div class="member-list-header">
     <h2><i class="fas fa-id-card"></i> Member List</h2>
     <div class="controls">
       <input type="text" id="nameSearch" placeholder="Search by name..." />
-      <select id="statusFilter">
-        <option value="all">All Status</option>
-        <option value="active">Active</option>
-        <option value="inactive">Inactive</option>
-      </select>
     </div>
   </div>
 
@@ -115,35 +65,19 @@
         <tr>
           <th>Member ID</th>
           <th>Full Name</th>
-          <th>Status</th>
+          <th>Email</th>
           <th>Registered On</th>
         </tr>
       </thead>
       <tbody id="memberTable">
-        <tr data-status="active">
-          <td>M001</td>
-          <td>Jane Smith</td>
-          <td><span class="badge active">Active</span></td>
-          <td>2023-09-15</td>
-        </tr>
-        <tr data-status="inactive">
-          <td>M002</td>
-          <td>Aliah Cruz</td>
-          <td><span class="badge inactive">Inactive</span></td>
-          <td>2022-07-04</td>
-        </tr>
-        <tr data-status="active">
-          <td>M003</td>
-          <td>Mark Reyes</td>
-          <td><span class="badge active">Active</span></td>
-          <td>2023-01-20</td>
-        </tr>
-        <tr data-status="active">
-          <td>M004</td>
-          <td>Luis Mendoza</td>
-          <td><span class="badge active">Active</span></td>
-          <td>2024-03-01</td>
-        </tr>
+        {% for member in active_members %}
+          <tr>
+            <td>{{ loop.index }}</td> <!-- No memberid in our new list, so use index -->
+            <td>{{ member.fullname }}</td>
+            <td>{{ member.email }}</td>
+            <td>{{ member.joindate }}</td>
+          </tr>
+        {% endfor %}
       </tbody>
     </table>
   </div>
@@ -182,6 +116,24 @@
       });
     });
   </script>
+  <script>
+    function updateStatus(memberId, status) {
+      fetch("/update_member_status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ member_id: memberId, status: status })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          alert("Member status updated to " + status);
+          location.reload();
+        } else {
+          alert("Failed to update status.");
+        }
+      });
+    }
+    </script>
 </body>
 </html>
 <!-- /* Added again after deleting */ -->

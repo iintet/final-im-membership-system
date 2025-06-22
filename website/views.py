@@ -1308,15 +1308,238 @@ def create_event():
 def institutional_dashboard():
     if session.get('user_type') != 'institution':
         return redirect(url_for('auth.login'))
-    return render_template('institutional_dashboard.html')
 
-@views.route('/institutional/profile')
+    member_id = session.get('member_id')
+
+    # Get organizationid and schoolid from institutional table
+    inst_resp = supabase.table('institutional').select('organizationid', 'schoolid').eq('memberid', member_id).maybe_single().execute()
+    if not inst_resp or not inst_resp.data:
+        return "Institutional record not found", 404
+
+    org_id = inst_resp.data.get('organizationid')
+    school_id = inst_resp.data.get('schoolid')
+
+    # 1. Total Registered Members under this institution
+    individual_query = supabase.table('individual').select('memberid')
+    if org_id:
+        individual_query = individual_query.eq('organizationid', org_id)
+    if school_id:
+        individual_query = individual_query.eq('schoolid', school_id)
+
+    total_individuals_resp = individual_query.execute()
+    total_registered = len(total_individuals_resp.data) if total_individuals_resp.data else 0
+
+    # 2. Active Memberships from institutionmembershipcapacity table
+    capacity_resp = supabase.table('institutionmembershipcapacity').select('currentlyregistered').eq('institutionid', member_id).execute()
+    active_memberships = sum(row['currentlyregistered'] for row in capacity_resp.data) if capacity_resp.data else 0
+
+    # 3. Pending Registrations (from membershipregistration with status='Pending')
+    pending_resp = supabase.table('membershipregistration').select('membershipregistrationid').eq('memberid', member_id).eq('status', 'Pending').execute()
+    pending_count = len(pending_resp.data) if pending_resp.data else 0
+
+    # 4. Upcoming Events (from event table, eventdate > today)
+    from datetime import datetime
+    today = datetime.today().strftime('%Y-%m-%d')
+
+    event_resp = supabase.table('event').select('name', 'eventdate').gt('eventdate', today).order('eventdate').execute()
+    upcoming_events = event_resp.data if event_resp and event_resp.data else []
+
+    return render_template(
+        'institutional_dashboard.html',
+        total_registered=total_registered,
+        active_memberships=active_memberships,
+        pending_count=pending_count,
+        upcoming_events=upcoming_events
+    )
+
+@views.route('/institutional/profile', methods=['GET', 'POST'])
 def institutional_profile():
-    return render_template('institutional_profile.html')
+    if session.get('user_type') != 'institution':
+        return redirect(url_for('auth.login'))
+
+    member_id = session.get('member_id')
+
+    if request.method == 'POST':
+        data = request.get_json()
+        # Password validation
+        current_password = data.get('current_password')
+        new_password = data.get('new_password')
+
+        # Get existing user
+        user_resp = supabase.table('member').select('password').eq('memberid', member_id).maybe_single().execute()
+        if not user_resp.data:
+            return jsonify({'message': 'Member not found'}), 404
+
+        hashed_pw = user_resp.data['password']
+
+        if current_password and new_password:
+            if not check_password_hash(hashed_pw, current_password):
+                return jsonify({'message': 'Incorrect current password'}), 400
+
+            new_hashed = generate_password_hash(new_password)
+            supabase.table('member').update({'password': new_hashed}).eq('memberid', member_id).execute()
+
+        # Update personal info
+        update_data = {
+            'streetaddress': data.get('streetaddress'),
+            'emergencycontactname': data.get('emergencycontactname'),
+            'emergencycontactnumber': data.get('emergencycontactnumber'),
+            'region': data.get('region'),
+            'province': data.get('province'),
+            'city': data.get('city'),
+            'barangay': data.get('barangay'),
+            'phone': data.get('phone')
+        }
+
+        supabase.table('member').update(update_data).eq('memberid', member_id).execute()
+
+        return jsonify({'message': 'Profile updated successfully'})
+
+    # GET request - fetch profile data
+    member_resp = supabase.table('member').select('*').eq('memberid', member_id).maybe_single().execute()
+    inst_resp = supabase.table('institutional').select('*').eq('memberid', member_id).maybe_single().execute()
+
+    if not member_resp.data or not inst_resp.data:
+        return "Institutional profile not found", 404
+
+    member = member_resp.data
+    inst = inst_resp.data
+
+    # Fetch location names
+    region_name = get_location_name('region', 'regionid', member['region'])
+    province_name = get_location_name('province', 'provinceid', member['province'])
+    city_name = get_location_name('city', 'cityid', member['city'])
+    barangay_name = get_location_name('barangay', 'barangayid', member['barangay'])
+
+    return render_template(
+        'institutional_profile.html',
+        institution_name=inst.get('institutionalname', ''),
+        institution_code=inst.get('schoolid') or inst.get('organizationid'),
+        institution_type=inst.get('type'),
+        fullname=f"{inst['representativefirstname']} {inst['representativemiddlename']} {inst['representativelastname']}",
+        phone=inst['representativecontactnumber'],
+        email=member['email'],
+        streetaddress=member['streetaddress'],
+        emergency_contact_name=member['emergencycontactname'],
+        emergency_contact=member['emergencycontactnumber'],
+        region_name=region_name,
+        province_name=province_name,
+        city_name=city_name,
+        barangay_name=barangay_name,
+        region_id=member['region'],
+        province_id=member['province'],
+        city_id=member['city'],
+        barangay_id=member['barangay']
+    )
+
+def get_location_name(table, id_field, id_value):
+    if not id_value:
+        return ''
+    res = supabase.table(table).select('*').eq(id_field, id_value).maybe_single().execute()
+    if not res.data:
+        return ''
+    return res.data.get(f"{table}name", '')
 
 @views.route('/institutional/member/management')
 def institutional_member_management():
-    return render_template('institutional_member_management.html')
+    if session.get('user_type') != 'institution':
+        return redirect(url_for('views.login'))
+
+    member_id = session.get('member_id')
+    if not member_id:
+        return "Unauthorized", 401
+
+    # 🔸 Get institutional data (org/school IDs)
+    inst_resp = supabase.table('institutional') \
+        .select('institutionalname, organizationid, schoolid') \
+        .eq('memberid', member_id) \
+        .maybe_single() \
+        .execute()
+
+    if not inst_resp or not inst_resp.data:
+        return "Institutional data not found", 404
+
+    institutionalname = inst_resp.data.get('institutionalname')
+    org_id = inst_resp.data.get('organizationid')
+    school_id = inst_resp.data.get('schoolid')
+
+    # 🔸 Fetch individuals under institution
+    individual_query = supabase.table("individual").select("memberid, firstname, middlename, lastname")
+    if org_id:
+        individual_query = individual_query.eq("organizationid", org_id)
+    if school_id:
+        individual_query = individual_query.eq("schoolid", school_id)
+
+    individual_result = individual_query.execute()
+    individual_members = individual_result.data if individual_result.data else []
+
+    member_ids = [m["memberid"] for m in individual_members]
+
+    # 🔸 Get Active Memberships
+    active_members = []
+    if member_ids:
+        registration_resp = supabase.table("membershipregistration") \
+            .select("memberid") \
+            .eq("status", "Active") \
+            .in_("memberid", member_ids) \
+            .execute()
+
+        active_ids = [r["memberid"] for r in registration_resp.data]
+
+        # Filter individuals who are active
+        for person in individual_members:
+            if person["memberid"] in active_ids:
+                # Get member info (email, joindate)
+                member_data = supabase.table("member") \
+                    .select("email, joindate") \
+                    .eq("memberid", person["memberid"]) \
+                    .maybe_single() \
+                    .execute().data
+
+                active_members.append({
+                    "fullname": f"{person['firstname']} {person.get('middlename', '')} {person['lastname']}".strip(),
+                    "email": member_data["email"] if member_data else "N/A",
+                    "joindate": member_data["joindate"] if member_data else "N/A"
+                })
+
+    # 🔸 Get Pending Memberships
+    pending_members = []
+    if member_ids:
+        pending_resp = supabase.table("membershipregistration") \
+            .select("memberid") \
+            .eq("status", "Pending") \
+            .in_("memberid", member_ids) \
+            .execute()
+
+        pending_ids = [p["memberid"] for p in pending_resp.data]
+
+        for person in individual_members:
+            if person["memberid"] in pending_ids:
+                pending_members.append({
+                    "membershipregistrationid": pending_resp.data[0]["memberid"],  # or fetch properly
+                    "fullname": f"{person['firstname']} {person.get('middlename', '')} {person['lastname']}".strip()
+                })
+
+    return render_template(
+        "institutional_member_management.html",
+        pending_members=pending_members,
+        active_members=active_members,
+        institutionalname=institutionalname
+    )
+
+@views.route('/institutional/update_status', methods=['POST'])
+def update_member_status():
+    membership_id = request.form.get("membershipregistrationid")
+    action = request.form.get("action")
+
+    new_status = "Active" if action == "approve" else "Rejected"
+
+    supabase.table("membershipregistration") \
+        .update({"status": new_status}) \
+        .eq("membershipregistrationid", membership_id) \
+        .execute()
+
+    return redirect(url_for('views.institutional_member_management'))
 
 @views.route('/institutional/membership/details')
 def institutional_membership_details():
