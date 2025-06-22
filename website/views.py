@@ -281,6 +281,9 @@ def admin_dashboard():
 @views.route('/admin/member-management', methods=['GET'])
 def admin_member_management():
     search = request.args.get('query', '').strip().lower()
+    filter_role = request.args.get('role', '').strip().lower()
+    filter_membership_type = request.args.get('membershiptype', '').strip().lower()
+    filter_status = request.args.get('status', '').strip().lower()
 
     # Get all members
     member_data = supabase.table("member").select("*").execute().data or []
@@ -317,7 +320,13 @@ def admin_member_management():
             membership_status = membership.get('status', 'N/A')
             
         # Apply search filter
-        if search and search not in full_name.lower() and search not in member.get("email", "").lower():
+        if search and search not in full_name.lower() and search not in email.lower():
+            continue
+        if filter_role and role.lower() != filter_role:
+            continue
+        if filter_membership_type and membership_type.lower() != filter_membership_type:
+            continue
+        if filter_status and membership_status.lower() != filter_status:
             continue
 
         enriched_members.append({
