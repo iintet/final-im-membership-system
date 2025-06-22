@@ -25,43 +25,60 @@ def login():
     if not email or not password:
         return jsonify({'error': 'Email and password are required'}), 400
 
-    # Check member table first
-    member_response = supabase.table('member').select('*').eq('email', email).execute()
+    # --- Check if INDIVIDUAL ---
+    individual_response = supabase.table('member').select('*').eq('email', email).eq('role', 'individual').execute()
 
-    if member_response.data:
-        member = member_response.data[0]
-        print("Logging in member:", member) 
-
-        if check_password_hash(member['password'], password):
-            session['user_type'] = 'member'
-            session['member_id'] = member['memberid']
+    if individual_response.data:
+        individual = individual_response.data[0]
+        if check_password_hash(individual['password'], password):
+            session.clear()
+            session['user_type'] = 'individual'
+            session['member_id'] = individual['memberid']
 
             return jsonify({
                 'message': 'Login successful',
                 'user': {
-                    'memberid': member['memberid'],
-                    'email': member['email'],
-                    'role': member['role'],
-                    'status': member['status'],
-                    'user_type': 'member'
-                }
+                    'memberid': individual['memberid'],
+                    'email': individual['email'],
+                    'role': individual['role'],
+                    'user_type': 'individual'
+                },
+                'redirect_to': '/user/dashboard'
             }), 200
         else:
             return jsonify({'error': 'Invalid credentials'}), 401
 
-    # If not a member, check staff table
+    # --- Check if INSTITUTION ---
+    institution_response = supabase.table('member').select('*').eq('email', email).eq('role', 'institution').execute()
+
+    if institution_response.data:
+        institution = institution_response.data[0]
+        if check_password_hash(institution['password'], password):
+            session.clear()
+            session['user_type'] = 'institution'
+            session['member_id'] = institution['memberid']
+
+            return jsonify({
+                'message': 'Login successful',
+                'user': {
+                    'memberid': institution['memberid'],
+                    'email': institution['email'],
+                    'role': institution['role'],
+                    'user_type': 'institution'
+                },
+                'redirect_to': '/institutional/dashboard'
+            }), 200
+        else:
+            return jsonify({'error': 'Invalid credentials'}), 401
+
+    # --- Check if STAFF ---
     staff_response = supabase.table('staff').select('*').eq('email', email).execute()
 
     if staff_response.data:
         staff = staff_response.data[0]
-
         if check_password_hash(staff['password'], password):
             session['user_type'] = 'staff'
             session['staff_id'] = staff['staffid']
-
-            print("Email:", email)
-            print("Password:", password)
-            print("Staff response:", staff_response.data)
 
             return jsonify({
                 'message': 'Login successful',
@@ -71,12 +88,14 @@ def login():
                     'role': staff['role'],
                     'fullname': staff['fullname'],
                     'user_type': 'staff'
-                }
+                },
+                'redirect_to': '/staff/dashboard'
             }), 200
         else:
             return jsonify({'error': 'Invalid credentials'}), 401
 
     return jsonify({'error': 'User not found'}), 404
+
     
 # -- AUTH REGISTER --
 @auth.route('/auth/register', methods=['GET', 'POST'])
@@ -137,7 +156,6 @@ def register():
             "email": email,
             "password": hashed_password,
             "role": role,
-            "status": "active",
             "region": region,
             "province": province,
             "city": city,

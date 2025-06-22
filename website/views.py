@@ -253,7 +253,7 @@ def get_organizations():
         return jsonify({'error': str(e)}), 500
 
 # -- ADMIN DASHBOARD --
-@views.route('/admindashboard')
+@views.route('/staff/dashboard')
 def admin_dashboard():
     if session.get('user_type') != 'staff':
         return redirect('/')
@@ -1058,11 +1058,12 @@ def admin_staff_roles():
     return render_template("admin_staff_assign_roles.html", staff=staff_list)
 
 # -- MEMBER DASHBOARD --
-@views.route('/userdashboard', methods=['GET'])
+@views.route('/user/dashboard', methods=['GET'])
 def userdashboard():
-    if session.get('user_type') != 'member':
-        return redirect('/')
-
+    print("Session data:", session)
+    if session.get('user_type') != 'individual':
+        return redirect(url_for('auth.login'))
+    
     member_id = session.get('member_id')
 
     # Step 1: Get role from member table
@@ -1302,6 +1303,28 @@ def create_event():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
+# -- INSTITUTIONAL DASHBOARD --
+@views.route('/institutional/dashboard')
+def institutional_dashboard():
+    if session.get('user_type') != 'institution':
+        return redirect(url_for('auth.login'))
+    return render_template('institutional_dashboard.html')
+
+@views.route('/institutional/profile')
+def institutional_profile():
+    return render_template('institutional_profile.html')
+
+@views.route('/institutional/member/management')
+def institutional_member_management():
+    return render_template('institutional_member_management.html')
+
+@views.route('/institutional/membership/details')
+def institutional_membership_details():
+    return render_template('institutional_membership_details.html')
+
+@views.route('/institutional/billing/payment')
+def institutional_billing_payment():
+    return render_template('institutional_billing_payment.html')
 
 
 # -- TO BE DELETED -- 

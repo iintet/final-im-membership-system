@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Institutional Dashboard</title>
-  <link rel="stylesheet" href="institutional_dashboard.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='institutional_dashboard.css') }}" />
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
@@ -14,11 +14,11 @@
     <aside class="sidebar">
       <div class="logo">MRSYS</div>
       <nav>
-        <a href="#" class="active"><i class="fas fa-home"></i> Dashboard</a>
-        <a href="institutional_profile.html"><i class="fas fa-user"></i> My Profile</a>
-        <a href="institutional_member_management.html"><i class="fas fa-users"></i> Member Management</a>
-        <a href="institutional_membership_details.html"><i class="fas fa-id-card"></i> Membership Management</a>
-        <a href="institutional_billing_payment.html"><i class="fas fa-money-bill-wave"></i> Billing & Payment</a>
+        <a href="{{ url_for('views.institutional_dashboard') }}" class="active"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="{{ url_for('views.institutional_profile') }}"><i class="fas fa-user"></i> My Profile</a>
+        <a href="{{ url_for('views.institutional_member_management') }}"><i class="fas fa-users"></i> Member Management</a>
+        <a href="{{ url_for('views.institutional_membership_details') }}"><i class="fas fa-id-card"></i> Membership Management</a>
+        <a href="{{ url_for('views.institutional_billing_payment') }}"><i class="fas fa-money-bill-wave"></i> Billing & Payment</a>
       </nav>
       <div class="logout">
         <a href="{{ url_for('views.home') }}"><i class="fas fa-sign-out-alt"></i> Log Out</a>
@@ -62,13 +62,13 @@
         <div class="card actions">
           <h2>Quick Actions</h2>
           <div class="action-buttons">
-            <a href="{{ url_for('views.institution_group_invoice') }}">
+            <a href="{{ url_for('views.institutional_dashboard') }}">
               <button class="medium-blue">Create Group Invoice</button>
             </a>
-            <a href="{{ url_for('views.institution_register_member') }}">
+            <a href="{{ url_for('views.institutional_dashboard') }}">
               <button class="medium-blue">Register New Member</button>
             </a>
-            <a href="{{ url_for('views.institution_billing') }}">
+            <a href="{{ url_for('views.institutional_dashboard') }}">
               <button class="light-blue">Download Billing Summary</button>
             </a>
           </div>

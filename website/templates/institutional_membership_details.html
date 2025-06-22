@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Membership Details - MRSYS</title>
-  <link rel="stylesheet" href="institutional_membership_details.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='institutional_membership_details.css') }}" />
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
@@ -14,11 +14,11 @@
       <div>
         <h2 class="logo">MRSYS</h2>
         <nav class="nav-menu">
-          <a href="institutional_dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
-          <a href="institutional_profile.html"><i class="fas fa-user"></i> My Profile</a>
-          <a href="institutional_member_management.html"><i class="fas fa-users"></i> Member Management</a>
-          <a href="institutional_profile.html" class="active"><i class="fas fa-id-card"></i> Membership Management</a>
-          <a href="institutional_billing_payment.html"><i class="fas fa-money-bill-wave"></i> Billing & Payment</a>
+          <a href="{{ url_for('views.institutional_dashboard') }}"><i class="fas fa-home"></i> Dashboard</a>
+          <a href="{{ url_for('views.institutional_profile') }}" ><i class="fas fa-user"></i> My Profile</a>
+          <a href="{{ url_for('views.institutional_member_management') }}"><i class="fas fa-users"></i> Member Management</a>
+          <a href="{{ url_for('views.institutional_membership_details') }}" class="active"><i class="fas fa-id-card"></i> Membership Management</a>
+          <a href="{{ url_for('views.institutional_billing_payment') }}" ><i class="fas fa-money-bill-wave"></i> Billing & Payment</a>
         </nav>
       </div>
       <div class="logout-section">

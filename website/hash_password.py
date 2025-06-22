@@ -1,6 +1,6 @@
 from werkzeug.security import generate_password_hash
 
-print(generate_password_hash("insti"))
+print(generate_password_hash("123123"))
 
 # intet01 - 123456
 # gelly02 - 000000
