@@ -237,6 +237,7 @@ def register():
                         organizationid = None
 
                 if affiliation_type == "school" and not data.get("school-name"):
+                    schooltype = safe_int(data.get("ind-school-type"), "schooltype")
                     school_insert = supabase.table("schname").insert({
                         "name": data.get("ind-school-name"),
                         "cityid": int(data.get("ind-school-city")),

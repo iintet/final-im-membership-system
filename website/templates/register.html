@@ -125,7 +125,7 @@
               <option value="">Select type</option>
               <option value="organization">Organization</option>
               <option value="school">School</option>
-              <option value="none">Not Applicable</option>
+              <option value="not_applicable">Not Applicable</option>
             </select>
           </div>
               <div id="ind-organization-dropdown" style="display: none;">
@@ -247,7 +247,6 @@
             <option value="">Select type</option>
             <option value="organization">Organization</option>
             <option value="school">School</option>
-            <option value="none">Not Applicable</option>
           </select>
 
           <div id="ins-organization-fields" style="display: none;">
@@ -446,6 +445,21 @@
   const affiliationType = document.getElementById("individual-affiliation-type");
   const orgSelect = document.getElementById("ind-organization-select");
   const orgAddress = document.getElementById("ind-organization-address");
+
+  document.getElementById('register-form').addEventListener('submit', function (e) {
+  const affiliation = document.querySelector('input[name="individual-affiliation-type"]:checked')?.value;
+  const orgDropdown = document.getElementById('ind-organization-select');
+
+  // If org is required based on affiliation but hidden, unhide it for focus
+  if (affiliation === 'organization') {
+    if (orgDropdown && orgDropdown.value === '') {
+      orgDropdown.focus(); // triggers browser to focus on it for error clarity
+      e.preventDefault();
+      alert("Please select an organization.");
+    }
+  }
+});
+
 
   if (affiliationType && orgSelect) {
     affiliationType.addEventListener("change", function () {
