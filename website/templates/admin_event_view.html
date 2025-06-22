@@ -24,36 +24,113 @@
       <a href="{{ url_for('views.home') }}"><i class="fas fa-sign-out-alt"></i> Log Out</a>
     </div>
   </div>
+  <style>
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: flex-end;
+      margin-bottom: 2rem;
+    }
 
+    .filters label {
+      font-weight: bold;
+      font-size: 14px;
+      margin-right: 4px;
+    }
+
+    .filters input[type="date"],
+    .filters select {
+      padding: 0.5rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      min-width: 150px;
+      font-family: 'Oswald', sans-serif;
+    }
+
+    .filters button {
+      background-color: #007bff;
+      color: white;
+      padding: 0.6rem 1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.2s ease;
+    }
+
+    .filters button:hover {
+      background-color: #0056b3;
+    }
+
+    .filters-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .filters-group-inline {
+      display: flex;
+      flex-direction: column;
+      min-width: 150px;
+    }
+
+    @media (max-width: 768px) {
+      .filters {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .filters-group-inline {
+        width: 100%;
+      }
+
+      .filters button {
+        width: 100%;
+      }
+    }
+  </style>
   <div class="main-content">
     <a href="{{ url_for('views.admin_event_management') }}" class="blue-button" style="margin-bottom: 20px; display: inline-block;">
       <i class="fas fa-arrow-left"></i> Back to Event Management
     </a>
     <h1>All Events</h1>
     <hr />
-    <form method="get" style="margin-bottom: 20px;">
-      <label for="from_date">From:</label>
-      <input type="date" name="from_date" value="{{ from_date }}">
-      
-      <label for="to_date">To:</label>
-      <input type="date" name="to_date" value="{{ to_date }}">
+    <form method="get" class="filters">
+      <div class="filters-group-inline">
+        <label for="from_date">From:</label>
+        <input type="date" name="from_date" value="{{ from_date }}">
+      </div>
 
-      <label for="status">Status:</label>
-      <select name="status">
-        <option value="All" {% if status_filter == 'All' %}selected{% endif %}>All</option>
-        <option value="Upcoming" {% if status_filter == 'Upcoming' %}selected{% endif %}>Upcoming</option>
-        <option value="Completed" {% if status_filter == 'Completed' %}selected{% endif %}>Completed</option>
-      </select>
+      <div class="filters-group-inline">
+        <label for="to_date">To:</label>
+        <input type="date" name="to_date" value="{{ to_date }}">
+      </div>
 
-      <label for="capacity_sort">Sort Capacity:</label>
-      <select name="capacity_sort">
-        <option value="">None</option>
-        <option value="asc" {% if capacity_sort == 'asc' %}selected{% endif %}>Ascending</option>
-        <option value="desc" {% if capacity_sort == 'desc' %}selected{% endif %}>Descending</option>
-      </select>
+      <div class="filters-group-inline">
+        <label for="status">Status:</label>
+        <select name="status">
+          <option value="All" {% if status_filter == 'All' %}selected{% endif %}>All</option>
+          <option value="Upcoming" {% if status_filter == 'Upcoming' %}selected{% endif %}>Upcoming</option>
+          <option value="Completed" {% if status_filter == 'Completed' %}selected{% endif %}>Completed</option>
+        </select>
+      </div>
 
-      <button type="submit">Apply Filters</button>
+      <div class="filters-group-inline">
+        <label for="capacity_sort">Sort Capacity:</label>
+        <select name="capacity_sort">
+          <option value="">None</option>
+          <option value="asc" {% if capacity_sort == 'asc' %}selected{% endif %}>Ascending</option>
+          <option value="desc" {% if capacity_sort == 'desc' %}selected{% endif %}>Descending</option>
+        </select>
+      </div>
+
+      <div class="filters-group-inline">
+        <label>&nbsp;</label>
+        <button type="submit">Apply Filters</button>
+      </div>
     </form>
+
 
     <!-- Events Table -->
     <table class="event-table">
