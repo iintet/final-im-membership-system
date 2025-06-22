@@ -515,9 +515,72 @@ def admin_event_view():
 
 @views.route('/admin/events/manage')
 def admin_event_manage():
-    response = supabase.table("event").select("*").order("eventdate", desc=False).execute()
-    events = response.data if response.data else []
-    return render_template('admin_event_manage.html', events=events)
+    date_filter = request.args.get('date_filter')
+    capacity_filter = request.args.get('capacity_filter')
+
+    query = (
+        supabase.table("event")
+        .select("""
+            eventid,
+            name,
+            eventdate,
+            location,
+            capacity,
+            fee,
+            staffid,
+            staff (
+                firstname,
+                lastname
+            )
+        """)
+    )
+
+    # Apply filters if any
+    if date_filter:
+        query = query.gte("eventdate", date_filter)
+
+    if capacity_filter:
+        query = query.gte("capacity", int(capacity_filter))
+
+    # Sort + execute
+    events_data = query.order("eventdate", desc=False).execute().data
+
+    # Get staff list
+    staff_list = supabase.table("staff").select("staffid, firstname, lastname").execute().data
+
+    return render_template(
+        "admin_event_manage.html",
+        events=events_data,
+        staff_list=staff_list,
+        date_filter=date_filter,
+        capacity_filter=capacity_filter
+    )
+
+@views.route('/admin/event/add', methods=['POST'])
+def add_event():
+    name = request.form.get("name")
+    date = request.form.get("date")
+    location = request.form.get("location")
+    capacity = int(request.form.get("capacity"))
+    fee = float(request.form.get("fee"))
+    staff_id = request.form.get("staff_id")
+
+    if name and date and location and capacity and fee and staff_id:
+        supabase.table("event").insert({
+            "name": name,
+            "eventdate": date,
+            "location": location,
+            "capacity": capacity,
+            "fee": fee,
+            "staffid": staff_id
+        }).execute()
+
+    return redirect(url_for('views.admin_event_manage'))
+
+@views.route('/admin/event/delete/<int:eventid>', methods=['POST'])
+def delete_event(eventid):
+    supabase.table("event").delete().eq("eventid", eventid).execute()
+    return redirect(url_for('views.admin_event_management'))
 
 @views.route('/admin/event/registrations')
 def admin_event_registrations():
@@ -665,7 +728,56 @@ def admin_billing_payment():
 
 @views.route('/admin/billing/create', methods=['GET', 'POST'])
 def admin_create_billing():
-    return render_template('admin_create_bill.html')
+    if request.method == 'POST':
+        member_name = request.form.get('member_name').strip()
+        bill_type = request.form.get('bill_type')
+        bill_date = request.form.get('bill_date')
+        due_date = request.form.get('due_date')
+        status = request.form.get('status')
+        amount = request.form.get('amount')
+
+        # Split the name for matching (basic approach)
+        name_parts = member_name.split()
+        firstname = name_parts[0]
+        lastname = name_parts[-1] if len(name_parts) > 1 else ''
+
+        # Search for individual
+        member_query = supabase.table("member").select("""
+            memberid,
+            individual (
+                firstname,
+                lastname
+            )
+        """).execute().data
+
+        matched_member = next(
+            (
+                m for m in member_query
+                if m.get("individual") and
+                m["individual"]["firstname"].lower() == firstname.lower() and
+                m["individual"]["lastname"].lower() == lastname.lower()
+            ),
+            None
+        )
+
+        if not matched_member:
+            return "Member not found", 404
+
+        member_id = matched_member["memberid"]
+
+        # Insert into billing
+        supabase.table("billing").insert({
+            "memberid": member_id,
+            "billtype": bill_type,
+            "billdate": bill_date,
+            "duedate": due_date,
+            "status": status,
+            "amount": float(amount)
+        }).execute()
+
+        return redirect(url_for('views.admin_billing_payment'))
+
+    return render_template("admin_create_bill.html")
 
 @views.route('/admin/payment/record', methods=['GET'])
 def admin_payment_record():

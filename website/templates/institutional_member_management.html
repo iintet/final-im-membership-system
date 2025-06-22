@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Member Management</title>
+  <link rel="stylesheet" href="institutional_member_management.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">MRSYS</div>
+        <nav>
+        <a href="#" class="active"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="institutional_profile.html"><i class="fas fa-user"></i> My Profile</a>
+        <a href="institutional_member_management.html"><i class="fas fa-users"></i> Member Management</a>
+        <a href="institutional_membership_details.html"><i class="fas fa-id-card"></i> Membership Management</a>
+        <a href="institutional_billing_payment.html"><i class="fas fa-money-bill-wave"></i> Billing & Payment</a>
+      </nav>
+      <div class="logout">
+        <a href="{{ url_for('views.home') }}"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="header-section">
+        <h1><i class="fas fa-users"></i> Member Management</h1>
+      </div>
+
+      <!-- Pending Registrations -->
+      <div class="pending-registrations">
+        <h2><i class="fas fa-user-clock"></i> Pending Membership Registrations</h2>
+        <ul class="pending-list">
+          <li>
+            <span>Michael Johnson</span>
+            <div class="actions">
+              <button class="btn-approve"><i class="fas fa-check-circle"></i> Approve</button>
+              <button class="btn-reject"><i class="fas fa-times-circle"></i> Reject</button>
+            </div>
+          </li>
+          <li>
+            <span>Samantha Lee</span>
+            <div class="actions">
+              <button class="btn-approve"><i class="fas fa-check-circle"></i> Approve</button>
+              <button class="btn-reject"><i class="fas fa-times-circle"></i> Reject</button>
+            </div>
+          </li>
+          <li>
+            <span>Chris Martin</span>
+            <div class="actions">
+              <button class="btn-approve"><i class="fas fa-check-circle"></i> Approve</button>
+              <button class="btn-reject"><i class="fas fa-times-circle"></i> Reject</button>
+            </div>
+          </li>
+          <li>
+            <span>Alyssa Villanueva</span>
+            <div class="actions">
+              <button class="btn-approve"><i class="fas fa-check-circle"></i> Approve</button>
+              <button class="btn-reject"><i class="fas fa-times-circle"></i> Reject</button>
+            </div>
+          </li>
+        </ul>
+
+        <!-- Extra pending hidden by default -->
+        <div class="extra-pending" style="display: none;">
+          <ul class="pending-list">
+            <li>
+              <span>Leo Fernandez</span>
+              <div class="actions">
+                <button class="btn-approve"><i class="fas fa-check-circle"></i> Approve</button>
+                <button class="btn-reject"><i class="fas fa-times-circle"></i> Reject</button>
+              </div>
+            </li>
+            <li>
+              <span>Andrea Lopez</span>
+              <div class="actions">
+                <button class="btn-approve"><i class="fas fa-check-circle"></i> Approve</button>
+                <button class="btn-reject"><i class="fas fa-times-circle"></i> Reject</button>
+              </div>
+            </li>
+            <li>
+              <span>Harold Tan</span>
+              <div class="actions">
+                <button class="btn-approve"><i class="fas fa-check-circle"></i> Approve</button>
+                <button class="btn-reject"><i class="fas fa-times-circle"></i> Reject</button>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <button id="toggle-more" class="btn-show-more"><i class="fas fa-chevron-down"></i> Show More</button>
+      </div>
+
+      <!-- Member List -->
+      <div class="member-list-section">
+  <div class="member-list-header">
+    <h2><i class="fas fa-id-card"></i> Member List</h2>
+    <div class="controls">
+      <input type="text" id="nameSearch" placeholder="Search by name..." />
+      <select id="statusFilter">
+        <option value="all">All Status</option>
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Member ID</th>
+          <th>Full Name</th>
+          <th>Status</th>
+          <th>Registered On</th>
+        </tr>
+      </thead>
+      <tbody id="memberTable">
+        <tr data-status="active">
+          <td>M001</td>
+          <td>Jane Smith</td>
+          <td><span class="badge active">Active</span></td>
+          <td>2023-09-15</td>
+        </tr>
+        <tr data-status="inactive">
+          <td>M002</td>
+          <td>Aliah Cruz</td>
+          <td><span class="badge inactive">Inactive</span></td>
+          <td>2022-07-04</td>
+        </tr>
+        <tr data-status="active">
+          <td>M003</td>
+          <td>Mark Reyes</td>
+          <td><span class="badge active">Active</span></td>
+          <td>2023-01-20</td>
+        </tr>
+        <tr data-status="active">
+          <td>M004</td>
+          <td>Luis Mendoza</td>
+          <td><span class="badge active">Active</span></td>
+          <td>2024-03-01</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+  <!-- Scripts -->
+  <script>
+    // Toggle extra pending
+    const toggleBtn = document.getElementById('toggle-more');
+    const extraSection = document.querySelector('.extra-pending');
+    toggleBtn.addEventListener('click', () => {
+      const visible = extraSection.style.display === 'block';
+      extraSection.style.display = visible ? 'none' : 'block';
+      toggleBtn.innerHTML = visible ? '<i class="fas fa-chevron-down"></i> Show More' : '<i class="fas fa-chevron-up"></i> Show Less';
+    });
+
+    // Search members
+    const searchInput = document.getElementById("nameSearch");
+    const rows = document.querySelectorAll("#memberTable tr");
+    searchInput.addEventListener("input", () => {
+      const value = searchInput.value.toLowerCase();
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(value) ? "" : "none";
+      });
+    });
+
+    // Filter by status
+    const filterSelect = document.getElementById("statusFilter");
+    filterSelect.addEventListener("change", () => {
+      const selected = filterSelect.value;
+      rows.forEach(row => {
+        const status = row.dataset.status;
+        row.style.display = (selected === "all" || selected === status) ? "" : "none";
+      });
+    });
+  </script>
+</body>
+</html>
+<!-- /* Added again after deleting */ -->

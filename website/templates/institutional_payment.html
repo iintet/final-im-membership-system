@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Submit Membership Payment - MRSYS</title>
+  <link rel="stylesheet" href="institutional_billing_payment.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">MRSYS</div>
+      <nav>
+        <a href="institutional_dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="institutional_profile.html"><i class="fas fa-user"></i> My Profile</a>
+        <a href="institutional_member_management.html"><i class="fas fa-users"></i> Member Management</a>
+        <a href="institutional_membership_details.html"><i class="fas fa-id-card"></i> Membership Management</a>
+        <a href="institutional_billing_payment.html" class="active"><i class="fas fa-money-bill-wave"></i> Billing & Payment</a>
+      </nav>
+      <div class="logout">
+        <a href="{{ url_for('views.home') }}"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="payment-container enhanced-payment-box">
+        <h2><i class="fas fa-wallet"></i> Submit Membership Payment</h2>
+        <p class="subtext">Select a membership type, view the amount, and upload your payment proof.</p>
+
+        <form id="membership-payment-form" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="membership-type"><i class="fas fa-id-badge"></i> Membership Type</label>
+            <select id="membership-type" name="membership-type" required>
+              <option value="">-- Select Membership --</option>
+              <option value="basic">Basic - ₱1,000</option>
+              <option value="premium">Premium - ₱2,000</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label><i class="fas fa-money-check-alt"></i> Amount</label>
+            <div class="price-display" id="price-display">₱0</div>
+          </div>
+
+          <div class="form-group">
+            <label for="proof"><i class="fas fa-upload"></i> Upload Proof of Payment</label>
+            <input type="file" id="proof" name="proof" accept="image/*,.pdf" required />
+          </div>
+
+          <button type="submit" class="pay-button">
+            <i class="fas fa-paper-plane"></i> Submit Payment
+          </button>
+        </form>
+
+        <div class="confirmation" id="confirmation-message" style="display: none;">
+          <i class="fas fa-check-circle"></i>
+          Payment submitted successfully. Thank you!
+        </div>
+
+        <a href="institutional_billing_payment.html" class="cancel-link">
+          <i class="fas fa-arrow-left"></i> Back to Billing & Payment
+        </a>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    document.getElementById('membership-type').addEventListener('change', function () {
+      const priceMap = { basic: 1000, premium: 2000 };
+      const selected = this.value;
+      const priceDisplay = document.getElementById('price-display');
+      priceDisplay.textContent = selected ? `₱${priceMap[selected].toLocaleString()}` : '₱0';
+    });
+
+    document.getElementById('membership-payment-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      this.style.display = 'none';
+      document.getElementById('confirmation-message').style.display = 'block';
+    });
+  </script>
+</body>
+</html>
+
+<!-- /* Added again after deleting */ -->
