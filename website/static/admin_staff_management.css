@@ -12,7 +12,7 @@ body {
   background-color: #f4f4f4;
   color: #001F54;
   overflow: hidden;
-  font-size: 15px;
+  font-size: 16px;
 }
 
 body, h1, h2, h3, h4, h5, h6, p, a, button, input, select, table, th, td {
@@ -40,39 +40,43 @@ th {
 }
 
 /* Sidebar */
+/* Sidebar Consistency Styles */
 .sidebar {
-  width: 240px;
+  width: 250px;
   background-color: #001F54;
   color: white;
-  padding: 24px 16px;
+  padding: 30px 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
 .sidebar .logo {
-  font-size: 1.6rem;
+  font-size: 2rem;
   font-weight: bold;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
 }
 
 .sidebar nav a,
-.logout a {
+.sidebar .logout a {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 0;
+  padding: 12px 0;
   color: white;
-  font-weight: 500;
+  text-decoration: none;
+  font-weight: 400;
+  font-size: 1rem;
   transition: 0.2s ease;
 }
 
 .sidebar nav a.active,
 .sidebar nav a:hover,
-.logout a:hover {
+.sidebar .logout a:hover {
   font-weight: bold;
   text-decoration: underline;
 }
+
 
 .logout {
   margin-top: auto;
