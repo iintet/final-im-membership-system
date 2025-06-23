@@ -225,10 +225,24 @@ td button {
 
 /* Back Button Styling */
 a.blue-btn {
-  margin-bottom: 16px;
+  text-decoration: none;   /* ✅ Remove underline */
+  border: none;            /* ✅ Ensure no border */
   font-weight: bold;
   font-size: 0.9rem;
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 6px;
+  background-color: #007BFF;
+  color: white;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 123, 255, 0.15);
 }
+
+a.blue-btn:hover {
+  background-color: #0056b3;
+  transform: translateY(-1px);
+}
+
 
 table select {
   padding: 6px 10px;

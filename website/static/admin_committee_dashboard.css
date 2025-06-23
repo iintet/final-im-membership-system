@@ -5,7 +5,8 @@
 }
 
 html, body {
-  height: 100%;
+  height: auto;
+  min-height: 100%;
   font-family: 'Oswald', sans-serif;
   background-color: #f4f4f4;
   color: #001F54;
@@ -15,7 +16,7 @@ html, body {
 
 body {
   display: flex;
-  flex-direction: row;
+  align-items: stretch; /* ✅ ensures sidebar stretches with content */
 }
 
 .blue-button {
@@ -47,6 +48,7 @@ body {
   flex-direction: column;
   justify-content: space-between;
 }
+
 
 .sidebar .logo {
   font-size: 2rem;
