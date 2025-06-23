@@ -240,8 +240,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (affiliationTypeValue === "organization") {
                 if (organizationFields) organizationFields.style.display = "block";
                 if (schoolFields) schoolFields.style.display = "none";
-                if (orgName) orgName.setAttribute("required", "required");
-                if (orgAddress) orgAddress.setAttribute("required", "required");
+                // Remove required attributes
+                if (orgName) orgName.removeAttribute("required");
+                if (orgAddress) orgAddress.removeAttribute("required");
                 if (schoolRegion) schoolRegion.removeAttribute("required");
                 if (schoolProvince) schoolProvince.removeAttribute("required");
                 if (schoolCity) schoolCity.removeAttribute("required");
@@ -249,15 +250,17 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (affiliationTypeValue === "school") {
                 if (schoolFields) schoolFields.style.display = "block";
                 if (organizationFields) organizationFields.style.display = "none";
-                if (schoolRegion) schoolRegion.setAttribute("required", "required");
-                if (schoolProvince) schoolProvince.setAttribute("required", "required");
-                if (schoolCity) schoolCity.setAttribute("required", "required");
-                if (schoolName) schoolName.setAttribute("required", "required");
+                // Remove required attributes
+                if (schoolRegion) schoolRegion.removeAttribute("required");
+                if (schoolProvince) schoolProvince.removeAttribute("required");
+                if (schoolCity) schoolCity.removeAttribute("required");
+                if (schoolName) schoolName.removeAttribute("required");
                 if (orgName) orgName.removeAttribute("required");
                 if (orgAddress) orgAddress.removeAttribute("required");
             } else {
                 if (organizationFields) organizationFields.style.display = "none";
                 if (schoolFields) schoolFields.style.display = "none";
+                // Remove required attributes
                 if (orgName) orgName.removeAttribute("required");
                 if (orgAddress) orgAddress.removeAttribute("required");
                 if (schoolRegion) schoolRegion.removeAttribute("required");
@@ -267,4 +270,5 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
 });
