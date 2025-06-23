@@ -269,3 +269,45 @@ form button[type="submit"] {
   display: inline-block;
   min-width: 60px;
 }
+
+.filter-form {
+  background-color: #f4f4f4;
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-row label {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.filter-row select,
+.filter-row input[type="date"] {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.blue-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.blue-btn:hover {
+  background-color: #0056b3;
+}

@@ -106,7 +106,7 @@ def register_event(event_id):
     }).execute()
 
     flash("Successfully registered for the event!", "success")
-    return redirect(url_for('views.usereventsparticipation'))
+    return redirect(url_for('views.eventsparticipation'))
 
 @views.route('/unregister-event/<int:event_id>', methods=['POST'])
 def unregister_event(event_id):
@@ -810,7 +810,10 @@ def admin_event_registrations():
 # -- MEMBERSHIP MANAGEMENT --
 @views.route('/admin/memberships')
 def admin_membership_management():
-    return render_template('admin_membership_management.html')
+    membership_types_response = supabase.table("membershiptype").select("*").execute()
+    membership_types = membership_types_response.data
+
+    return render_template("admin_membership_management.html", membership_types=membership_types)
 
 @views.route('/admin/membership/edit')
 def admin_membership_edit():
@@ -983,9 +986,39 @@ def admin_create_billing():
         institutional_members=institutional_members
     )
 
-@views.route('/admin/payment/record', methods=['GET'])
+@views.route('/admin/payment/record')
 def admin_payment_record():
-    return render_template('admin_record_payment.html')
+    from_date = request.args.get('from_date')
+    to_date = request.args.get('to_date')
+
+    query = supabase.table("payment").select("""
+        paymentid,
+        amountpaid,
+        paymentdate,
+        referencenumber,
+        status,
+        billing (
+            billtype,
+            member (
+                individual (
+                    firstname,
+                    lastname
+                )
+            )
+        )
+    """).order("paymentdate", desc=True)
+
+    if from_date:
+        query = query.gte("paymentdate", from_date)
+    if to_date:
+        query = query.lte("paymentdate", to_date)
+
+    response = query.order("paymentdate", desc=True).execute()
+    payments = response.data if response.data else []
+
+    return render_template("admin_record_payment.html", payments=payments,
+                           from_date=from_date, to_date=to_date)
+
 
 # -- ADMIN COMMITTEE MANAGEMENT --
 @views.route('/admin/committees')

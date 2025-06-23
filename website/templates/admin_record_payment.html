@@ -26,49 +26,48 @@
   </div>
 
   <div class="main-content">
-    <a href="{{ url_for('views.admin_billing_payment') }}" class= "back-btn emphasized"> 
-      <i class="fas fa-arrow-left"></i> Back to Billing & Payment</a>
-    
-
-    <div class="page-heading">
-      <h1>Record Payment</h1>
-    </div>
-    <p class="subtitle">Enter payment details for a member's outstanding bill.</p>
-
+    <h1>All Payment Records</h1>
     <div class="card full-width">
-      <form>
-        <div class="form-group">
-          <label for="member-name">Member Name</label>
-          <input type="text" id="member-name" name="member-name" placeholder="e.g., Maria Santos" required />
-        </div>
+      <h2>Filter Payments</h2>
+      <form method="GET" action="{{ url_for('views.admin_payment_record') }}" class="filter-row">
+        <label for="from-date">From:</label>
+        <input type="date" id="from-date" name="from_date" value="{{ from_date }}"/>
 
-        <div class="form-group">
-          <label for="reference-id">Bill Reference ID</label>
-          <input type="text" id="reference-id" name="reference-id" placeholder="e.g., TXN-MEM2025-00012" required />
-        </div>
+        <label for="to-date">To:</label>
+        <input type="date" id="to-date" name="to_date" value="{{ to_date }}"/>
 
-        <div class="form-group">
-          <label for="payment-date">Payment Date</label>
-          <input type="date" id="payment-date" name="payment-date" required />
-        </div>
-
-        <div class="form-group">
-          <label for="amount">Amount Paid (₱)</label>
-          <input type="number" id="amount" name="amount" placeholder="e.g., 1500" required />
-        </div>
-
-        <div class="form-group">
-          <label for="status">Payment Status</label>
-          <select id="status" name="status" required>
-            <option value="">Select status</option>
-            <option value="Paid">Paid</option>
-            <option value="Pending">Pending</option>
-          </select>
-        </div>
-
-        <button type="submit" class="blue-btn">Submit Payment</button>
+        <button type="submit" class="blue-btn">Apply Filter</button>
       </form>
     </div>
+
+    <table class="event-table">
+      <thead>
+        <tr>
+          <th>Member Name</th>
+          <th>Bill Type</th>
+          <th>Reference</th>
+          <th>Payment Date</th>
+          <th>Amount Paid</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in payments %}
+        <tr>
+          <td>{{ p.billing.member.individual.firstname }} {{ p.billing.member.individual.lastname }}</td>
+          <td>{{ p.billing.billtype }}</td>
+          <td>{{ p.referencenumber }}</td>
+          <td>{{ p.paymentdate }}</td>
+          <td>₱{{ p.amountpaid }}</td>
+          <td>
+            <span class="{{ 'status-paid' if p.status == 'Paid' else 'status-unpaid' }}">{{ p.status }}</span>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6">No payments found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 </body>
 </html>
