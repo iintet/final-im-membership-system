@@ -1306,6 +1306,24 @@ def membershipdetails():
     if not member_id:
         return "Unauthorized", 401
 
+    membership = supabase.table("membershipregistration") \
+        .select("typeid") \
+        .eq("memberid", member_id) \
+        .eq("status", "Active") \
+        .limit(1) \
+        .execute().data
+
+    membership_type_name = "None"
+    if membership:
+        typeid = membership[0]["typeid"]
+        # Get membership type name
+        type_result = supabase.table("membershiptype") \
+            .select("name") \
+            .eq("typeid", typeid) \
+            .execute().data
+        if type_result:
+            membership_type_name = type_result[0]["name"]
+
     # Check if the member exists in the member table
     member_check_resp = supabase.table('member').select('memberid').eq('memberid', member_id).execute()
 
@@ -1334,7 +1352,8 @@ def membershipdetails():
     return render_template(
         'user_membership_details.html',
         current_membership=current_membership,
-        membership_history=membership_history
+        membership_history=membership_history,
+        membership_type=membership_type_name
     )
 
 @views.route('/userprofile', methods=['GET', 'POST'])

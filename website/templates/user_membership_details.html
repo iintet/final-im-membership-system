@@ -39,8 +39,14 @@
       </section>
 
 <section class="membership-type card-box">
-  <h3>Current Membership: <span class="badge gold">Gold</span></h3>
-  <button class="upgrade-btn">Renew / Upgrade</button>
+  <h3>Current Membership:
+    {% if membership_type != "None" %}
+      <span class="badge {{ membership_type | lower }}">{{ membership_type }}</span>
+    {% else %}
+      <span class="badge gray">Not Registered</span>
+    {% endif %}
+  </h3>
+  <a href="{{ url_for('views.billingpayment') }}" class="upgrade-btn">Renew</a>
 </section>
 
 <section class="benefits card-box">
