@@ -50,10 +50,149 @@ def contact():
 
 @views.route('/usereventsparticipation')
 def eventsparticipation():
-    return render_template('user_events_participation.html')
+    member_id = session.get('member_id')
+    if not member_id:
+        return "Unauthorized", 401  # adjust based on your login blueprint
 
-@views.route('/usercommitteeparticipation')
+    # Fetch upcoming events the user hasn't registered for
+    upcoming_response = supabase.table("event") \
+        .select("*") \
+        .gt("eventdate", "now()") \
+        .order("eventdate", desc=False) \
+        .execute()
+    upcoming_events = upcoming_response.data
+
+    # Fetch user's registered events
+    registered_response = supabase.table("eventregistration") \
+        .select("eventid, status, event(name, eventdate)") \
+        .eq("memberid", member_id) \
+        .execute()
+    registered_events = registered_response.data
+
+    # Extract past attended events
+    past_attended_events = []
+    registered_event_ids = set()
+
+    for reg in registered_events:
+        event = reg['event']
+        if reg['status'] == 'attended':
+            past_attended_events.append({
+                'event_name': event['eventname'],
+                'date': event['eventdate']
+            })
+        registered_event_ids.add(reg['eventid'])
+
+    # Mark events as registered/unregistered
+    for event in upcoming_events:
+        if event['eventid'] in registered_event_ids:
+            event['is_registered'] = True
+        else:
+            event['is_registered'] = False
+
+    return render_template('user_events_participation.html',
+                           upcoming_events=upcoming_events,
+                           past_attended=past_attended_events)
+
+@views.route('/register-event/<int:event_id>', methods=['POST'])
+def register_event(event_id):
+    member_id = session.get('member_id')
+    if not member_id:
+        return "Unauthorized", 401
+
+    supabase.table("eventregistration").insert({
+        "eventid": event_id,
+        "memberid": member_id,
+        "status": "registered"
+    }).execute()
+
+    flash("Successfully registered for the event!", "success")
+    return redirect(url_for('views.usereventsparticipation'))
+
+@views.route('/unregister-event/<int:event_id>', methods=['POST'])
+def unregister_event(event_id):
+    member_id = session.get('memberid')
+    if not member_id:
+        return redirect(url_for('auth.login'))
+
+    supabase.table("eventregistration") \
+        .delete() \
+        .eq("eventid", event_id) \
+        .eq("memberid", member_id) \
+        .execute()
+
+    flash("You have unregistered from the event.", "info")
+    return redirect(url_for('views.usereventsparticipation'))
+
+@views.route('/usercommitteeparticipation', methods=['GET', 'POST'])
 def committeeparticipation():
+    member_id = session.get("member_id")
+    if not member_id:
+        return redirect(url_for('auth.login'))
+
+    # Handle form submission
+    if request.method == 'POST':
+        event_id = request.form.get('event_id')
+        committee_id = request.form.get('committee_id')
+        role = request.form.get('role')
+        
+        if event_id and committee_id and role:
+            supabase.table("committeemember").insert({
+                "memberid": member_id,
+                "committeeid": int(committee_id),
+                "position": role.capitalize(),
+                "applicationdate": date.today().isoformat(),
+                "status": "Pending"
+            }).execute()
+            flash("Application submitted!", "success")
+            return redirect(url_for('views.committeeparticipation'))
+
+    # Fetch all events
+    events = supabase.table("event").select("eventid, name").execute().data
+
+    # Fetch all committees with event name
+    committees_raw = supabase.table("committee").select("committeeid, name, eventid").execute().data
+    event_map = {e["eventid"]: e["name"] for e in events}
+    committees = [
+        {
+            "committeeid": c["committeeid"],
+            "name": c["name"],
+            "eventname": event_map.get(c["eventid"], "Unknown Event"),
+            "eventid": c["eventid"]
+        }
+        for c in committees_raw
+    ]
+
+    # Current application
+    application = supabase.table("committeemember") \
+        .select("*") \
+        .eq("memberid", member_id) \
+        .order("applicationdate", desc=True) \
+        .limit(1).execute().data
+
+    current_application = application[0] if application else None
+
+    # Designation history
+    designation_data = supabase.table("committeedesignation") \
+        .select("startdate, enddate, committeeid") \
+        .eq("memberid", member_id).execute().data
+
+    designation_history = []
+    for d in designation_data:
+        committee = supabase.table("committee").select("name").eq("committeeid", d["committeeid"]).execute().data
+        designation_history.append({
+            "committee": committee[0]["name"] if committee else "Unknown",
+            "startdate": d["startdate"],
+            "enddate": d["enddate"] or "Present",
+            "role": "Assigned"
+        })
+
+    return render_template(
+        'user_committee_participation.html',
+        events=events,
+        committees=committees,
+        current_application=current_application,
+        designation_history=designation_history
+    )
     return render_template('user_committee_participation.html')
 
 # API endpoints to fetch locations data from Supabase
@@ -536,7 +675,6 @@ def admin_event_manage():
             eventdate,
             location,
             capacity,
-            fee,
             staffid,
             staff (
                 firstname,
@@ -572,16 +710,14 @@ def add_event():
     date = request.form.get("date")
     location = request.form.get("location")
     capacity = int(request.form.get("capacity"))
-    fee = float(request.form.get("fee"))
     staff_id = request.form.get("staff_id")
 
-    if name and date and location and capacity and fee and staff_id:
+    if name and date and location and capacity and staff_id:
         supabase.table("event").insert({
             "name": name,
             "eventdate": date,
             "location": location,
             "capacity": capacity,
-            "fee": fee,
             "staffid": staff_id
         }).execute()
 
@@ -846,8 +982,6 @@ def admin_create_billing():
         individual_members=individual_members,
         institutional_members=institutional_members
     )
-
-
 
 @views.route('/admin/payment/record', methods=['GET'])
 def admin_payment_record():
@@ -1146,13 +1280,23 @@ def userdashboard():
         membership_status = "No Active Membership"
         validity_start = None
         validity_end = None
+    
+    upcoming_event = supabase.table("event") \
+        .select("*") \
+        .gt("eventdate", "now()") \
+        .order("eventdate", desc=True) \
+        .limit(1) \
+        .execute()
+
+    next_event = upcoming_event.data[0] if upcoming_event.data else None
 
     return render_template(
         'user_dashboard.html',
         fullname=fullname,
         membership_status=membership_status,
         validity_start=validity_start,
-        validity_end=validity_end
+        validity_end=validity_end,
+        next_event=next_event
     )
 
 @views.route('/usermembershipdetails')
@@ -1315,7 +1459,34 @@ def update_profile(data, member_id):
 def billingpayment():
     if session.get('user_type') != 'individual':
         return redirect('/')
+    
+    member_id = session.get("member_id")
+    if not member_id:
+        return redirect(url_for('auth.login'))
+    
+    billing_data = supabase.table("billing") \
+        .select("billingid, amountdue, duedate, status, billtype, registrationid") \
+        .eq("memberid", member_id) \
+        .order("duedate", desc=False) \
+        .execute().data
+
+    # Get payment history
+    payments = supabase.table("payment") \
+        .select("paymentdate, referencenumber, amountpaid, status") \
+        .order("paymentdate", desc=True) \
+        .execute().data
+
+    return render_template(
+        'user_billing_payment.html',
+        current_bills=billing_data,
+        payments=payments
+    )
     return render_template('user_billing_payment.html')
+
+@views.route('/pay-online/<int:billing_id>', methods=['POST'])
+def pay_online(billing_id):
+    # Redirect to payment gateway or simulate payment
+    return redirect(url_for('views.billingpayment'))
 
 @views.route('/api/events', methods=['POST'])
 def create_event():

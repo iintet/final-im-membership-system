@@ -52,16 +52,18 @@
 
   <div class="info-card">
     <div class="card-body">
-      <h3>Outstanding Balance</h3>
-      <p class="info-main">₱150,000</p>
-    </div>
-  </div>
-
-  <div class="info-card">
-    <div class="card-body">
       <h3>Next Upcoming Event</h3>
-      <p class="info-main">August 01, 2025</p>
-      <button class="join-btn">Join</button>
+
+      {% if next_event %}
+        <p><strong>{{ next_event.name }}</strong></p>
+        <p><strong>Date:</strong> {{ next_event.eventdate }}</p>
+        <p><strong>Location:</strong> {{ next_event.location }}</p>
+        <form method="POST" action="{{ url_for('views.register_event', event_id=next_event.eventid) }}">
+          <button class="join-btn" type="submit">Join</button>
+        </form>
+      {% else %}
+        <p>No upcoming events.</p>
+      {% endif %}
     </div>
   </div>
 </section>

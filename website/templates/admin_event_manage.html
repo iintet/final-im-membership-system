@@ -103,7 +103,6 @@
             <th>Date</th>
             <th>Location</th>
             <th>Capacity</th>
-            <th>Fee</th>
             <th>Staff Assigned</th>
             <th>Actions</th>
           </tr>
@@ -115,7 +114,6 @@
             <td>{{ e.eventdate }}</td>
             <td>{{ e.location }}</td>
             <td>{{ e.capacity }}</td>
-            <td>{{ e.fee }}</td>
             <td>{{ e.staff.firstname }} {{ e.staff.lastname }}</td>
             <td>
               <form method="POST" action="{{ url_for('views.delete_event', eventid=e.eventid) }}" onsubmit="return confirm('Delete this event?');">

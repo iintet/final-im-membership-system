@@ -39,12 +39,33 @@
       <!-- Apply Section -->
 <section class="apply-section card-box">
   <h3>Apply to Join a Committee</h3>
-  <form class="apply-form">
+  <form class="apply-form" method="POST" action="{{ url_for('views.committeeparticipation') }}">
+    <!-- Event List -->
+    <label for="event_id">Select Event:</label>
+    <select id="event_id" name="event_id" required>
+      <option value="">-- Select Event --</option>
+      {% for event in events %}
+      <option value="{{ event.eventid }}">{{ event.name }}</option>
+      {% endfor %}
+    </select>
+
+    <!-- Committee List -->
+    <label for="committee_id">Select Committee:</label>
+    <select id="committee_id" name="committee_id" required>
+      <option value="">-- Select Committee --</option>
+      {% for committee in committees %}
+      <option value="{{ committee.committeeid }}" data-event="{{ committee.eventid }}">
+        {{ committee.name }} ({{ committee.eventname }})
+      </option>
+      {% endfor %}
+    </select>
+
+    <!-- Role -->
     <label for="role">Select Role:</label>
-    <select id="role" required>
-      <option value="">-- Select role --</option>
-      <option value="head">Head</option>
-      <option value="member">Member</option>
+    <select id="role" name="role" required>
+      <option value="">-- Select Role --</option>
+      <option value="Head">Head</option>
+      <option value="Member">Member</option>
     </select>
 
     <button type="submit">Submit Application</button>
@@ -59,6 +80,12 @@
       <div>
         <p class="label">Status</p>
         <p class="value dim">Pending Review</p>
+        {% if current_application %}
+          {{ current_application.status }}
+        {% else %}
+          No Application Found
+        {% endif %}
+      </p>
       </div>
     </div>
     <div class="status-item">
@@ -83,22 +110,42 @@
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td>Ethics Committee</td>
-        <td>Secretary</td>
-        <td>Jan 2022</td>
-        <td>Dec 2022</td>
-      </tr>
-      <tr>
-        <td>Education Committee</td>
-        <td>Member</td>
-        <td>Aug 2021</td>
-        <td>Aug 2022</td>
-      </tr>
+      {% if designation_history %}
+        {% for d in designation_history %}
+        <tr>
+          <td>{{ d.committee }}</td>
+          <td>{{ d.role }}</td>
+          <td>{{ d.startdate }}</td>
+          <td>{{ d.enddate }}</td>
+        </tr>
+        {% endfor %}
+      {% else %}
+        <tr><td colspan="4">No designation history available.</td></tr>
+      {% endif %}
     </tbody>
   </table>
 </section>
     </main>
   </div>
+  <script>
+    const eventSelect = document.getElementById("event_id");
+    const committeeSelect = document.getElementById("committee_id");
+
+    function filterCommitteesByEvent(eventId) {
+      const options = committeeSelect.querySelectorAll("option");
+      options.forEach(option => {
+        if (!option.value) return; // Skip placeholder
+        option.style.display = option.getAttribute("data-event") === eventId ? "block" : "none";
+      });
+      committeeSelect.value = ""; // Reset committee selection
+    }
+
+    eventSelect.addEventListener("change", () => {
+      filterCommitteesByEvent(eventSelect.value);
+    });
+
+    // Trigger filtering on load (optional)
+    filterCommitteesByEvent(eventSelect.value);
+  </script>
 </body>
 </html>
